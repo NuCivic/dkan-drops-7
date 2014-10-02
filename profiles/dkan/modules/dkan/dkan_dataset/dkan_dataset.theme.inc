@@ -150,7 +150,7 @@ function theme_dkan_dataset_resource_teaser_view($vars) {
           'url' => 'node/' . $vars['node']->nid,
           'link' => array(
             'attributes' => array(
-              'class' => array('label'),
+              'class' => array('span'),
               'title' => t('Resources') . ': ' . $vars['node']->title,
               'data-format' => $name,
             ),

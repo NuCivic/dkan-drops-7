@@ -35,7 +35,7 @@ p, p:last-child { margin: 0 0 1.25em 0; }
 .alert .close { line-height: 18px; position: absolute; right: 10px; top: 5px; }
 
 table, table.table { border-collapse: collapse; margin: 1em 0; width: 100%; }
-table thead > tr > th, table.table thead > tr > th { background-color: hero; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #f0f0f0)); background-image: -webkit-linear-gradient(#f5f5f5, #f0f0f0); background-image: -moz-linear-gradient(#f5f5f5, #f0f0f0); background-image: -o-linear-gradient(#f5f5f5, #f0f0f0); background-image: linear-gradient(#f5f5f5, #f0f0f0); border: 1px solid rgba(0, 0, 0, 0.15) !important; padding: 4px 8px; }
+table thead > tr > th, table.table thead > tr > th { background-color: hero; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #f0f0f0)); background-image: -webkit-linear-gradient(#f5f5f5, #f0f0f0); background-image: -moz-linear-gradient(#f5f5f5, #f0f0f0); background-image: -o-linear-gradient(#f5f5f5, #f0f0f0); background-image: linear-gradient(#f5f5f5, #f0f0f0); border: 1px solid rgba(0, 0, 0, 0.15) !important; padding: 4px 8px; font-weight: bold; }
 table thead th:first-child, table.table thead th:first-child { @inlclude border-top-left-radius(4px); }
 table thead th:last-child, table thead th:last-child, table.table thead th:last-child, table.table thead th:last-child { -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
 table tbody th, table td, table.table tbody th, table.table td { border: 1px solid rgba(0, 0, 0, 0.15); padding: 4px 8px; vertical-align: top; }
@@ -130,6 +130,9 @@ body { font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 .page-admin .region-content .block { -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; border: none; margin: 0; padding: 0; }
 
 .node-type-group .region-content .block { -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; border: none; padding: 0; }
+
+table.group_additional th:nth-of-type(1n), table.group_additional td:nth-of-type(1n), .field-name-field-additional-info table th:nth-of-type(1n), .field-name-field-additional-info table td:nth-of-type(1n) { width: 30%; }
+table.group_additional th:nth-of-type(2n), table.group_additional td:nth-of-type(2n), .field-name-field-additional-info table th:nth-of-type(2n), .field-name-field-additional-info table td:nth-of-type(2n) { width: 70%; }
 
 #block-views-front-page-group-grid-block { -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; margin-bottom: 0; padding: 0; }
 

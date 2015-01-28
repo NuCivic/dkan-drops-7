@@ -180,7 +180,10 @@
         };
 
         window.dataExplorer = new recline.View.MultiView(Drupal.settings.recline.args);
-        router = new recline.DeepLink.Router(window.dataExplorer);
+        window.router = new recline.DeepLink.Router(window.dataExplorer);
+        var map = window.dataExplorer.pageViews[2].view.map;
+        window.router.addDependency(new recline.DeepLink.Deps.Map(map, window.router));
+        window.router.start();
         $.event.trigger('createDataExplorer');
         return views;
     };

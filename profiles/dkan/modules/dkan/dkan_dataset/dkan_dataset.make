@@ -16,6 +16,7 @@ projects[beautytips][type] = module
 projects[chosen][version] = 2.0-alpha1
 projects[chosen][subdir] = contrib
 
+projects[context][version] = 3.3
 projects[context][subdir] = contrib
 
 projects[ctools][version] = 1.4
@@ -112,14 +113,14 @@ projects[open_data_schema_map_dkan][subdir] = contrib
 
 projects[ref_field][download][type] = git
 projects[ref_field][download][url] = "http://git.drupal.org/project/ref_field.git"
-projects[ref_field][download][patch][1670356] = http://drupal.org/files/removed_notice-1670356-1.patch
-projects[ref_field][download][patch][2360019] = https://www.drupal.org/files/issues/ref_field-delete-insert-warning-2360019-0.patch
+projects[ref_field][patch][1670356] = http://drupal.org/files/removed_notice-1670356-1.patch
+projects[ref_field][patch][2360019] = https://www.drupal.org/files/issues/ref_field-delete-insert-warning-2360019-0.patch
 projects[ref_field][download][revision] = 9dbf7cf
 projects[ref_field][subdir] = contrib
 projects[ref_field][type] = module
 
 projects[remote_file_source][version] = 1.x
-projects[remote_file_source][download][patch][2362487] = https://www.drupal.org/files/issues/remote_file_source-location-content-dist.patch
+projects[remote_file_source][patch][2362487] = https://www.drupal.org/files/issues/remote_file_source-location-content-dist.patch
 projects[remote_file_source][subdir] = contrib
 
 projects[remote_stream_wrapper][version] = 1.0-beta4

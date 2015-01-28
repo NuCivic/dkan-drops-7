@@ -401,6 +401,7 @@ function recline_default_formatter_output($variables) {
 
   $recline = libraries_load('recline');
   $recline_deeplink = libraries_load('recline_deeplink');
+  $leaflet_markercluster = libraries_load('leaflet_markercluster');
   $deep_diff = libraries_load('deep_diff');
 
   if (isset($variables['item']['grid']) &&

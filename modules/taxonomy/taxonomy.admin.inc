@@ -768,7 +768,7 @@ function taxonomy_form_term($form, &$form_state, $edit = array(), $vocabulary = 
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
-      '#access' => user_access("delete terms in $vocabulary->vid") || user_access('administer taxonomy'),
+      '#access' => user_access("delete terms in $vocabulary->machine_name") || user_access('administer taxonomy'),
       '#weight' => 10,
     );
   }

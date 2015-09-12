@@ -185,6 +185,15 @@ function dkan_sitewide_roles_perms_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'administer fieldable panels panes'.
+  $permissions['administer fieldable panels panes'] = array(
+    'name' => 'administer fieldable panels panes',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'fieldable_panels_panes',
+  );
+
   // Exported permission: 'administer fieldgroups'.
   $permissions['administer fieldgroups'] = array(
     'name' => 'administer fieldgroups',
@@ -285,6 +294,15 @@ function dkan_sitewide_roles_perms_user_default_permissions() {
   // Exported permission: 'administer pane access'.
   $permissions['administer pane access'] = array(
     'name' => 'administer pane access',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'panels',
+  );
+
+   // Exported permission: 'administer panelizer'.
+  $permissions['administer panelizer'] = array(
+    'name' => 'administer panelizer',
     'roles' => array(
       'administrator' => 'administrator',
     ),
@@ -500,6 +518,15 @@ function dkan_sitewide_roles_perms_user_default_permissions() {
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'node',
+  );
+
+  // Exported permission: 'create files'.
+  $permissions['create files'] = array(
+    'name' => 'create files',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'file_entity',
   );
 
   // Exported permission: 'create group content'.

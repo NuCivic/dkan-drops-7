@@ -12,3 +12,9 @@ regions[header] = Header
 regions[footer] = Footer
 regions[highlighted] = Highlighted
 regions[help] = Help
+
+; Information added by Drupal.org packaging script on 2015-08-19
+version = "7.39"
+project = "drupal"
+datestamp = "1440020197"
+

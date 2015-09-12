@@ -72,12 +72,12 @@ function taxonomy_permission() {
   );
   foreach (taxonomy_get_vocabularies() as $vocabulary) {
     $permissions += array(
-      'edit terms in ' . $vocabulary->vid => array(
+      'edit terms in ' . $vocabulary->machine_name => array(
         'title' => t('Edit terms in %vocabulary', array('%vocabulary' => $vocabulary->name)),
       ),
     );
     $permissions += array(
-       'delete terms in ' . $vocabulary->vid => array(
+       'delete terms in ' . $vocabulary->machine_name => array(
          'title' => t('Delete terms from %vocabulary', array('%vocabulary' => $vocabulary->name)),
       ),
     );
@@ -371,7 +371,14 @@ function taxonomy_admin_paths() {
  * Return edit access for a given term.
  */
 function taxonomy_term_edit_access($term) {
-  return user_access("edit terms in $term->vid") || user_access('administer taxonomy');
+  if (user_access('administer taxonomy')) {
+    return TRUE;
+  }
+  if (!isset($term->vocabulary_machine_name)) {
+    $vocabulary = taxonomy_vocabulary_load($term->vid);
+    $term->vocabulary_machine_name = $vocabulary->machine_name;
+  }
+  return user_access("edit terms in $term->vocabulary_machine_name");
 }
 
 /**

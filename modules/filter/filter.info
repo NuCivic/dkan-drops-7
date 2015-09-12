@@ -6,3 +6,9 @@ core = 7.x
 files[] = filter.test
 required = TRUE
 configure = admin/config/content/formats
+
+; Information added by Drupal.org packaging script on 2015-08-19
+version = "7.39"
+project = "drupal"
+datestamp = "1440020197"
+

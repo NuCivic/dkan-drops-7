@@ -5,3 +5,9 @@ version = VERSION
 core = 7.x
 files[] = contact.test
 configure = admin/structure/contact
+
+; Information added by Drupal.org packaging script on 2015-08-19
+version = "7.39"
+project = "drupal"
+datestamp = "1440020197"
+

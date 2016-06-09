@@ -16,19 +16,6 @@ function rules_entity_file_info() {
 }
 
 /**
- * Implements hook_rules_category_info() on behalf of the pseudo entity module.
- */
-function rules_entity_category_info() {
-  return array(
-    'rules_entity' => array(
-      'label' => t('Entities'),
-      'equals group' => t('Entities'),
-      'weight' => -50,
-    ),
-  );
-}
-
-/**
  * Implements hook_rules_action_info() on behalf of the entity module.
  * @see rules_core_modules()
  */
@@ -240,7 +227,7 @@ function rules_action_entity_query_value_options_list(RulesAbstractPlugin $eleme
   // Get the possible values for the selected property.
   $element->settings += array('type' => NULL, 'property' => NULL);
   if ($element->settings['type'] && $element->settings['property']) {
-    $wrapper = rules_get_entity_metadata_wrapper_all_properties($element);
+    $wrapper = entity_metadata_wrapper($element->settings['type']);
 
     if (isset($wrapper->{$element->settings['property']}) && $property = $wrapper->{$element->settings['property']}) {
       return $property->optionsList('view');
@@ -455,15 +442,11 @@ function rules_condition_entity_is_new_help() {
  * Returns options for choosing a field for the selected entity.
  */
 function rules_condition_entity_has_field_options(RulesAbstractPlugin $element) {
-  // The field_info_field_map() function was introduced in Drupal 7.22 (see
-  // https://drupal.org/node/1915646).
-  if (function_exists('field_info_field_map')) {
-    $fields = field_info_field_map();
+  $options = array();
+  foreach (field_info_fields() as $field_name => $field) {
+    $options[$field_name] = $field_name;
   }
-  else {
-    $fields = field_info_fields();
-  }
-  return drupal_map_assoc(array_keys($fields));
+  return $options;
 }
 
 /**

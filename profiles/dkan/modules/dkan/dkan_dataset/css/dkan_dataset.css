@@ -678,3 +678,5 @@ body .node-dataset #data-and-resources ul.resource-list li .orig {
 #data-and-resources .btn .fa-share {
   padding: 0 8px 0 0;
 }
+.field-name-field-additional-info table p,
+.field-name-field-additional-info table p:last-child { margin: 0; }

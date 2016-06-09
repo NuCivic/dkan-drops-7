@@ -123,17 +123,11 @@ function rules_action_mail_to_users_of_role($roles, $subject, $message, $from = 
   $message = array('result' => TRUE);
   foreach ($result as $row) {
     $message = drupal_mail('rules', $key, $row->mail, language_default(), $params, $from);
-    // If $message['result'] is FALSE, then it's likely that email sending is
-    // failing at the moment, and we should just abort sending any more. If
-    // however, $mesage['result'] is NULL, then it's likely that a module has
-    // aborted sending this particular email to this particular user, and we
-    // should just keep on sending emails to the other users.
-    // For more information on the result value, see drupal_mail().
-    if ($message['result'] === FALSE) {
+    if (!$message['result']) {
       break;
     }
   }
-  if ($message['result'] !== FALSE) {
+  if ($message['result']) {
     $role_names = array_intersect_key(user_roles(TRUE), array_flip($roles));
     watchdog('rules', 'Successfully sent email to the role(s) %roles.', array('%roles' => implode(', ', $role_names)));
   }
@@ -148,17 +142,6 @@ function rules_mail($key, &$message, $params) {
 
   $message['subject'] .= str_replace(array("\r", "\n"), '', $params['subject']);
   $message['body'][] = $params['message'];
-}
-
-/**
- * Action: Block an IP address.
- */
-function rules_action_block_ip($ip_address = NULL) {
-  if (empty($ip_address)) {
-    $ip_address = ip_address();
-  }
-  db_insert('blocked_ips')->fields(array('ip' => $ip_address))->execute();
-  watchdog('rules', 'Banned IP address %ip', array('%ip' => $ip_address));
 }
 
 /**

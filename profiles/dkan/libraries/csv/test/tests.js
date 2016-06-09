@@ -123,6 +123,42 @@ test("serialize - dialect options", function() {
   deepEqual(out, exp);
 });
 
+asyncTest("request fail", function(){
+  var dataset = {
+    url: 'http://fauxurlexample.com',
+  };
+
+  CSV.fetch(dataset).always(function(response, status){
+    if(response.error) {
+      var r = response.error.request;
+      equal(r.status, 0);
+      equal(r.readyState, 0);
+    } else {
+      ok(false);
+    }
+    start();
+  });
+});
+
+test("parse custom lineterminator", function(){
+  var csv = '"Jones, Jay",10\r' +
+  '"Xyz ""ABC"" O\'Brien",11:35\r' +
+  '"Other, AN",12:35\r';
+
+  var exp = [
+    ['Jones, Jay', 10],
+    ['Xyz "ABC" O\'Brien', '11:35' ],
+    ['Other, AN', '12:35' ]
+  ];
+
+  var settings = {
+    delimiter: ',',
+    lineterminator: '\r',
+  };
+
+  var array = CSV.parse(csv, settings);
+  deepEqual(array, exp);
+});
 
 test('normalizeDialectOptions', function() {
   var indata = {
@@ -152,6 +188,60 @@ test('normalizeDialectOptions', function() {
   }
   var out = CSV.normalizeDialectOptions(indata);
   deepEqual(out, exp);
+});
+
+test('normalizeLineTerminator', function() {
+  var exp = [
+    ['Jones, Jay', 10],
+    ['Xyz "ABC" O\'Brien', '11:35' ],
+    ['Other, AN', '12:35' ]
+  ];
+  var csv, array;
+
+  // Multics, Unix and Unix-like systems (Linux, OS X, FreeBSD, AIX, Xenix, etc.), BeOS, Amiga, RISC OS, and other
+  csv = '"Jones, Jay",10\n' +
+  '"Xyz ""ABC"" O\'Brien",11:35\n' +
+  '"Other, AN",12:35\n';
+  array = CSV.parse(csv);
+  deepEqual(exp, array);
+
+  // Commodore 8-bit machines, Acorn BBC, ZX Spectrum, TRS-80, Apple II family, Oberon, Mac OS up to version 9, and OS-9
+  csv = '"Jones, Jay",10\r' +
+  '"Xyz ""ABC"" O\'Brien",11:35\r' +
+  '"Other, AN",12:35\r';
+  array = CSV.parse(csv);
+  deepEqual(exp, array);
+
+  // Microsoft Windows, DOS (MS-DOS, PC DOS, etc.),
+  csv = '"Jones, Jay",10\r\n' +
+  '"Xyz ""ABC"" O\'Brien",11:35\r\n' +
+  '"Other, AN",12:35\r\n';
+  array = CSV.parse(csv);
+  deepEqual(exp, array);
+
+  // Override line terminator
+  var settings = {
+    delimiter: ',',
+    lineterminator: '\r',
+  };
+  csv = '"Jones, Jay",10\r' +
+  '"Xyz ""ABC"" O\'Brien",11:35\r' +
+  '"Other, AN",12:35\r';
+  array = CSV.parse(csv, settings);
+  deepEqual(exp, array);
+
+  // Nested mixed terminators
+  var exp = [
+    ['Jones,\n Jay', 10],
+    ['Xyz "ABC" O\'Brien', '11:35' ],
+    ['Other, AN', '12:35' ]
+  ];
+  csv = '"Jones,\n Jay",10\r' +
+  '"Xyz ""ABC"" O\'Brien",11:35\r' +
+  '"Other, AN",12:35\r';
+  array = CSV.parse(csv, settings);
+  deepEqual(exp, array);
+
 });
 
 })(this.jQuery);

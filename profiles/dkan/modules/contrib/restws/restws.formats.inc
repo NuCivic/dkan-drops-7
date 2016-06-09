@@ -452,14 +452,9 @@ abstract class RestWSBaseFormat implements RestWSFormatInterface {
 function restws_property_access_filter($wrapper) {
   $filtered = array();
   foreach ($wrapper as $name => $property) {
-    try {
-      if ($property->access('view')) {
-        $filtered[$name] = $property;
-      }
+    if ($property->access('view')) {
+      $filtered[$name] = $property;
     }
-    // Some properties like entity_metadata_book_get_properties() throw
-    // exceptions, so we catch them here and ignore the property (deny access).
-    catch (EntityMetadataWrapperException $e) {}
   }
   return $filtered;
 }
@@ -573,8 +568,6 @@ class RestWSFormatXML extends RestWSBaseFormat {
   }
 
   public function unserialize($properties, $data) {
-    // Disable XML external entity expansion for security reasons.
-    libxml_disable_entity_loader(TRUE);
     $xml = simplexml_load_string($data);
     return $this->xmlToArray($properties, $xml);
   }

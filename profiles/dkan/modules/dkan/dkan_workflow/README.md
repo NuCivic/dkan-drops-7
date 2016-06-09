@@ -34,6 +34,8 @@ make](https://github.com/NuCivic/nucivic-process/wiki/Using-drush-make-in-indivi
 before being enabled. If you download only the module you will miss key
 dependencies for required modules and libraries.
 
+After either enabling or disabling DKAN Workflow and its dependencies, you will need to [rebuild content permissions](https://docs.acquia.com/articles/rebuilding-node-access-permissions). If logged in as an admin you should see a message telling you this with a link to the form to do so.
+
 To install:
 ```
 cd <path to modules directory>

@@ -1,0 +1,12 @@
+name = Panels curator
+description = Provides content administration tools for panels panes buckets.
+core = 7.x
+package = Panels
+dependencies[] = panels
+
+; Information added by Drupal.org packaging script on 2015-09-23
+version = "7.x-1.1"
+core = "7.x"
+project = "panels_curator"
+datestamp = "1443050361"
+

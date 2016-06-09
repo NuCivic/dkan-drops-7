@@ -25,9 +25,7 @@ Drupal.behaviors.colorizer = {
     // Decode reference colors to HSL.
     var reference = settings.color.reference;
     for (i in reference) {
-      if (reference[i] != 'transparent') {
-        reference[i] = farb.RGBToHSL(farb.unpack(reference[i]));
-      }
+      reference[i] = farb.RGBToHSL(farb.unpack(reference[i]));
     }
 
     // Build a preview.
@@ -65,10 +63,7 @@ Drupal.behaviors.colorizer = {
         // Get colors of active scheme.
         colors = schemes[colorScheme];
         for (var field_name in colors) {
-          var element = $('#edit-palette-' + field_name);
-          if (element.length > 0) {
-            callback(element, colors[field_name], false, true);
-          }
+          callback($('#edit-palette-' + field_name), colors[field_name], false, true);
         }
         preview();
       }
@@ -168,26 +163,21 @@ Drupal.behaviors.colorizer = {
     function callback(input, color, propagate, colorScheme) {
       var matched;
       // Set background/foreground colors.
-
-      if (color == 'transparent') {
-        $(input).css({backgroundColor: color});
-      }
-      else {
-        $(input).css({
-          backgroundColor: color,
-          'color': farb.RGBToHSL(farb.unpack(color))[2] > 0.5 ? '#000' : '#fff'
-        });
-      }
+      $(input).css({
+        backgroundColor: color,
+        'color': farb.RGBToHSL(farb.unpack(color))[2] > 0.5 ? '#000' : '#fff'
+      });
 
       // Change input value.
       if ($(input).val() && $(input).val() != color) {
-        if ($(input).val() != 'transparent') {
-          var prev_color = farb.RGBToHSL(farb.unpack($(input).val()));
-        }
+        var prev_color = farb.RGBToHSL(farb.unpack($(input).val()));
         $(input).val(color);
 
         // Update locked values.
-        if (propagate && ($(input).val() != 'transparent')) {
+        if (propagate) {
+          console.log(locks);
+          i = input.i;
+          console.log(i);
           var base_color = farb.RGBToHSL(farb.unpack(color));
           var ref_color;
           for (j = 0; j < inputs.length; j++) {

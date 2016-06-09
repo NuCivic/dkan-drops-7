@@ -5,13 +5,12 @@ DKAN_MODULE="dkan_dataset"
 # DKAN branch to use
 DKAN_BRANCH="7.x-1.x"
 
-COMPOSER_PATH=".composer/vendor/bin"
+COMPOSER_PATH="$HOME/.config/composer/vendor/bin"
 
-#Fix for probo not setting the composer path.
 if [[ "$PATH" != *"$COMPOSER_PATH"* ]]; then
   echo "> Composer PATH is not set. Adding temporarily.. (you should add to your .bashrc)"
   echo "PATH (prior) = $PATH"
-  export PATH="$PATH:~/$COMPOSER_PATH"
+  export PATH="$PATH:$COMPOSER_PATH"
 fi
 
 wget -O /tmp/dkan-init.sh https://raw.githubusercontent.com/NuCivic/dkan/$DKAN_BRANCH/dkan-init.sh

@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * Module file for the Panels curator module.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function panels_curator_menu() {
+  $items = array();
+  $items['admin/config/user-interface/panels'] = array(
+    'title' => 'Panels curator',
+    'description' => 'Configure panels buckets and groups',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('panels_curator_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'panels_curator.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements template_preprocess_panels_add_content_modal().
+ */
+function panels_curator_preprocess_panels_add_content_modal(&$vars) {
+  // Get our curated categories from the admin configurations.
+  $curated_categories = variable_get('panels_curator_categories', '');
+  $curated_categories = array_filter(explode(',', $curated_categories));
+  if (!empty($curated_categories)) {
+    $categories = array();
+    foreach ($curated_categories as $key => &$category) {
+      if (!is_array($category)) {
+        $key = $category;
+        $regions = variable_get('panels_curator_regions_' . $key, '');
+        $regions = array_filter(explode(',', $regions));
+        $category = variable_get('panels_curator_' . $key, '');
+        $category = unserialize($category);
+        if (!empty($regions) && !in_array($vars['region'], $regions)) {
+          // Limit category groups to specific regions.
+          continue;
+        }
+        elseif (!empty($category['content']) && $key != 'disabled') {
+          // Only add groups that are not empty.
+          $categories[$key] = $category;
+        }
+        elseif ($key == 'root') {
+          // Unset root content if the root category is empty.
+          $vars['root_content'] = '';
+        }
+      }
+    }
+
+    // Include the re-usable category.
+    if (isset($vars['categories']['re-usable-content'])) {
+      $categories['re-usable-content'] = $vars['categories']['re-usable-content'];
+    }
+
+    $vars['categories'] = $categories;
+  }
+  // Remove all category group links and rebuild from the new category list.
+  unset($vars['categories_array']);
+  // Process the list of categories.
+  foreach ($vars['categories'] as $key => $category_info) {
+    // The 'root' category is actually displayed under the category group links.
+    if ($key == 'root') {
+      continue;
+    }
+
+    $class = 'panels-modal-add-category';
+    if ($key == $vars['category']) {
+      $class .= ' active';
+    }
+
+    $url = $vars['renderer']->get_url('select-content', $vars['region'], $key);
+    $vars['categories_array'][] = ctools_ajax_text_button($category_info['title'], $url, '', $class);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function panels_curator_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['reusable'])) {
+    // Force re-usable panels into one group.
+    $form['reusable']['category']['#disabled'] = TRUE;
+    $form['reusable']['category']['#value'] = 'Re-usable content';
+    $form['reusable']['category']['#default_value'] = 'Re-usable content';
+  }
+}

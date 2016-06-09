@@ -23,7 +23,7 @@ libraries[backbone][download][revision] = "e109f6d3e7a366f933f1f34405ca97effecae
 libraries[csv][type] = libraries
 libraries[csv][download][type] = git
 libraries[csv][download][url] = "https://github.com/okfn/csv.js.git"
-libraries[csv][download][revision] = "976b61384a1808eb464aca5876e5ea46c98deaee"
+libraries[csv][download][revision] = "0cdcac3b792f4cf49b9f379da31d3844062f8c9d"
 
 # SLICKGRID
 libraries[slickgrid][type] = libraries

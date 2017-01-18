@@ -301,7 +301,7 @@
     this.item = item;
     var self = this;
 
-    var close = $('<a class="autocomplete-deluxe-item-delete" href="javascript:void(0)"></a>').appendTo(this.element);
+    var close = $('<a class="autocomplete-deluxe-item-delete" href="javascript:void(0)"><span class="element-invisible">Remove</span></a>').appendTo(this.element);
     // Use single quotes because of the double quote encoded stuff.
     var input = $('<input type="hidden" value=\'' + this.value + '\'/>').appendTo(this.element);
 

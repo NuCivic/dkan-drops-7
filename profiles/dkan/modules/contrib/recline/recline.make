@@ -23,7 +23,7 @@ libraries[backbone][download][revision] = "e109f6d3e7a366f933f1f34405ca97effecae
 libraries[csv][type] = libraries
 libraries[csv][download][type] = git
 libraries[csv][download][url] = "https://github.com/okfn/csv.js.git"
-libraries[csv][download][revision] = "0cdcac3b792f4cf49b9f379da31d3844062f8c9d"
+libraries[csv][download][revision] = "7150de4c8d5e02626ac6a7fb9c178e955c964faf"
 
 # SLICKGRID
 libraries[slickgrid][type] = libraries
@@ -75,3 +75,24 @@ libraries[leaflet_markercluster][download][type] = git
 libraries[leaflet_markercluster][download][url] = "https://github.com/Leaflet/Leaflet.markercluster.git"
 libraries[leaflet_markercluster][directory_name] = leaflet_markercluster
 libraries[leaflet_markercluster][download][revision] = "c5864dbfca9e71c86ac61b432862cc77f8fd8e68"
+
+# XLS BACKEND
+libraries[xls][type] = libraries
+libraries[xls][download][type] = git
+libraries[xls][download][url] = "https://github.com/NuCivic/recline.backend.xlsx"
+libraries[xls][directory_name] = xls
+libraries[xls][download][revision] = "a5d49f7305895f147c3e9a12115c2456a897f941"
+
+# SheetsJS
+libraries[jsxlsx][type] = libraries
+libraries[jsxlsx][download][type] = git
+libraries[jsxlsx][download][url] = "https://github.com/SheetJS/js-xlsx"
+libraries[jsxlsx][directory_name] = jsxlsx
+libraries[jsxlsx][download][revision] = "53f7f6d9446ccd680c9b13992d6dcdccde49a8f6"
+
+# JSON VIEW
+libraries[jsonview][type] = libraries
+libraries[jsonview][download][type] = git
+libraries[jsonview][download][url] = "https://github.com/yesmeck/jquery-jsonview.git"
+libraries[jsonview][directory_name] = jsonview
+libraries[jsonview][download][revision] = "84fb68cc25e4749d2adf5af8dc3adefd80b4c430"

@@ -42,3 +42,8 @@ Thumbs.db
 # SASS #
 ##########
 .sass-cache
+
+# IDEs #
+########
+.idea
+*.iml

@@ -3,28 +3,28 @@ This is a version of DKAN that has already been "made" with drush make. It inclu
 
 To install, follow the same directions as Drupal core: https://www.drupal.org/documentation/install
 
-See the main DKAN repository for further instructions, support, and community: http://github.com/nucivic/dkan
+See the main DKAN repository for further instructions, support, and community: http://github.com/GetDKAN/dkan
 
 # DKAN on Pantheon
 
 This is a fork based on [Pantheon DROPs](https://github.com/pantheon-systems/drops-7)
 
-## How to update Drupal Drop from Pantheon Git Repository
+## How to update Drupal Drop from GetDKAN Git Repository
 
-Just for the first time, add the pantheon base drop repo as a remote
+Just for the first time, add the GetDKAN base drop repo as a remote
 ```bash
-git remote add pantheon https://github.com/pantheon-systems/drops-7.git
+git remote add getdkan https://github.com/GetDKAN/dkan-drops-7.git
 ```
 
 Any time you want to integrate their changes into this repo
 
 ```bash
 # Make a branch so we can test if their work pass our testing
-git checkout -b updating_from_pantheon_drops
+git checkout -b updating_from_getdkan_drops
 # Pull their master into your branch (solve conflicts if any)
-git merge pantheon/master -X theirs
-# Push changes and wait for travis to run the build on the 'updating_from_pantheon_drops' branch.  
-git push origin updating_from_pantheon_drops
+git merge getdkan/master -X theirs
+# Push changes and wait for travis to run the build on the 'updating_from_getdkan_drops' branch.  
+git push origin updating_from_getdkan_drops
 ```
 
 Fix any issues with the build (if any) pushing commits. When everything is ok squash all your fix commits into one. Then:
@@ -33,11 +33,11 @@ Fix any issues with the build (if any) pushing commits. When everything is ok sq
 # Checkout master
 git checkout master
 # Rebase changes from your branch
-git rebase updating_from_pantheon_drops
+git rebase updating_from_getdkan_drops
 # Push
 git push origin master
 # Delete integration branch
-git push origin :updating_from_pantheon_drops
+git push origin :updating_from_getdkan_drops
 ```
 
 ## How to update dkan profile

@@ -15,8 +15,14 @@ function media_bulk_upload_import($form, &$form_state) {
     $form['directory'] = array(
       '#type' => 'textfield',
       '#title' => t('Directory'),
-      '#description' => t('Enter the absolute directory on the web server to look for files. Subdirectories inside this directory will not be scanned.'),
+      '#description' => t('Enter the absolute directory on the web server to look for files. Subdirectories inside this directory will not be scanned unless the Recurse through subdirectories box is checked.'),
       '#required' => TRUE,
+    );
+
+    $form['recurse'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Recurse through subdirectories'),
+      '#description' => 'Iterate over the directory looking for files within subfolders that match the pattern.',
     );
 
     $form['to_directory'] = array(
@@ -63,6 +69,7 @@ function media_bulk_upload_import_validate($form, &$form_state) {
   if ($form_state['values']['op'] != t('Confirm')) {
     $directory = $form_state['values']['directory'];
     $pattern = $form_state['values']['pattern'];
+    $recurse = $form_state['values']['recurse'];
     if (!is_dir($directory)) {
       form_set_error('directory', t('The provided directory does not exist.'));
     }
@@ -77,7 +84,7 @@ function media_bulk_upload_import_validate($form, &$form_state) {
       '\\*' => '.*',
       '\\?' => '.?',
     ));
-    $files = file_scan_directory($directory, '/^(' . $pattern_quoted . ')$/', array('recurse' => FALSE));
+    $files = file_scan_directory($directory, '/^(' . $pattern_quoted . ')$/i', array('recurse' => $recurse));
     $files = array_keys($files);
     if (empty($files)) {
       form_set_error('pattern', t('No files were found in %directory matching the regular expression %pattern', array('%directory' => $directory, '%pattern' => $pattern_quoted)));

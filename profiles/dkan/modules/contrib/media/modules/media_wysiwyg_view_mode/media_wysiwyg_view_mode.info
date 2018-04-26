@@ -3,9 +3,8 @@ description = DEPRECATED, this folder is only here so that the module can be uni
 package = Media
 core = 7.x
 
-; Information added by Drupal.org packaging script on 2017-10-19
-version = "7.x-2.13"
+; Information added by Drupal.org packaging script on 2018-04-25
+version = "7.x-2.19"
 core = "7.x"
 project = "media"
-datestamp = "1508430548"
-
+datestamp = "1524677887"

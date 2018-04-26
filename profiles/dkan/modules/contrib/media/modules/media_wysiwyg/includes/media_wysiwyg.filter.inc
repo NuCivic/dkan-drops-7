@@ -5,7 +5,7 @@
  * Functions related to the WYSIWYG editor and the media input filter.
  */
 
-define('MEDIA_WYSIWYG_TOKEN_REGEX', '/\[\[.+?"type":"media".+?\]\]/s');
+define('MEDIA_WYSIWYG_TOKEN_REGEX', '/\[\[\{.*?"type":"media".+?\}\]\]/s');
 
 /**
  * Filter callback for media markup filter.
@@ -311,14 +311,19 @@ function media_wysiwyg_token_to_markup($match, $wysiwyg = FALSE, $langcode = NUL
     drupal_add_js(array('mediaDataMap' => array($file->fid => $data)), 'setting');
     $element['#attributes']['data-fid'] = $file->fid;
     $element['#attributes']['data-media-element'] = '1';
-    $element['#attributes']['class'][] = 'media-element';
+    if (is_array($element['#attributes']['class'])) {
+      $element['#attributes']['class'][] = 'media-element';
+    }
+    else {
+      $element['#attributes']['class'] .= 'media-element';
+    }
   }
   else {
     // Display the field elements.
     $element = array();
     // Render the file entity, for sites using the file_entity rendering method.
     if (variable_get('media_wysiwyg_default_render', 'file_entity') == 'file_entity') {
-      $element['content'] = file_view($file, $tag_info['view_mode']);
+      $element['content'] = file_view($file, $tag_info['view_mode'], $langcode);
     }
     $element['content']['file'] = media_wysiwyg_get_file_without_label($file, $tag_info['view_mode'], $settings, $langcode);
     // Overwrite or set the file #alt attribute if it has been set in this
@@ -383,31 +388,51 @@ function media_wysiwyg_token_to_markup($match, $wysiwyg = FALSE, $langcode = NUL
 }
 
 /**
- * Parse the field array from the collapsed AJAX string.
+ * Parse the 'fields' entry of $tag_info into structured, sanitized fields data.
+ *
+ * The keys of the fields array are the string equivalent of accessing the
+ * field's value, e.g. 'field_file_image_alt_text[und][0][value]' and the value
+ * is the actual field value. These parts are turned into sanitized fields data
+ * arrays with the full hierarchy of language, deltas, data column and finally
+ * value.
+ *
+ * Only configured or programmed fields present in the site's installation is
+ * parsed and returned.
+ *
+ * @param array $tag_info
+ *   Media token as PHP array equivalent.
+ *
+ * @return array
+ *   An array of fields with sanitized field data structures.
  */
-function media_wysiwyg_filter_field_parser($tag_info) {
+function media_wysiwyg_filter_field_parser(array $tag_info) {
   $fields = array();
   if (isset($tag_info['fields'])) {
-    // Field names that end in [format] are associated with long-text fields that may have HTML Entities.
-    // Those values will need to be URLDecoded as well as HTMLDecoded.
+    // Field value reference candidates (keys) that end in [format] are
+    // associated with long-text fields that may have HTML Entities. Those
+    // values will need to be URLDecoded as well as HTMLDecoded.
     $url_encoded_fields = array();
-    foreach($tag_info['fields'] as $field_name => $field_value) {
-      if (preg_match('/\[format\]$/', $field_name) > 0){
-        $url_encoded_fields[] = preg_replace('/\[format\]$/', '[value]', $field_name);
+    foreach ($tag_info['fields'] as $candidate => $field_value) {
+      if (preg_match('/\[format\]$/', $candidate) > 0) {
+        $url_encoded_fields[] = preg_replace('/\[format\]$/', '[value]', $candidate);
       }
     }
 
-    foreach($tag_info['fields'] as $field_name => $field_value) {
-      if (strpos($field_name, 'field_') === 0) {
-        $parsed_field = explode('[', str_replace(']', '', $field_name));
-        $ref = &$fields;
+    foreach ($tag_info['fields'] as $candidate => $field_value) {
+      if (strpos($candidate, 'field_') === 0) {
+        $parsed_field = explode('[', str_replace(']', '', $candidate));
+        // We are garuanteed to have a value in $parsed_field[0].
+        $info = field_info_field($parsed_field[0]);
+        if (!$info) {
+          // Not an existing/configured field.
+          continue;
+        }
 
         // Certain types of fields, because of differences in markup, end up
         // here with incomplete arrays. Make a best effort to support as many
         // types of fields as possible.
         // Single-value select lists show up here with only 2 array items.
         if (count($parsed_field) == 2) {
-          $info = field_info_field($parsed_field[0]);
           if ($info && !empty($info['columns'])) {
             // Assume single-value.
             $parsed_field[] = 0;
@@ -417,27 +442,36 @@ function media_wysiwyg_filter_field_parser($tag_info) {
         }
         // Multi-value select lists show up here with 3 array items.
         elseif (count($parsed_field) == 3 && (empty($parsed_field[2]) || is_numeric($parsed_field[2]))) {
-          $info = field_info_field($parsed_field[0]);
           // They just need the value column.
           $parsed_field[3] = key($info['columns']);
         }
 
         // Each key of the field needs to be the child of the previous key.
+        $ref = &$fields;
         foreach ($parsed_field as $key) {
           if (!isset($ref[$key])) {
             $ref[$key] = array();
           }
           $ref = &$ref[$key];
         }
-
         // The value should be set at the deepest level.
-        if (in_array($field_name, $url_encoded_fields)){
+        if (in_array($candidate, $url_encoded_fields)) {
           // Fields that use rich-text markup will be urlencoded.
           $ref = urldecode(decode_entities($field_value));
         }
         else {
           // Only entities need to be decoded.
           $ref = decode_entities($field_value);
+        }
+      }
+    }
+    // Strip fields for empty values. This is necessary to do post parsing of
+    // all field entries as they may refer to the same field several times.
+    foreach ($fields as $field_name => $field_languages) {
+      $info = field_info_field($field_name);
+      if (isset($field_languages) && is_array($field_languages)) {
+        foreach ($field_languages as $lang => $items) {
+          $fields[$field_name][$lang] = _field_filter_items($info, $items);
         }
       }
     }

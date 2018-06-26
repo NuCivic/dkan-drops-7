@@ -4,7 +4,7 @@ DKAN is an open source open data platform with a full suite of cataloging, publi
 
 *  [ Official website ](https://getdkan.org)
 *  [ Demo ](http://demo.getdkan.com/)
-*  [ Documetation ](https://docs.getdkan.com/)
+*  [ Documentation ](https://docs.getdkan.com/)
 
 ## Community
 
@@ -47,7 +47,7 @@ Join the [DKAN Slack community](https://dkansignup.herokuapp.com/).
 
 ## Installation
 
-Please see the [Installation](https://docs.getdkan.com/en/latest/introduction/installation.html) section of the DKAN Documentation.
+Please see the [Installation](http://dkan.readthedocs.io/en/latest/installation/index.html) section of the DKAN Documentation.
 
 ### Upgrading DKAN
 

@@ -6,9 +6,9 @@ php = 5.2
 dependencies[] = job_scheduler
 dependencies[] = trigger
 configure = admin/config/system/job_scheduler
-; Information added by Drupal.org packaging script on 2017-07-05
-version = "7.x-2.0-alpha3+22-dev"
+; Information added by Drupal.org packaging script on 2018-02-13
+version = "7.x-2.0"
 core = "7.x"
 project = "job_scheduler"
-datestamp = "1499280569"
+datestamp = "1518514085"
 

@@ -35,10 +35,10 @@ function migrate_ui_update_7201() {
  */
 function migrate_ui_set_weight() {
   $node_weight = db_select('system', 's')
-                 ->fields('s', array('weight'))
-                 ->condition('name', 'node')
-                 ->execute()
-                 ->fetchField();
+    ->fields('s', array('weight'))
+    ->condition('name', 'node')
+    ->execute()
+    ->fetchField();
   db_update('system')
     ->fields(array('weight' => $node_weight + 1))
     ->condition('name', 'migrate_ui')
@@ -62,10 +62,10 @@ function migrate_ui_update_7202() {
     }
     variable_set('migrate_import_method', $import_method);
     variable_set('migrate_drush_mail',
-                 variable_get('wordpress_migrate_notification', 0));
+      variable_get('wordpress_migrate_notification', 0));
     variable_set('migrate_drush_mail_subject',
-                 variable_get('wordpress_migrate_notification_subject', ''));
+      variable_get('wordpress_migrate_notification_subject', ''));
     variable_set('migrate_drush_mail_body',
-                 variable_get('wordpress_migrate_notification_body', ''));
+      variable_get('wordpress_migrate_notification_body', ''));
   }
 }

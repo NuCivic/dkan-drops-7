@@ -1,3 +1,29 @@
+Next release
+============
+
+Features and enhancements
+- #2552189 - Return migration status from drush migrate-import.
+- #2550793 - Option to always use chunk IDs in MigrateContentParser.
+- #2505683 - Pass item ID to MigrateContentParser implementations.
+- #2532222 - Allow spreadsheet source data on a row different that 1.
+- #1406802 - Add callback() field mapping method, to pass additional arguments
+             to callbacks.
+- #2516828 - Add mdreg alias for migrate-deregister.
+- #2504517 - Add timezone handling to timestamp().
+
+Bug fixes
+- #2612110 - Notice when units omitted on --limit.
+- #2597606 - Escape MySQL database names.
+- #2577091 - Do strict type-check on XML ids.
+- #2537206 - copy() return not checked.
+- #2536616 - Improve message when sourceMigration not found.
+- #2578391 - Improve message when class not found.
+- #2565043 - Handle empty idlist in MigrateSourceMultiItems.
+- #2510010 - Stop stripping group name prefixes from migration names.
+- #2542520 - Fallback for missing source key description.
+- #2499861 - Properly save/disable/restore mail system.
+- #2541996 - Prevent NULL file_mask being passed to file_scan_directory().
+
 Migrate 2.8
 ===========
 

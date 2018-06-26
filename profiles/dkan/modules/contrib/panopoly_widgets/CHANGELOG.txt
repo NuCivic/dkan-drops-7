@@ -1,3 +1,39 @@
+7.x-1.54, 2018-05-10
+-------------------
+- Upgrade media and media_youtube in panopoly_widgets.
+- Update to Drupal core 7.59 and Media for SA-CORE-2018-004.
+- File and Image widgets show PHP notices when underlying file has been deleted.
+- Widgets can be saved without any content.
+- Update and patch Simple GMAP.
+- Update TableField to 7.x-3.1.
+
+7.x-1.51, 2018-02-22
+-------------------
+- No changes since last release.
+
+7.x-1.50, 2018-02-15
+-------------------
+- No changes since last release.
+
+7.x-1.49, 2017-12-13
+-------------------
+- No changes since last release.
+
+7.x-1.48, 2017-11-30
+-------------------
+- Edit file button appears on Media style selector modal.
+- Update to Media 2.13 and File Entity 2.12.
+
+7.x-1.47, 2017-08-17
+-------------------
+- No changes since last release.
+
+7.x-1.46, 2017-06-21
+-------------------
+- Fields shown when adding a reusable widget, even if the user doesn't have
+  permission to edit them.
+- Use Media Browser on Spotlight widget.
+
 7.x-1.45, 2017-05-11
 -------------------
 - Update of Media to 2.1 for security issue DRUPAL-SA-CONTRIB-2017-044.

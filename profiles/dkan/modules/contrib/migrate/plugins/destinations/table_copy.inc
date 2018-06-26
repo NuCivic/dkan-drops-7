@@ -9,6 +9,7 @@
  * Destination class implementing migration into a single table.
  */
 class MigrateDestinationTableCopy extends MigrateDestination {
+
   public function __construct($tableName, $keySchema) {
     parent::__construct();
     $this->tableName = $tableName;
@@ -41,6 +42,7 @@ class MigrateDestinationTableCopy extends MigrateDestination {
    *  Object object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
    *  Raw source data object - passed through to prepare/complete handlers.
+   *
    * @return array
    *  Array of key fields of the object that was saved if
    *  successful. FALSE on failure.
@@ -53,15 +55,17 @@ class MigrateDestinationTableCopy extends MigrateDestination {
     // table.
     foreach ($fields as $field => $data) {
       if (strpos($field, 'migrate_map_') === 0) {
-        unset($fields->$field);
+        unset($fields->{$field});
       }
     }
     $keys = array_keys($this->keySchema);
-    $values  = array();
+    $values = array();
     foreach ($keys as $key) {
-      $values[] = $row->$key;
+      $values[] = $row->{$key};
     }
-    $query = db_merge($this->tableName)->key($keys, $values)->fields((array)$fields);
+    $query = db_merge($this->tableName)
+      ->key($keys, $values)
+      ->fields((array) $fields);
     try {
       $status = $query->execute();
       if ($status == MergeQuery::STATUS_INSERT) {
@@ -71,12 +75,10 @@ class MigrateDestinationTableCopy extends MigrateDestination {
         $this->numUpdated++;
       }
       return $values;
-    }
-    catch (MigrateException $e) {
+    } catch (MigrateException $e) {
       $migration->saveMessage($e->getMessage(), $e->getLevel());
       Migration::displayMessage($e->getMessage());
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
       $migration->handleException($e);
     }
   }

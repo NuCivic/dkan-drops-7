@@ -72,13 +72,13 @@ function migrate_example_wine_schema_wine() {
   return array(
     'description' => 'Wines of the world',
     'fields' => array(
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Wine ID',
       ),
-      'name'  => array(
+      'name' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -140,7 +140,7 @@ function migrate_example_wine_schema_updates() {
   return array(
     'description' => 'Updated wine ratings',
     'fields' => array(
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -161,13 +161,13 @@ function migrate_example_wine_schema_producer() {
   return array(
     'description' => 'Wine producers of the world',
     'fields' => array(
-      'producerid'  => array(
+      'producerid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Producer ID',
       ),
-      'name'  => array(
+      'name' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -211,7 +211,7 @@ function migrate_example_wine_schema_categories() {
         'not null' => TRUE,
         'description' => 'Type of category: variety, region, best_with',
       ),
-      'name'  => array(
+      'name' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -242,12 +242,12 @@ function migrate_example_wine_schema_vintages() {
   return array(
     'description' => 'Wine vintages',
     'fields' => array(
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Wine ID',
       ),
-      'vintage'  => array(
+      'vintage' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -282,12 +282,12 @@ function migrate_example_wine_schema_category_wine() {
   return array(
     'description' => 'Wine category assignments',
     'fields' => array(
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Wine ID',
       ),
-      'categoryid'  => array(
+      'categoryid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -302,12 +302,12 @@ function migrate_example_wine_schema_category_producer() {
   return array(
     'description' => 'Producer category assignments',
     'fields' => array(
-      'producerid'  => array(
+      'producerid' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Producer ID',
       ),
-      'categoryid'  => array(
+      'categoryid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -322,13 +322,13 @@ function migrate_example_wine_schema_comment() {
   return array(
     'description' => 'Wine comments',
     'fields' => array(
-      'commentid'  => array(
+      'commentid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Comment ID',
       ),
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -403,7 +403,7 @@ function migrate_example_wine_schema_comment_updates() {
   return array(
     'description' => 'Wine comment updates',
     'fields' => array(
-      'commentid'  => array(
+      'commentid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -424,12 +424,12 @@ function migrate_example_wine_schema_account() {
   return array(
     'description' => 'Wine accounts.',
     'fields' => array(
-      'accountid'  => array(
+      'accountid' => array(
         'type' => 'serial',
         'not null' => TRUE,
         'description' => 'Account ID',
       ),
-      'status'  => array(
+      'status' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Blocked_Allowed',
@@ -488,7 +488,7 @@ function migrate_example_wine_schema_account() {
         'not null' => TRUE,
         'description' => 'Signature for comments',
       ),
-      'imageid'  => array(
+      'imageid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
@@ -509,7 +509,7 @@ function migrate_example_wine_schema_account_updates() {
   return array(
     'description' => 'Wine account updates',
     'fields' => array(
-      'accountid'  => array(
+      'accountid' => array(
         'type' => 'serial',
         'not null' => TRUE,
         'description' => 'Account ID',
@@ -529,7 +529,7 @@ function migrate_example_wine_schema_blobs() {
   return array(
     'description' => 'Wine blobs to be migrated to file entities',
     'fields' => array(
-      'imageid'  => array(
+      'imageid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -549,31 +549,31 @@ function migrate_example_wine_schema_files() {
   return array(
     'description' => 'Wine and account files',
     'fields' => array(
-      'imageid'  => array(
+      'imageid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Image ID',
       ),
-      'url'  => array(
+      'url' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'Image URL',
       ),
-      'image_alt'  => array(
+      'image_alt' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
         'description' => 'Image alt',
       ),
-      'image_title'  => array(
+      'image_title' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
         'description' => 'Image title',
       ),
-      'wineid'  => array(
+      'wineid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
@@ -588,19 +588,19 @@ function migrate_example_wine_schema_table_source() {
   return array(
     'description' => 'Source data to go into a custom Drupal table',
     'fields' => array(
-      'fooid'  => array(
+      'fooid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Primary key',
       ),
-      'field1'  => array(
+      'field1' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'First field',
       ),
-      'field2'  => array(
+      'field2' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -615,19 +615,19 @@ function migrate_example_wine_schema_table_dest() {
   return array(
     'description' => 'Custom Drupal table to receive source data directly',
     'fields' => array(
-      'recordid'  => array(
+      'recordid' => array(
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'Primary key',
       ),
-      'drupal_text'  => array(
+      'drupal_text' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'First field',
       ),
-      'drupal_int'  => array(
+      'drupal_int' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -944,9 +944,12 @@ function migrate_example_wine_fields() {
 
 function migrate_example_wine_content_type_delete() {
   $bundle = 'migrate_example_wine';
-  $field_names = array('migrate_example_wine_varieties',
-    'migrate_example_wine_regions', 'migrate_example_wine_best_with',
-    'field_migrate_example_image');
+  $field_names = array(
+    'migrate_example_wine_varieties',
+    'migrate_example_wine_regions',
+    'migrate_example_wine_best_with',
+    'field_migrate_example_image',
+  );
   foreach ($field_names as $field_name) {
     $instance = field_info_instance('node', $field_name, $bundle);
     field_delete_instance($instance);
@@ -964,15 +967,45 @@ function migrate_example_wine_content_type_delete() {
 }
 
 function migrate_example_wine_data_wine() {
-  $fields = array('wineid', 'name', 'body', 'excerpt', 'accountid',
-    'posted', 'last_changed', 'variety', 'region', 'rating');
+  $fields = array(
+    'wineid',
+    'name',
+    'body',
+    'excerpt',
+    'accountid',
+    'posted',
+    'last_changed',
+    'variety',
+    'region',
+    'rating',
+  );
   $query = db_insert('migrate_example_wine')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
-    array(1, 'Montes Classic Cabernet Sauvignon', 'Intense ruby-red color', 'Great!', 9,
-      strtotime('2010-01-02 03:04:05'), strtotime('2010-03-04 05:06:07'), 25, 17, 95),
-    array(2, 'Archeo Ruggero di Tasso Nero d\'Avola', 'Lots of berry character', 'Pair with red sauced dishes', 3,
-      strtotime('2010-09-03 18:23:58'), strtotime('2010-09-03 18:23:58'), 26, 2, 85),
+    array(
+      1,
+      'Montes Classic Cabernet Sauvignon',
+      'Intense ruby-red color',
+      'Great!',
+      9,
+      strtotime('2010-01-02 03:04:05'),
+      strtotime('2010-03-04 05:06:07'),
+      25,
+      17,
+      95,
+    ),
+    array(
+      2,
+      'Archeo Ruggero di Tasso Nero d\'Avola',
+      'Lots of berry character',
+      'Pair with red sauced dishes',
+      3,
+      strtotime('2010-09-03 18:23:58'),
+      strtotime('2010-09-03 18:23:58'),
+      26,
+      2,
+      85,
+    ),
   );
   foreach ($data as $row) {
     $query->values(array_combine($fields, $row));
@@ -983,7 +1016,7 @@ function migrate_example_wine_data_wine() {
 function migrate_example_wine_data_updates() {
   $fields = array('wineid', 'rating');
   $query = db_insert('migrate_example_wine_updates')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, 93),
     array(2, NULL),
@@ -997,7 +1030,7 @@ function migrate_example_wine_data_updates() {
 function migrate_example_wine_data_producer() {
   $fields = array('producerid', 'name', 'body', 'excerpt', 'accountid');
   $query = db_insert('migrate_example_wine_producer')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, 'Montes', 'Fine Chilean winery', 'Great!', 9),
     array(2, 'Archeo', 'Sicilia!', NULL, 3),
@@ -1009,20 +1042,69 @@ function migrate_example_wine_data_producer() {
 }
 
 function migrate_example_wine_data_account() {
-  $fields = array('accountid', 'status', 'posted', 'last_access', 'last_login',
-    'name', 'sex', 'password', 'mail', 'original_mail', 'sig', 'imageid', 'positions');
+  $fields = array(
+    'accountid',
+    'status',
+    'posted',
+    'last_access',
+    'last_login',
+    'name',
+    'sex',
+    'password',
+    'mail',
+    'original_mail',
+    'sig',
+    'imageid',
+    'positions',
+  );
   $query = db_insert('migrate_example_wine_account')
     ->fields($fields);
   $data = array(
-    array(1, 1, '2010-03-30 10:31:05', '2010-04-30 18:25:24', '2010-04-30 14:01:02',
-      'darren', 'M', 'dpass', 'ddarren@example.com', 'darren@example.com',
-      'All about the Australians', NULL, '5'),
-    array(3, 0, '2007-03-15 10:31:05', '2007-06-10 04:11:38', '2007-06-10 04:11:38',
-      'emily', 'F', 'insecure', 'emily@example.com', 'emily@example.com',
-      'Sommelier to the stars', NULL, '18'),
-    array(9, 1, '2004-02-29 10:31:05', '2004-02-29 10:31:05', '2004-02-29 10:31:05',
-      'fonzie', NULL, 'bike', 'thefonz@example.com', 'arthur@example.com',
-      'Aaay!', 1, '5,18'),
+    array(
+      1,
+      1,
+      '2010-03-30 10:31:05',
+      '2010-04-30 18:25:24',
+      '2010-04-30 14:01:02',
+      'darren',
+      'M',
+      'dpass',
+      'ddarren@example.com',
+      'darren@example.com',
+      'All about the Australians',
+      NULL,
+      '5',
+    ),
+    array(
+      3,
+      0,
+      '2007-03-15 10:31:05',
+      '2007-06-10 04:11:38',
+      '2007-06-10 04:11:38',
+      'emily',
+      'F',
+      'insecure',
+      'emily@example.com',
+      'emily@example.com',
+      'Sommelier to the stars',
+      NULL,
+      '18',
+    ),
+    array(
+      9,
+      1,
+      '2004-02-29 10:31:05',
+      '2004-02-29 10:31:05',
+      '2004-02-29 10:31:05',
+      'fonzie',
+      NULL,
+      'bike',
+      'thefonz@example.com',
+      'arthur@example.com',
+      'Aaay!',
+      1,
+      '5,18',
+    ),
   );
   foreach ($data as $row) {
     $query->values(array_combine($fields, $row));
@@ -1033,7 +1115,7 @@ function migrate_example_wine_data_account() {
 function migrate_example_wine_data_account_updates() {
   $fields = array('accountid', 'sex');
   $query = db_insert('migrate_example_wine_account_updates')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, NULL),
     array(3, 'M'),
@@ -1046,26 +1128,93 @@ function migrate_example_wine_data_account_updates() {
 }
 
 function migrate_example_wine_data_comment() {
-  $fields = array('commentid', 'wineid', 'comment_parent', 'subject', 'body',
-    'name', 'mail', 'accountid', 'commenthost', 'userpage', 'posted', 'lastchanged');
+  $fields = array(
+    'commentid',
+    'wineid',
+    'comment_parent',
+    'subject',
+    'body',
+    'name',
+    'mail',
+    'accountid',
+    'commenthost',
+    'userpage',
+    'posted',
+    'lastchanged',
+  );
   $query = db_insert('migrate_example_wine_comment')
     ->fields($fields);
   $data = array(
-    array(1, 1, NULL, 'im first', 'Tasty', 'grace', 'grace@example.com', 0,
-      '123.456.78.9', 'http:://grace.example.com/',
-      strtotime('2010-01-02 03:04:05'), strtotime('2010-04-05 06:07:08')),
-    array(2, 1, NULL, 'im second', 'Delicious', 'horace', 'horace@example.com', 0,
-      'example.com', NULL,
-      strtotime('2010-02-02 03:04:05'), strtotime('2010-05-05 06:07:08')),
-    array(3, 1, NULL, 'im parent', 'Don\'t care for it', 'irene', 'irene@example.com', 0,
-      '254.0.2.5', 'http:://www.example.com/irene',
-      strtotime('2010-03-02 03:04:05'), strtotime('2010-03-02 03:04:05')),
-    array(4, 1, 3, 'im child', 'But it\'s so good!', 'emily', NULL, 3,
-      '58.29.126.1', 'http:://www.wine.com/',
-      strtotime('2010-01-02 03:04:05'), strtotime('2010-01-02 03:04:05')),
-    array(5, 1, 4, 'im grandchild', 'Right on, Emily!', 'thefonz@example.com', NULL, 9,
-      '123.456.78.9', NULL,
-      strtotime('2010-06-02 03:04:05'), strtotime('2010-06-02 03:04:05')),
+    array(
+      1,
+      1,
+      NULL,
+      'im first',
+      'Tasty',
+      'grace',
+      'grace@example.com',
+      0,
+      '123.456.78.9',
+      'http:://grace.example.com/',
+      strtotime('2010-01-02 03:04:05'),
+      strtotime('2010-04-05 06:07:08'),
+    ),
+    array(
+      2,
+      1,
+      NULL,
+      'im second',
+      'Delicious',
+      'horace',
+      'horace@example.com',
+      0,
+      'example.com',
+      NULL,
+      strtotime('2010-02-02 03:04:05'),
+      strtotime('2010-05-05 06:07:08'),
+    ),
+    array(
+      3,
+      1,
+      NULL,
+      'im parent',
+      'Don\'t care for it',
+      'irene',
+      'irene@example.com',
+      0,
+      '254.0.2.5',
+      'http:://www.example.com/irene',
+      strtotime('2010-03-02 03:04:05'),
+      strtotime('2010-03-02 03:04:05'),
+    ),
+    array(
+      4,
+      1,
+      3,
+      'im child',
+      'But it\'s so good!',
+      'emily',
+      NULL,
+      3,
+      '58.29.126.1',
+      'http:://www.wine.com/',
+      strtotime('2010-01-02 03:04:05'),
+      strtotime('2010-01-02 03:04:05'),
+    ),
+    array(
+      5,
+      1,
+      4,
+      'im grandchild',
+      'Right on, Emily!',
+      'thefonz@example.com',
+      NULL,
+      9,
+      '123.456.78.9',
+      NULL,
+      strtotime('2010-06-02 03:04:05'),
+      strtotime('2010-06-02 03:04:05'),
+    ),
   );
   foreach ($data as $row) {
     $query->values(array_combine($fields, $row));
@@ -1076,7 +1225,7 @@ function migrate_example_wine_data_comment() {
 function migrate_example_wine_data_comment_updates() {
   $fields = array('commentid', 'subject');
   $query = db_insert('migrate_example_wine_comment_updates')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, 'I am first'),
     array(2, 'I am second'),
@@ -1091,12 +1240,33 @@ function migrate_example_wine_data_comment_updates() {
 }
 
 function migrate_example_wine_data_categories() {
-  $fields = array('categoryid', 'type', 'name', 'category_parent', 'details', 'ordering');
+  $fields = array(
+    'categoryid',
+    'type',
+    'name',
+    'category_parent',
+    'details',
+    'ordering',
+  );
   $query = db_insert('migrate_example_wine_categories')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
-    array(1, 'variety', 'White wine', NULL, 'White wines are generally simpler and sweeter than red', 3),
-    array(3, 'variety', 'Red wine', NULL, 'Red wines are generally more complex and "dry" than white', 1),
+    array(
+      1,
+      'variety',
+      'White wine',
+      NULL,
+      'White wines are generally simpler and sweeter than red',
+      3,
+    ),
+    array(
+      3,
+      'variety',
+      'Red wine',
+      NULL,
+      'Red wines are generally more complex and "dry" than white',
+      1,
+    ),
     array(8, 'variety', 'Riesling', 1, 'Associated with Germany', 2),
     array(9, 'variety', 'Chardonnay', 1, 'One of the most popular whites', 1),
     array(13, 'variety', 'Merlot', 3, 'Very drinkable', 4),
@@ -1128,7 +1298,7 @@ function migrate_example_wine_data_categories() {
 function migrate_example_wine_data_vintages() {
   $fields = array('wineid', 'vintage');
   $query = db_insert('migrate_example_wine_vintages')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, 2006),
     array(1, 2007),
@@ -1143,7 +1313,7 @@ function migrate_example_wine_data_vintages() {
 function migrate_example_wine_data_variety_updates() {
   $fields = array('categoryid', 'details');
   $query = db_insert('migrate_example_wine_variety_updates')
-           ->fields($fields);
+    ->fields($fields);
   $data = array(
     array(1, 'White wines are simpler and sweeter than red'),
     array(3, 'Red wines are generally more complex and dry than white'),
@@ -1194,9 +1364,27 @@ function migrate_example_wine_data_files() {
     ->fields($fields);
   $data = array(
     array(1, 'http://placekitten.com/200/200', NULL, NULL, NULL),
-    array(2, 'http://cyrve.com/files/penguin.jpeg', 'Penguin alt', 'Penguin title', 1),
-    array(3, 'http://cyrve.com/files/rioja.jpeg', 'Rioja alt', 'Rioja title', 2),
-    array(4, 'http://cyrve.com/files/boutisse_0.jpeg', 'Boutisse alt', 'Boutisse title', 2),
+    array(
+      2,
+      'http://cyrve.com/files/penguin.jpeg',
+      'Penguin alt',
+      'Penguin title',
+      1,
+    ),
+    array(
+      3,
+      'http://cyrve.com/files/rioja.jpeg',
+      'Rioja alt',
+      'Rioja title',
+      2,
+    ),
+    array(
+      4,
+      'http://cyrve.com/files/boutisse_0.jpeg',
+      'Boutisse alt',
+      'Boutisse title',
+      2,
+    ),
   );
   foreach ($data as $row) {
     $query->values(array_combine($fields, $row));

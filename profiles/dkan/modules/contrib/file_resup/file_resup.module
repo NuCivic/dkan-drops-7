@@ -63,6 +63,9 @@ function file_resup_upload() {
     $_POST['form_build_id'] = $form_build_id;
     list($form) = ajax_get_form();
 
+    // Sanitize form parents before using them.
+    $form_parents = array_filter($form_parents, 'element_child');
+
     // Get the form element.
     $element = drupal_array_get_nested_value($form, $form_parents);
     if (!$element) {

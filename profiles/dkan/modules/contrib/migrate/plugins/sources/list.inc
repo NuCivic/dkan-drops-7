@@ -15,7 +15,9 @@
  * obtain a list of IDs from an XML document).
  */
 abstract class MigrateList {
-  public function __construct() {}
+
+  public function __construct() {
+  }
 
   /**
    * Implementors are expected to return a string representing where the listing
@@ -34,7 +36,8 @@ abstract class MigrateList {
   abstract public function getIdList();
 
   /**
-   * Implementors are expected to return a count of IDs available to be migrated.
+   * Implementors are expected to return a count of IDs available to be
+   * migrated.
    *
    * @return int
    */
@@ -46,7 +49,9 @@ abstract class MigrateList {
  * given migratable item given its ID as provided by the MigrateList class.
  */
 abstract class MigrateItem {
-  public function __construct() {}
+
+  public function __construct() {
+  }
 
   /**
    * Implementors are expected to return an object representing a source item.
@@ -74,6 +79,7 @@ abstract class MigrateItem {
  * IDs provided by a MigrateList and retrieving data from a MigrateItem.
  */
 class MigrateSourceList extends MigrateSource {
+
   /**
    * MigrateList object used to obtain ID lists.
    *
@@ -105,8 +111,7 @@ class MigrateSourceList extends MigrateSource {
   /**
    * Simple initialization.
    */
-  public function __construct(MigrateList $list_class, MigrateItem $item_class, $fields = array(),
-      $options = array()) {
+  public function __construct(MigrateList $list_class, MigrateItem $item_class, $fields = array(), $options = array()) {
     parent::__construct($options);
     $this->listClass = $list_class;
     $this->itemClass = $item_class;
@@ -120,6 +125,15 @@ class MigrateSourceList extends MigrateSource {
    */
   public function __toString() {
     return (string) $this->listClass;
+  }
+
+  /**
+   * Return MigrateList object used to obtain ID lists.
+   *
+   * @return MigrateList
+   */
+  public function listClass() {
+    return $this->listClass;
   }
 
   /**
@@ -195,8 +209,9 @@ class MigrateSourceList extends MigrateSource {
         foreach (array_keys($this->activeMap->getSourceKey()) as $key_name) {
           // Grab the first id and advance the array cursor. Then save the ID
           // using the map source key - it will be used for mapping.
-          list(, $id) = each($ids);
-          $row->$key_name = $id;
+          $id = current($ids);
+          next($ids);
+          $row->{$key_name} = $id;
         }
         break;
       }

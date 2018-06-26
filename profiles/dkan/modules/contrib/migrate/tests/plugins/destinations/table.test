@@ -9,6 +9,7 @@
  * Test table migration.
  */
 class MigrateTableUnitTest extends DrupalWebTestCase {
+
   public static function getInfo() {
     return array(
       'name' => 'Table migration',

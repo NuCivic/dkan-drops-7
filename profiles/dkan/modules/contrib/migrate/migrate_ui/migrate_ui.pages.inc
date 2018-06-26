@@ -25,15 +25,15 @@ function migrate_ui_migrate_dashboard($form, &$form_state) {
   );
 
   $result = db_select('migrate_group', 'mg')
-            ->fields('mg', array('name', 'title', 'arguments'))
-            ->execute();
+    ->fields('mg', array('name', 'title', 'arguments'))
+    ->execute();
   $rows = array();
   foreach ($result as $group_row) {
     $row = array();
     $migration_result = db_select('migrate_status', 'ms')
-                        ->fields('ms', array('machine_name', 'status', 'arguments'))
-                        ->condition('group_name', $group_row->name)
-                        ->execute();
+      ->fields('ms', array('machine_name', 'status', 'arguments'))
+      ->condition('group_name', $group_row->name)
+      ->execute();
     if (!$migration_result) {
       continue;
     }
@@ -201,17 +201,8 @@ function migrate_ui_migrate_group($form, &$form_state, $group_name) {
 
     $row['status'] = $status;
     $machine_name = $migration->getMachineName();
-    $name_length = strlen($machine_name);
-    $group_length = strlen($group_name);
-    if ($name_length != $group_length &&
-        !strncasecmp($group_name, $machine_name, $group_length)) {
-      $display_name = substr($machine_name, $group_length);
-    }
-    else {
-      $display_name = $machine_name;
-    }
     $row['machinename'] =
-      l($display_name, "admin/content/migrate/groups/$group_name/$machine_name");
+      l($machine_name, "admin/content/migrate/groups/$group_name/$machine_name");
     $row['importrows'] = (int) $total;
     $row['imported'] = (int) $imported;
     $row['unprocessed'] = (int) $unprocessed;
@@ -287,7 +278,7 @@ function _migrate_ui_migrate_operations() {
         'import_immediate' => t('Import'),
         'rollback_immediate' => t('Rollback'),
       );
-    break;
+      break;
   }
 
   $options += array(
@@ -460,10 +451,16 @@ function migrate_ui_migrate_submit($form, &$form_state) {
           if ($update && method_exists($migration, 'prepareUpdate')) {
             $migration->prepareUpdate();
           }
-          $operations[] = array('migrate_ui_batch', array('import', $machine_name, $limit, $force));
+          $operations[] = array(
+            'migrate_ui_batch',
+            array('import', $machine_name, $limit, $force),
+          );
           break;
         case 'rollback_immediate':
-          $operations[] = array('migrate_ui_batch', array('rollback', $machine_name, $limit, $force));
+          $operations[] = array(
+            'migrate_ui_batch',
+            array('rollback', $machine_name, $limit, $force),
+          );
           break;
         case 'import_background':
         case 'rollback_background':
@@ -543,7 +540,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
       drupal_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
     }
     else {
-      drupal_set_message('Your operation is running in the background. You may '.
+      drupal_set_message('Your operation is running in the background. You may ' .
         'refresh the dashboard page to check on its progress.');
     }
   }
@@ -590,10 +587,16 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
   // Perform the requested operation
   switch ($operation) {
     case 'import':
-      $result = $migration->processImport(array('limit' => $limit, 'force' => $force));
+      $result = $migration->processImport(array(
+        'limit' => $limit,
+        'force' => $force,
+      ));
       break;
     case 'rollback':
-      $result = $migration->processRollback(array('limit' => $limit, 'force' => $force));
+      $result = $migration->processRollback(array(
+        'limit' => $limit,
+        'force' => $force,
+      ));
       break;
   }
 
@@ -608,10 +611,10 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
           switch ($operation) {
             case 'import':
               $to_update = $migration->updateCount();
-              $context['finished'] = ($processed-$to_update)/$total;
+              $context['finished'] = ($processed - $to_update) / $total;
               break;
             case 'rollback':
-              $context['finished'] = ($total - $migration->importedCount())/$total;
+              $context['finished'] = ($total - $migration->importedCount()) / $total;
               break;
           }
         }
@@ -623,8 +626,8 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
           array(
             '!name' => $machine_name,
             '!depends' => implode(", ", $migration->incompleteDependencies()),
-          ))
-        );
+          )),
+      );
       $context['finished'] = 1;
       break;
     case MigrationBase::RESULT_STOPPED:
@@ -770,7 +773,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
   $dependencies = $migration->getHardDependencies();
   if (count($dependencies) > 0) {
     $form['overview']['dependencies'] = array(
-      '#title' => t('Dependencies') ,
+      '#title' => t('Dependencies'),
       '#markup' => filter_xss_admin(implode(', ', $dependencies)),
       '#type' => 'item',
     );
@@ -903,7 +906,13 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       '#empty' => t('No fields'),
     );
 
-    $header = array(t('Destination'), t('Source'), t('Default'), t('Description'), t('Priority'));
+    $header = array(
+      t('Destination'),
+      t('Source'),
+      t('Default'),
+      t('Description'),
+      t('Priority'),
+    );
 
     // First group the mappings
     $descriptions = array();
@@ -917,17 +926,18 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       if (!is_null($source_field) && !isset($source_fields[$source_field])) {
         drupal_set_message(t('"!source" was used as source field in the
           "!destination" mapping but is not in list of source fields', array(
-            '!source' => filter_xss_admin($source_field),
-            '!destination' => filter_xss_admin($destination_field),
-          )),
-        'warning');
+          '!source' => filter_xss_admin($source_field),
+          '!destination' => filter_xss_admin($destination_field),
+        )),
+          'warning');
       }
       if (!is_null($destination_field) && !isset($destination_fields[$destination_field])) {
         drupal_set_message(t('"!destination" was used as destination field in
           "!source" mapping but is not in list of destination fields', array(
-            '!source' => filter_xss_admin($source_field),
-            '!destination' => filter_xss_admin($destination_field))),
-        'warning');
+          '!source' => filter_xss_admin($source_field),
+          '!destination' => filter_xss_admin($destination_field),
+        )),
+          'warning');
       }
       $descriptions[$mapping->getIssueGroup()][] = $mapping;
     }
@@ -954,7 +964,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
           $issue_number = $mapping->getIssueNumber();
           if (!is_null($issue_pattern) && !is_null($issue_number)) {
             $priority .= ' (' . l(t('#') . $issue_number, str_replace(':id:', $issue_number,
-              $issue_pattern)) . ')';
+                $issue_pattern)) . ')';
           }
           if ($issue_priority != MigrateFieldMapping::ISSUE_PRIORITY_OK) {
             $classes[] = 'migrate-error';
@@ -972,10 +982,16 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
           $source_field = "<em>$source_field</em>";
         }
         $row = array(
-          array('data' => filter_xss_admin($destination_field), 'class' => $classes),
+          array(
+            'data' => filter_xss_admin($destination_field),
+            'class' => $classes,
+          ),
           array('data' => filter_xss_admin($source_field), 'class' => $classes),
           array('data' => filter_xss_admin($default), 'class' => $classes),
-          array('data' => filter_xss_admin($mapping->getDescription()), 'class' => $classes),
+          array(
+            'data' => filter_xss_admin($mapping->getDescription()),
+            'class' => $classes,
+          ),
           array('data' => filter_xss_admin($priority), 'class' => $classes),
         );
         $rows[] = $row;
@@ -1091,14 +1107,14 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 
       // Check for a click of the DNM box...
       if (isset($form_state['values']) &&
-          $form_state['values']['source_fields'][$name] == 1) {
+        $form_state['values']['source_fields'][$name] == 1) {
         $dnm_value = 1;
       }
       else {
         // ... or a source-only mapping with the DNM issue group.
         foreach ($field_mappings as $mapping) {
           if ($mapping->getSourceField() == $name &&
-              $mapping->getIssueGroup() == t('DNM')) {
+            $mapping->getIssueGroup() == t('DNM')) {
             $dnm_value = 1;
           }
         }
@@ -1119,7 +1135,8 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 
     if (isset($field_mappings['is_new'])) {
       $default_is_new = $field_mappings['is_new']->getDefaultValue();
-    } else {
+    }
+    else {
       $default_is_new = 0;
     }
     foreach ($dest_fields as $name => $description) {
@@ -1146,7 +1163,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       // If the DNM box has been clicked, make sure we clear the mapping and
       // default value fields.
       if (isset($form_state['values']) &&
-          $form_state['values']['field_mappings'][$name]['issue_group'] == 1) {
+        $form_state['values']['field_mappings'][$name]['issue_group'] == 1) {
         $dnm_value = 1;
       }
       else {
@@ -1185,7 +1202,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       $form['field_mappings'][$name]['mapping'] = array(
         '#type' => 'select',
         '#title' => t($label,
-                      array('!description' => $description, '!field_name' => $name)),
+          array('!description' => $description, '!field_name' => $name)),
         '#options' => $options,
         '#default_value' => $default_mapping,
       );
@@ -1245,7 +1262,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
   // Remove any migrations depending on us, directly or indirectly. First, get
   // a list of such migrations.
   $descendent_migrations = _migrate_ui_get_descendents($migration_name,
-                                                        $all_dependencies);
+    $all_dependencies);
   $source_migration_options = array_diff_key($source_migration_options,
     $descendent_migrations);
   foreach ($source_migration_options as $machine_name) {
@@ -1294,7 +1311,7 @@ function _migrate_ui_get_descendents($migration_name, array $all_dependencies) {
     if (in_array($migration_name, $dependencies)) {
       $descendents[$machine_name] = $machine_name;
       $descendents += _migrate_ui_get_descendents($machine_name,
-                                                  $all_dependencies);
+        $all_dependencies);
     }
   }
   return $descendents;
@@ -1310,10 +1327,10 @@ function _migrate_ui_get_descendents($migration_name, array $all_dependencies) {
 function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
   $machine_name = $form_state['values']['machine_name'];
   $row = db_select('migrate_status', 'ms')
-               ->fields('ms', array('arguments', 'class_name', 'group_name'))
-               ->condition('machine_name', $machine_name)
-               ->execute()
-               ->fetchObject();
+    ->fields('ms', array('arguments', 'class_name', 'group_name'))
+    ->condition('machine_name', $machine_name)
+    ->execute()
+    ->fetchObject();
   $class_name = $row->class_name;
   $group_name = $row->group_name;
   $arguments = unserialize($row->arguments);
@@ -1359,17 +1376,17 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
           $info['source_migration'] = NULL;
         }
         if ($info['issue_group'] == 0 && $coded_mappings[$destination_field]->getIssueGroup() != t('DNM') ||
-            $info['issue_group'] == 1 && $coded_mappings[$destination_field]->getIssueGroup() == t('DNM')) {
+          $info['issue_group'] == 1 && $coded_mappings[$destination_field]->getIssueGroup() == t('DNM')) {
           $dnm_matches = TRUE;
         }
         else {
           $dnm_matches = FALSE;
         }
         if ($info['mapping'] == $coded_source_field &&
-            $info['default_value'] == $coded_default_value &&
-            $info['source_migration'] == $coded_source_migration &&
-            (!$xml || ($xml && ($info['xpath'] == $coded_xpath))) &&
-            $dnm_matches) {
+          $info['default_value'] == $coded_default_value &&
+          $info['source_migration'] == $coded_source_migration &&
+          (!$xml || ($xml && ($info['xpath'] == $coded_xpath))) &&
+          $dnm_matches) {
           continue;
         }
       }
@@ -1401,17 +1418,17 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
       // losing important bits.
       $mapping = NULL;
       if (isset($existing_mappings[$destination_field]) &&
-          $issue_group_values[$destination_field] != 0) {
+        $issue_group_values[$destination_field] != 0) {
         /** @var MigrateFieldMapping $old_mapping */
         $old_mapping = $existing_mappings[$destination_field];
         if ($source_field == $old_mapping->getSourceField() &&
-            $default_values[$destination_field] == $old_mapping->getDefaultValue() &&
-            $source_migrations[$destination_field] == $old_mapping->getSourceMigration() &&
-            (!$xml || ($xml && ($xpaths[$destination_field] == $old_mapping->getXpath())))) {
+          $default_values[$destination_field] == $old_mapping->getDefaultValue() &&
+          $source_migrations[$destination_field] == $old_mapping->getSourceMigration() &&
+          (!$xml || ($xml && ($xpaths[$destination_field] == $old_mapping->getXpath())))) {
           // First, if this mapping matches a previously-stored mapping, we want to
           // preserve it as it was originally stored.
           if ($old_mapping->getMappingSource() ==
-              MigrateFieldMapping::MAPPING_SOURCE_DB) {
+            MigrateFieldMapping::MAPPING_SOURCE_DB) {
             $mapping = $old_mapping;
           }
           // If it matches a coded mapping, then we don't want to save it at all.
@@ -1439,7 +1456,7 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
       }
 
       if ($source_migrations[$destination_field] &&
-          $source_migrations[$destination_field] != '-1') {
+        $source_migrations[$destination_field] != '-1') {
         $mapping->sourceMigration($source_migrations[$destination_field]);
       }
 
@@ -1452,7 +1469,7 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
       $code_ignored = FALSE;
       foreach ($coded_mappings as $destination_field => $mapping) {
         if (is_numeric($destination_field) &&
-            $mapping->getSourceField() == $source_field) {
+          $mapping->getSourceField() == $source_field) {
           $code_ignored = TRUE;
         }
       }
@@ -1548,8 +1565,13 @@ function theme_migrate_ui_field_mapping_form($variables) {
   $form = $variables['field_mappings'];
   $elements = element_children($form);
   if (!empty($elements)) {
-    $header = array(t('DNM'), t('Destination field'), t('Source field'),
-                    t('Default value'), t('Source migration'));
+    $header = array(
+      t('DNM'),
+      t('Destination field'),
+      t('Source field'),
+      t('Default value'),
+      t('Source migration'),
+    );
     if (!empty($form['#is_xml_migration'])) {
       $header[] = t('Xpath');
     }
@@ -1596,7 +1618,11 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
     $row[] = drupal_render($form[$mapping_key]);
     $rows[] = $row;
   }
-  $output .= theme('table', array('rows' => $rows, 'header' => $header, 'empty' => t('No other migrations were found.')));
+  $output .= theme('table', array(
+    'rows' => $rows,
+    'header' => $header,
+    'empty' => t('No other migrations were found.'),
+  ));
 
   $output .= drupal_render_children($form);
   return $output;
@@ -1607,7 +1633,7 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
  */
 function migrate_ui_messages($group_name, $migration_name) {
   drupal_set_title(t('Import messages for !migration',
-                   array('!migration' => $migration_name)));
+    array('!migration' => $migration_name)));
 
   $build = $rows = array();
 
@@ -1624,7 +1650,7 @@ function migrate_ui_messages($group_name, $migration_name) {
   // Add a table header for each source key in the migration's map.
   foreach ($source_key as $key => $map_info) {
     $header[] = array(
-      'data' => filter_xss_admin($map_info['description']),
+      'data' => isset($map_info['description']) ? filter_xss_admin($map_info['description']) : t('Source ID'),
       'field' => $source_key_map[$key],
       'sort' => 'asc',
     );
@@ -1635,13 +1661,13 @@ function migrate_ui_messages($group_name, $migration_name) {
 
   // TODO: need a general MigrateMap API
   $messages = $migration->getMap()->getConnection()
-              ->select($migration->getMap()->getMessageTable(), 'msg')
-              ->extend('PagerDefault')
-              ->extend('TableSort')
-              ->orderByHeader($header)
-              ->limit(500)
-              ->fields('msg')
-              ->execute();
+    ->select($migration->getMap()->getMessageTable(), 'msg')
+    ->extend('PagerDefault')
+    ->extend('TableSort')
+    ->orderByHeader($header)
+    ->limit(500)
+    ->fields('msg')
+    ->execute();
 
   foreach ($messages as $message) {
     $classes[] = $message->level <= MigrationBase::MESSAGE_WARNING ? 'migrate-error' : '';
@@ -1732,17 +1758,17 @@ function migrate_ui_configure_form($form, &$form_state) {
 
   $migrations = array();
   $result = db_select('migrate_status', 'ms')
-                ->fields('ms', array('class_name', 'machine_name'))
-                ->execute();
+    ->fields('ms', array('class_name', 'machine_name'))
+    ->execute();
   $migration_list = '';
   foreach ($result as $row) {
     if (!class_exists($row->class_name)) {
       $migrations[] = $row->machine_name;
       $migration_list .= '<li>' . t('!migration (class !class)',
-        array(
-          '!migration' => filter_xss_admin($row->machine_name),
-          '!class' => filter_xss_admin($row->class_name),
-        )) . "</li>\n";
+          array(
+            '!migration' => filter_xss_admin($row->machine_name),
+            '!class' => filter_xss_admin($row->class_name),
+          )) . "</li>\n";
     }
   }
 
@@ -1906,18 +1932,18 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   $disabled = unserialize(variable_get('migrate_disabled_handlers',
-                                       serialize(array())));
+    serialize(array())));
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $rows = array();
   $default_values = array();
   foreach ($class_list as $class_name => $handler) {
     $row = array();
     $module = db_select('registry', 'r')
-              ->fields('r', array('module'))
-              ->condition('name', $class_name)
-              ->condition('type', 'class')
-              ->execute()
-              ->fetchField();
+      ->fields('r', array('module'))
+      ->condition('name', $class_name)
+      ->condition('type', 'class')
+      ->execute()
+      ->fetchField();
     $row['module'] = check_plain($module);
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
@@ -1950,11 +1976,11 @@ function migrate_ui_configure_form($form, &$form_state) {
   foreach ($class_list as $class_name => $handler) {
     $row = array();
     $module = db_select('registry', 'r')
-              ->fields('r', array('module'))
-              ->condition('name', $class_name)
-              ->condition('type', 'class')
-              ->execute()
-              ->fetchField();
+      ->fields('r', array('module'))
+      ->condition('name', $class_name)
+      ->condition('type', 'class')
+      ->execute()
+      ->fetchField();
     $row['module'] = check_plain($module);
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
@@ -1992,8 +2018,8 @@ function migrate_ui_configure_register_submit($form, &$form_state) {
  */
 function migrate_ui_configure_deregister_submit($form, &$form_state) {
   $result = db_select('migrate_status', 'ms')
-                ->fields('ms', array('class_name', 'machine_name'))
-                ->execute();
+    ->fields('ms', array('class_name', 'machine_name'))
+    ->execute();
   foreach ($result as $row) {
     if (!class_exists($row->class_name)) {
       migrate_ui_deregister_migration($row->machine_name);
@@ -2007,7 +2033,7 @@ function migrate_ui_configure_deregister_submit($form, &$form_state) {
  */
 function migrate_ui_configure_settings_submit($form, &$form_state) {
   variable_set('migrate_deprecation_warnings',
-               $form_state['values']['deprecation_warnings']);
+    $form_state['values']['deprecation_warnings']);
   drupal_set_message(t('Migration settings saved.'));
 }
 

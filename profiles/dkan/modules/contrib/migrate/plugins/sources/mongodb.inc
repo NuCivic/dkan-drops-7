@@ -9,6 +9,7 @@
  * Implementation of MigrateSource, to handle imports from MongoDB connections.
  */
 class MigrateSourceMongoDB extends MigrateSource {
+
   /**
    * The mongodb collection object.
    *
@@ -41,8 +42,8 @@ class MigrateSourceMongoDB extends MigrateSource {
    * Simple initialization.
    */
   public function __construct(MongoCollection $collection, array $query,
-      array $fields = array(), array $sort = array('_id' => 1),
-      array $options = array()) {
+                              array $fields = array(), array $sort = array('_id' => 1),
+                              array $options = array()) {
     parent::__construct($options);
 
     $this->collection = $collection;
@@ -106,8 +107,8 @@ class MigrateSourceMongoDB extends MigrateSource {
     migrate_instrument_start('MigrateSourceMongoDB execute');
     try {
       $this->cursor = $this->collection
-                           ->find($this->query)
-                           ->sort($this->sort);
+        ->find($this->query)
+        ->sort($this->sort);
       $this->cursor->timeout(-1);
     } catch (MongoCursorException $e) {
       Migration::displayMessage($e->getMessage(), 'error');
@@ -123,20 +124,20 @@ class MigrateSourceMongoDB extends MigrateSource {
   public function __toString() {
     if (is_null($this->cursor)) {
       $this->cursor = $this->collection
-                           ->find($this->query)
-                           ->sort($this->sort);
+        ->find($this->query)
+        ->sort($this->sort);
       $this->cursor->timeout(-1);
     }
 
     $query_info = $this->cursor->info();
 
-    $query  = 'query:    ' . drupal_json_encode($query_info['query']['$query']);
-    $sort   = 'order by: ' . drupal_json_encode($query_info['query']['$orderby']);
+    $query = 'query:    ' . drupal_json_encode($query_info['query']['$query']);
+    $sort = 'order by: ' . drupal_json_encode($query_info['query']['$orderby']);
     $fields = 'fields:   ' . drupal_json_encode($query_info['fields']);
 
     return $query . PHP_EOL .
-           $sort . PHP_EOL .
-           $fields . PHP_EOL;
+      $sort . PHP_EOL .
+      $fields . PHP_EOL;
   }
 
   /**
@@ -147,13 +148,14 @@ class MigrateSourceMongoDB extends MigrateSource {
    *   Document key value.
    * @param array $keys
    *   List of keys.
+   *
    * @return type
    */
   public function getMongoId($document_id, $keys) {
     if ($keys[0]['name'] != '_id') {
       switch ($keys[0]['type']) {
         case 'int':
-          return (int)$document_id;
+          return (int) $document_id;
           break;
         default:
           return $document_id;

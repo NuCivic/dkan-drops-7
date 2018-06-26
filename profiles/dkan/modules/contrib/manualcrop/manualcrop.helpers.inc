@@ -151,7 +151,7 @@ function manualcrop_instance_required_styles($settings) {
 function manualcrop_croptool_process(&$form, &$form_state, &$element, $file, $settings = array(), $instance = NULL, $preview = 'preview') {
   static $processed_forms;
 
-  if (user_access('use manualcrop') && $styles = manualcrop_styles_with_crop()) {
+  if (_manualcrop_supported_file($file) && user_access('use manualcrop') && $styles = manualcrop_styles_with_crop()) {
     // Merge-in the instance or default settings.
     if (is_array($instance)) {
       $settings += $instance['widget']['settings'];
@@ -1010,4 +1010,21 @@ function _manualcrop_update_style_name_in_image_effect($style_name, $new_style_n
       }
     }
   }
+}
+
+/**
+ * Determine if a file supports cropping.
+ *
+ * @param $file
+ *   The file object.
+ *
+ * @return
+ *   TRUE if the file support cropping, FALSE otherwise.
+ */
+function _manualcrop_supported_file($file) {
+  if (empty($file->filemime)) {
+    return FALSE;
+  }
+
+  return strpos($file->filemime, 'image') === 0;
 }

@@ -19,6 +19,28 @@ define('MIGRATE_ACCESS_BASIC', 'migration information');
 define('MIGRATE_ACCESS_ADVANCED', 'advanced migration information');
 
 /**
+ * Implements hook_help().
+ */
+function migrate_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#migrate':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Migrate module provides a flexible framework for migrating content into Drupal from other sources (e.g., when converting a web site from another CMS to Drupal). Out-of-the-box, support for creating Drupal nodes, taxonomy terms, comments, and users are included. Plugins permit migration of other types of content. For more information, see the online documentation for the <a href="@handbook">Migrate module</a>.', array('@handbook' => 'http://drupal.org/migrate')) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Getting Started') . '</dt>';
+      $output .= '<dd>' . t('To get started, enable the migrate_example module and browse to admin/content/migrate to see its dashboard. The code for this migration is in migrate_example/beer.inc (advanced examples are in wine.inc). Mimic that file in order to specify your own migrations.') . '</dd>';
+      $output .= '<dt>' . t('Migrate Support') . '</dt>';
+      $output .= '<dd>' . t('The Migrate module itself has support for migration into core objects. Some built-in support for migration involving contrib modules is in the migrate_extras module.') . '</dd>';
+      $output .= '<dt>' . t('Migrate Extended Support') . '</dt>';
+      $output .= '<dd>' . t('The best place to implement migration support for a contributed module is in that module, not in the Migrate or Migrate Extras modules. That way, the migration support is always self-consistent with the current module implementation - it is not practical for the migrate modules to keep up with changes to all other contrib modules.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
  * Retrieve a list of all active migrations, ordered by dependencies. To be
  * recognized, a class must be non-abstract, and derived from MigrationBase.
  *
@@ -45,8 +67,8 @@ function migrate_migrations($reset = NULL) {
   $required_migrations = array();
 
   $result = db_select('migrate_status', 'ms')
-            ->fields('ms', array('machine_name', 'class_name'))
-            ->execute();
+    ->fields('ms', array('machine_name', 'class_name'))
+    ->execute();
   foreach ($result as $row) {
     if (class_exists($row->class_name)) {
       $reflect = new ReflectionClass($row->class_name);
@@ -68,12 +90,12 @@ function migrate_migrations($reset = NULL) {
       }
       else {
         MigrationBase::displayMessage(t('Class !class is no longer a valid concrete migration class',
-                                      array('!class' => $row->class_name)));
+          array('!class' => $row->class_name)));
       }
     }
     else {
-      MigrationBase::displayMessage(t('Class !class no longer exists',
-                                    array('!class' => $row->class_name)));
+      MigrationBase::displayMessage(t('Class !class could not be found',
+        array('!class' => $row->class_name)));
     }
   }
 
@@ -101,7 +123,8 @@ function migrate_migrations($reset = NULL) {
       )));
     }
     else {
-      $final_migrations[$migration->getGroup()->getName()][$machine_name] = $migration;
+      $final_migrations[$migration->getGroup()
+        ->getName()][$machine_name] = $migration;
     }
   }
   // Flatten the grouped list.
@@ -124,8 +147,8 @@ function migrate_migrations($reset = NULL) {
  *  Destination type ('Node', 'User', etc.) - generally the same string as
  *  the destination class name without the MigrateDestination prefix.
  * @param $method
- *  Method name such as 'prepare' (called at the beginning of an import operation)
- *  or 'complete' (called at the end of an import operation).
+ *  Method name such as 'prepare' (called at the beginning of an import
+ *   operation) or 'complete' (called at the end of an import operation).
  * @param ...
  *  Parameters to be passed to the handler.
  */
@@ -138,7 +161,7 @@ function migrate_handler_invoke_all($destination, $method) {
   $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($destination)
-        && method_exists($handler, $method)) {
+      && method_exists($handler, $method)) {
       migrate_instrument_start($class_name . '->' . $method);
       $result = call_user_func_array(array($handler, $method), $args);
       migrate_instrument_stop($class_name . '->' . $method);
@@ -169,16 +192,16 @@ function migrate_handler_invoke_all($destination, $method) {
  *  Handler method to call (defaults to prepare()).
  */
 function migrate_field_handler_invoke_all($entity, array $field_info,
-    array $instance, array $values, $method = 'prepare') {
+                                          array $instance, array $values, $method = 'prepare') {
   $return = array();
   $type = $field_info['type'];
   $class_list = _migrate_class_list('MigrateFieldHandler');
   $disabled = unserialize(variable_get('migrate_disabled_handlers',
-                                       serialize(array())));
+    serialize(array())));
   $handler_called = FALSE;
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($type)
-        && method_exists($handler, $method)) {
+      && method_exists($handler, $method)) {
       migrate_instrument_start($class_name . '->' . $method);
       $result = call_user_func_array(array($handler, $method),
         array($entity, $field_info, $instance, $values));
@@ -210,13 +233,15 @@ function migrate_field_handler_invoke_all($entity, array $field_info,
 }
 
 /**
- * For a given parent class, identify and instantiate objects for any non-abstract
- * classes derived from the parent, returning an array of the objects indexed by
- * class name. The array will be ordered such that any classes with dependencies
- * are listed after the classes they are dependent on.
+ * For a given parent class, identify and instantiate objects for any
+ * non-abstract classes derived from the parent, returning an array of the
+ * objects indexed by class name. The array will be ordered such that any
+ * classes with dependencies are listed after the classes they are dependent
+ * on.
  *
  * @param $parent_class
  *  Name of a class from which results will be derived.
+ *
  * @return
  *  Array of objects, keyed by the class name.
  */
@@ -295,8 +320,11 @@ function migrate_get_module_apis($reset = FALSE) {
       else {
         drupal_set_message(t('%function supports Migrate API version %modversion,
           Migrate module API version is %version - migration support not loaded.',
-          array('%function' => $function, '%modversion' => $info['api'],
-                '%version' => MIGRATE_API_VERSION)));
+          array(
+            '%function' => $function,
+            '%modversion' => $info['api'],
+            '%version' => MIGRATE_API_VERSION,
+          )));
       }
     }
 
@@ -448,6 +476,7 @@ function migrate_memory_start($name) {
  *
  * @param name
  *   The name of the memory measurement.
+ *
  * @return
  *   The change in bytes since the last start.
  */
@@ -471,9 +500,11 @@ function migrate_memory_read($name) {
  *
  * @param name
  *   The name of the memory measurement.
+ *
  * @return
  *   A memory array. The array contains the number of times the memory has been
- *   started and stopped (count) and the accumulated memory difference value in bytes.
+ *   started and stopped (count) and the accumulated memory difference value in
+ *   bytes.
  */
 function migrate_memory_stop($name) {
   global $_migrate_memory;
@@ -496,9 +527,9 @@ function migrate_memory_stop($name) {
 }
 
 /**
- * Start measuring time and (optionally) memory consumption over a section of code.
- * Note that the memory consumption measurement is generally not useful in
- * lower areas of the code, where data is being generated that will be freed
+ * Start measuring time and (optionally) memory consumption over a section of
+ * code. Note that the memory consumption measurement is generally not useful
+ * in lower areas of the code, where data is being generated that will be freed
  * by the next call to the same area. For example, measuring the memory
  * consumption of db_query is not going to be helpful.
  *
@@ -534,7 +565,8 @@ function migrate_instrument_stop($name) {
 }
 
 /**
- * Call hook_migrate_overview for overall documentation on implemented migrations.
+ * Call hook_migrate_overview for overall documentation on implemented
+ * migrations.
  */
 function migrate_overview() {
   $overview = '';

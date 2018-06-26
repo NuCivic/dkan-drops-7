@@ -1,3 +1,10 @@
+Manual Crop 7.x-1.7, 2017-12-21
+-------------------------------
+- Added support for file fields with multiple allowed file types.
+- Fixed detection of imgAreaSelect.
+- Fixed crop not being saved for an file entity images.
+- Fixed compatibility with media 2.0+.
+
 Manual Crop 7.x-1.6, 2016-12-04
 -------------------------------
 - Added file entity revision support.
@@ -23,33 +30,33 @@ Manual Crop 7.x-1.6, 2016-12-04
 Manual Crop 7.x-1.5, 2015-04-11
 -------------------------------
 - Added a permission to crop images.
-- Added auto reuse effect (thanks to OnkelTem).
-- Added a hook to expose supporting widgets (thanks to dreamlabs).
-- Added Views integration (thanks to OnkelTem and merlinofchaos).
+- Added auto reuse effect.
+- Added a hook to expose supporting widgets.
+- Added Views integration.
 - Added option to maximize the default crop area.
 - Added support for the image style labels.
 - Added support for the Link Image widget
-- Added support for the MultiUpload widget (thanks to havran).
-- Added support for the Image URL Formatter module (thanks to papadak).
+- Added support for the MultiUpload widget.
+- Added support for the Image URL Formatter module.
 - Added an example Drush make file.
 - Removed the third-party jQuery plugins and added the Libraries module as dependency.
 - Removed faulty width and height attributes.
 - Disabled crop after upload on mobile devices.
 - Fixed and improved Media integration (there are a lot of people to thank for this).
 - Fixed compatibility jQuery 1.9 and up.
-- Fixed issues with the admin bar (thanks to anou and candelas).
+- Fixed issues with the admin bar.
 - And much more fixes and features, see the git log for more details.
 
 Manual Crop 7.x-1.4, 2012-10-19
 -------------------------------
-- Switched from the custom widget to the default image widget (thanks to Alan D. for improving the upgrade path).
-- Added Media 2.x support for most Manual Crop settings (thanks to mrfelton).
-- Added a selection maximize button (thanks to esbenvb).
+- Switched from the custom widget to the default image widget.
+- Added Media 2.x support for most Manual Crop settings.
+- Added a selection maximize button.
 - Added an option to exclude none Manual Crop styles from Insert.
 - Added the HTTP cache-controller to images with the crop reuse effect.
 - Changed the text on some buttons.
 - Changed the admin multi-selects to checkboxes and added support for the Multi-column checkboxes radios module.
-- Fixed empty span issue with crop after upload (thanks to phreestilr).
+- Fixed empty span issue with crop after upload.
 - Fixed IE 8 and 9 compatibility (lazy loading CSS and JavaScript issues).
 - Other various improvements and bug fixes.
 
@@ -62,23 +69,23 @@ Manual Crop 7.x-1.3, 2012-04-22
 - Added an option to show a default crop area.
 - Added basic Media 2.x and Insert integration.
 - Added a crop reuse effect.
-- Added support for image dimensions callbacks (thanks to atlea).
+- Added support for image dimensions callbacks.
 - Added an option to skip resize if the image was not cropped.
 - Added a "maintain proportions" option for crop without scale.
 - Added support for string overrides.
 - Changed button labels.
-- Fixed enforcing of required fields (thanks to atlea).
+- Fixed enforcing of required fields.
 - Various other fixes.
 
 Manual Crop 7.x-1.2, 2011-10-10
 -------------------------------
 - Fixed the crop selection validation, removed images should be skipped during validation.
-- Added support for the FileField Sources module (thanks to Fidelix).
+- Added support for the FileField Sources module.
 - Show a crop button instead of a selection list when only one selection can be cropped.
 - Present the user a cleaner image style name.
 - Added the "enter" shortcut and changed the "esc" shortcut effect.
-- Added an option, at the performance page, to enable an HTTP cache controller variable that will force image reloading after re-cropping (thanks to mstrelan, who improved this with additional caching).
-- Fixed support for images in a field collection (thanks to mstrelan).
+- Added an option, at the performance page, to enable an HTTP cache controller variable that will force image reloading after re-cropping.
+- Fixed support for images in a field collection.
 - Updated the preview image to show the latest crop selection if one was made.
 
 Manual Crop 7.x-1.1, 2011-06-29

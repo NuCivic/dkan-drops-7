@@ -1,0 +1,16 @@
+name = Link checker
+description = "Periodically checks for broken links in node types, blocks and fields and reports the results."
+configure = admin/config/content/linkchecker
+core = 7.x
+files[] = linkchecker.test
+files[] = views/handlers/linkchecker_handler_field_linkchecker_block_custom_block_edit.inc
+files[] = views/handlers/linkchecker_handler_field_linkchecker_link_link_edit.inc
+files[] = views/handlers/linkchecker_handler_field_linkchecker_link_redirect_add.inc
+files[] = views/handlers/linkchecker_handler_field_linkchecker_link_url.inc
+files[] = views/handlers/linkchecker_handler_filter_linkchecker_link_code.inc
+files[] = views/plugins/linkchecker_plugin_access.inc
+
+; Information added by drush on 2017-01-30
+version = "623819d04464b26af8e216113a88cd03f4bb4ccc"
+project = "linkchecker"
+datestamp = "1485787509"

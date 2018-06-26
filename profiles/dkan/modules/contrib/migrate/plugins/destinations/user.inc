@@ -13,6 +13,7 @@
  * Destination class implementing migration into users.
  */
 class MigrateDestinationUser extends MigrateDestinationEntity {
+
   /**
    * Indicates whether incoming passwords are md5-encrypted - if so, we will
    * rehash them similarly to the D6->D7 upgrade path.
@@ -68,6 +69,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    *
    * @param Migration $migration
    *  Optionally, the migration containing this destination.
+   *
    * @return array
    *  Keys: machine names of the fields (to be passed to addFieldMapping)
    *  Values: Human-friendly descriptions of the fields.
@@ -76,43 +78,43 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     $fields = array();
     // First the core (users table) properties
     $fields['uid'] = t('<a href="@doc">Existing user ID</a>',
-            array('@doc' => 'http://drupal.org/node/1349632#uid'));
+      array('@doc' => 'http://drupal.org/node/1349632#uid'));
     $fields['mail'] = t('<a href="@doc">Email address</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#mail'));
+      array('@doc' => 'http://drupal.org/node/1349632#mail'));
     $fields['name'] = t('<a href="@doc">Username</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#name'));
+      array('@doc' => 'http://drupal.org/node/1349632#name'));
     $fields['pass'] = t('<a href="@doc">Password</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#pass'));
+      array('@doc' => 'http://drupal.org/node/1349632#pass'));
     $fields['status'] = t('<a href="@doc">Status</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#status'));
+      array('@doc' => 'http://drupal.org/node/1349632#status'));
     $fields['created'] = t('<a href="@doc">Registered timestamp</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#created'));
+      array('@doc' => 'http://drupal.org/node/1349632#created'));
     $fields['access'] = t('<a href="@doc">Last access timestamp</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#access'));
+      array('@doc' => 'http://drupal.org/node/1349632#access'));
     $fields['login'] = t('<a href="@doc">Last login timestamp</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#login'));
+      array('@doc' => 'http://drupal.org/node/1349632#login'));
     $fields['roles'] = t('<a href="@doc">Role IDs</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#roles'));
+      array('@doc' => 'http://drupal.org/node/1349632#roles'));
     $fields['role_names'] = t('<a href="@doc">Role Names</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#role_names'));
+      array('@doc' => 'http://drupal.org/node/1349632#role_names'));
     $fields['picture'] = t('<a href="@doc">Picture</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#picture'));
+      array('@doc' => 'http://drupal.org/node/1349632#picture'));
     $fields['signature'] = t('<a href="@doc">Signature</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#signature'));
+      array('@doc' => 'http://drupal.org/node/1349632#signature'));
     $fields['signature_format'] = t('<a href="@doc">Signature format</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#signature_format'));
+      array('@doc' => 'http://drupal.org/node/1349632#signature_format'));
     $fields['timezone'] = t('<a href="@doc">Timezone</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#timezone'));
+      array('@doc' => 'http://drupal.org/node/1349632#timezone'));
     $fields['language'] = t('<a href="@doc">Language</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#language'));
+      array('@doc' => 'http://drupal.org/node/1349632#language'));
     $fields['theme'] = t('<a href="@doc">Default theme</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#theme'));
+      array('@doc' => 'http://drupal.org/node/1349632#theme'));
     $fields['init'] = t('<a href="@doc">Init</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#init'));
+      array('@doc' => 'http://drupal.org/node/1349632#init'));
     $fields['data'] = t('<a href="@doc">Data</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#init'));
+      array('@doc' => 'http://drupal.org/node/1349632#init'));
     $fields['is_new'] = t('Option: <a href="@doc">Indicates a new user with the specified uid should be created</a>',
-                array('@doc' => 'http://drupal.org/node/1349632#is_new'));
+      array('@doc' => 'http://drupal.org/node/1349632#is_new'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
@@ -139,9 +141,11 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    * Import a single user.
    *
    * @param $account
-   *  Account object to build. Prefilled with any fields mapped in the Migration.
+   *  Account object to build. Prefilled with any fields mapped in the
+   *   Migration.
    * @param $row
    *  Raw source data object - passed through to prepare/complete handlers.
+   *
    * @return array
    *  Array of key fields (uid only in this case) of the user that was saved if
    *  successful. FALSE on failure.
@@ -155,7 +159,10 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       if (isset($account->uid)) {
         if ($account->uid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming uid !uid and map destination uid !destid1 don't match",
-            array('!uid' => $account->uid, '!destid1' => $row->migrate_map_destid1)));
+            array(
+              '!uid' => $account->uid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
@@ -195,7 +202,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       }
       $account->roles = drupal_map_assoc($account->roles);
     }
-    if (empty($account->roles) && empty($old_account->roles))  {
+    if (empty($account->roles) && empty($old_account->roles)) {
       $account->roles = array();
     }
 
@@ -234,7 +241,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     MigrateDestinationEntity::fieldAttachValidate('user', $account);
 
     migrate_instrument_start('user_save');
-    $newaccount = user_save($old_account, (array)$account);
+    $newaccount = user_save($old_account, (array) $account);
     migrate_instrument_stop('user_save');
     if ($newaccount) {
       if ($this->md5Passwords && !empty($account->pass)) {
@@ -285,6 +292,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
 }
 
 class MigrateDestinationRole extends MigrateDestinationTable {
+
   public function __construct() {
     parent::__construct('role');
   }
@@ -309,7 +317,7 @@ class MigrateDestinationRole extends MigrateDestinationTable {
   public function rollback(array $id) {
     migrate_instrument_start('role rollback');
     $rid = reset($id);
-    user_role_delete((int)$rid);
+    user_role_delete((int) $rid);
     migrate_instrument_stop('role rollback');
   }
 
@@ -320,6 +328,7 @@ class MigrateDestinationRole extends MigrateDestinationTable {
    *  Object object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
    *  Raw source data object - passed through to prepare/complete handlers.
+   *
    * @return array
    *  Array of key fields of the object that was saved if
    *  successful. FALSE on failure.
@@ -333,7 +342,10 @@ class MigrateDestinationRole extends MigrateDestinationTable {
       if (isset($entity->rid)) {
         if ($entity->rid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming id !id and map destination id !destid don't match",
-            array('!id' => $entity->rid, '!destid' => $row->migrate_map_destid1)));
+            array(
+              '!id' => $entity->rid,
+              '!destid' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
@@ -350,7 +362,7 @@ class MigrateDestinationRole extends MigrateDestinationTable {
       $old_entity = user_role_load($entity->rid);
 
       foreach ($entity as $field => $value) {
-        $old_entity->$field = $entity->$field;
+        $old_entity->{$field} = $entity->{$field};
       }
       $entity = $old_entity;
     }

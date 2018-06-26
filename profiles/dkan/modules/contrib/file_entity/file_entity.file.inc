@@ -197,7 +197,7 @@ function file_entity_file_load($files) {
 /**
  * Implements hook_entitycache_ENTITY_TYPE_load().
  */
-function file_entitycache_file_load($files) {
+function file_entity_entitycache_file_load($files) {
   // Integrates with entitycache - ensures the alt and title text on images is
   // localized.
   file_entity_set_title_alt_properties($files);
@@ -207,13 +207,6 @@ function file_entitycache_file_load($files) {
  * Implements hook_entity_load().
  */
 function file_entity_entity_load($entities, $entity_type) {
-  file_entity_set_title_alt_properties_on_file_fields($entities, $entity_type);
-}
-
-/**
- * Implements hook_entitycache_load().
- */
-function file_entity_entitycache_load($entities, $entity_type) {
   file_entity_set_title_alt_properties_on_file_fields($entities, $entity_type);
 }
 

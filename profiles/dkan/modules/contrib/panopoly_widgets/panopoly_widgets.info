@@ -121,12 +121,12 @@ features[file_display][] = video__link__file_field_file_default
 features[file_display][] = video__preview__media_youtube_image
 features[file_display][] = video__teaser__media_youtube_image
 features[file_display][] = video__teaser__media_youtube_video
+features[linkit_profiles][] = content_fields
 features[views_view][] = panopoly_widgets_general_content
 features_exclude[dependencies][linkit] = linkit
 
-; Information added by Drupal.org packaging script on 2017-05-11
-version = "7.x-1.45"
+; Information added by Drupal.org packaging script on 2018-05-10
+version = "7.x-1.54"
 core = "7.x"
 project = "panopoly_widgets"
-datestamp = "1494506128"
-
+datestamp = "1525979476"

@@ -10,6 +10,7 @@
  * from a JSON object.
  */
 class MigrateListJSON extends MigrateList {
+
   /**
    * A URL pointing to an JSON object containing a list of IDs to be processed.
    *
@@ -35,7 +36,8 @@ class MigrateListJSON extends MigrateList {
   }
 
   /**
-   * Load the JSON at the given URL, and return an array of the IDs found within it.
+   * Load the JSON at the given URL, and return an array of the IDs found
+   * within it.
    *
    * @return array
    */
@@ -56,7 +58,7 @@ class MigrateListJSON extends MigrateList {
       }
     }
     Migration::displayMessage(t('Loading of !listurl failed:',
-        array('!listurl' => $this->listUrl)));
+      array('!listurl' => $this->listUrl)));
     return NULL;
   }
 
@@ -104,6 +106,7 @@ class MigrateListJSON extends MigrateList {
  * an ID provided by a MigrateList class.
  */
 class MigrateItemJSON extends MigrateItem {
+
   /**
    * A URL pointing to a JSON object containing the data for one item to be
    * migrated.
@@ -136,7 +139,7 @@ class MigrateItemJSON extends MigrateItem {
     }
     else {
       $migration = Migration::currentMigration();
-      $message =  t('Loading of !objecturl failed:', array('!objecturl' => $item_url));
+      $message = t('Loading of !objecturl failed:', array('!objecturl' => $item_url));
       $migration->getMap()->saveMessage(
         array($id), $message, MigrationBase::MESSAGE_ERROR);
       return NULL;
@@ -178,6 +181,7 @@ class MigrateItemJSON extends MigrateItem {
  * To deal with different structures, extend this class and override next().
  */
 class MigrateJSONReader implements Iterator {
+
   /**
    * URL of the source JSON file.
    *
@@ -242,7 +246,8 @@ class MigrateJSONReader implements Iterator {
    *  The next non-whitespace character, or FALSE on end-of-file.
    */
   protected function getNonBlank() {
-    while (($c = fgetc($this->fileHandle)) !== FALSE && trim($c) == '') {}
+    while (($c = fgetc($this->fileHandle)) !== FALSE && trim($c) == '') {
+    }
     return $c;
   }
 
@@ -266,7 +271,7 @@ class MigrateJSONReader implements Iterator {
       $this->fileHandle = fopen($this->url, 'r');
       if (!$this->fileHandle) {
         Migration::displayMessage(t('Could not open JSON file !url',
-                                  array('!url' => $this->url)));
+          array('!url' => $this->url)));
         return;
       }
 
@@ -278,7 +283,7 @@ class MigrateJSONReader implements Iterator {
       }
       if ($char != '[') {
         Migration::displayMessage(t('!url is not a JSON file containing an array of objects',
-                                  array('!url' => $this->url)));
+          array('!url' => $this->url)));
         return;
       }
     }
@@ -390,9 +395,11 @@ class MigrateJSONReader implements Iterator {
 }
 
 /**
- * Implementation of MigrateSource, to handle imports from stand-alone JSON files.
+ * Implementation of MigrateSource, to handle imports from stand-alone JSON
+ * files.
  */
 class MigrateSourceJSON extends MigrateSource {
+
   /**
    * The MigrateJSONReader object serving as a cursor over the JSON source file.
    *
@@ -402,6 +409,7 @@ class MigrateSourceJSON extends MigrateSource {
 
   /**
    * Name of the field within the JSON object holding the ID value.
+   *
    * @var string
    */
   protected $idField;
@@ -454,7 +462,7 @@ class MigrateSourceJSON extends MigrateSource {
    *    MigrateJSONReader).
    */
   public function __construct($urls, $id_field, array $fields = array(),
-      array $options = array()) {
+                              array $options = array()) {
     parent::__construct($options);
     $this->idField = $id_field;
     if (empty($options['reader_class'])) {
@@ -581,7 +589,7 @@ class MigrateSourceJSON extends MigrateSource {
     // Return value
     $status = FALSE;
 
-    while ($this->activeUrl === NULL || (count($this->sourceUrls)-1) > $this->activeUrl) {
+    while ($this->activeUrl === NULL || (count($this->sourceUrls) - 1) > $this->activeUrl) {
       if (is_null($this->activeUrl)) {
         $this->activeUrl = 0;
       }

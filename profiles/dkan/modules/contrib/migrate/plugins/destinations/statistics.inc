@@ -6,6 +6,7 @@
  */
 
 class MigrateStatisticsEntityHandler extends MigrateDestinationHandler {
+
   public function __construct() {
     $this->registerTypes(array('node'));
   }

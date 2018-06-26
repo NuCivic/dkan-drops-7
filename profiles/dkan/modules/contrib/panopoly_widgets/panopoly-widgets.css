@@ -66,3 +66,10 @@ div.pane-bundle-video .media-youtube-video embed {
 .ctools-modal-content .media-widget a.edit {
   display: none;
 }
+
+/**
+ * Hide the Edit file button on the Media WYSIWYG style selector, until its behavior is fixed.
+ */
+#media-wysiwyg-format-form .edit-file-link {
+  display: none;
+}

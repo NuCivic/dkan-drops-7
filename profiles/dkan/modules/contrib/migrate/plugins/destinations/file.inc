@@ -12,6 +12,7 @@
  * a Drupal file entity (creating the entity if necessary).
  */
 interface MigrateFileInterface {
+
   /**
    * Return a list of subfields and options specific to this implementation,
    * keyed by name.
@@ -35,6 +36,7 @@ interface MigrateFileInterface {
 }
 
 abstract class MigrateFileBase implements MigrateFileInterface {
+
   /**
    * Extension of the core FILE_EXISTS_* constants, offering an alternative to
    * reuse the existing file if present as-is (core only offers the options of
@@ -99,6 +101,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
    *  Path to the Drupal copy of the file.
    * @param $owner
    *  Uid of the file owner.
+   *
    * @return stdClass
    *  A file object ready to be saved.
    */
@@ -130,7 +133,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
     // If we are replacing or reusing an existing filesystem entry,
     // also re-use its database record.
     if ($this->fileReplace == FILE_EXISTS_REPLACE ||
-        $this->fileReplace == self::FILE_EXISTS_REUSE) {
+      $this->fileReplace == self::FILE_EXISTS_REUSE) {
       $existing_files = file_load_multiple(array(), array('uri' => $destination));
       if (count($existing_files)) {
         $existing = reset($existing_files);
@@ -171,6 +174,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
  * to copy or otherwise use it.
  */
 class MigrateFileUriAsIs extends MigrateFileBase {
+
   public function processFile($value, $owner) {
     $file = file_save($this->createFileEntity($value, $owner));
     return $file;
@@ -181,6 +185,7 @@ class MigrateFileUriAsIs extends MigrateFileBase {
  * Handle the degenerate case where we already have a file ID.
  */
 class MigrateFileFid extends MigrateFileBase {
+
   /**
    * Implementation of MigrateFileInterface::processFile().
    *
@@ -188,6 +193,7 @@ class MigrateFileFid extends MigrateFileBase {
    *  An existing file entity ID (fid).
    * @param $owner
    *  User ID (uid) to be the owner of the file. Ignored in this case.
+   *
    * @return int
    *  The file entity corresponding to the fid that was passed in.
    */
@@ -201,6 +207,7 @@ class MigrateFileFid extends MigrateFileBase {
  * Base class for creating core file entities.
  */
 abstract class MigrateFile extends MigrateFileBase {
+
   /**
    * The destination directory within Drupal.
    *
@@ -232,13 +239,13 @@ abstract class MigrateFile extends MigrateFileBase {
    */
   static public function fields() {
     return parent::fields() + array(
-      'destination_dir' => t('Subfield: <a href="@doc">Path within Drupal files directory to store file</a>',
-        array('@doc' => 'http://drupal.org/node/1540106#destination_dir')),
-      'destination_file' => t('Subfield: <a href="@doc">Path within destination_dir to store the file.</a>',
-        array('@doc' => 'http://drupal.org/node/1540106#destination_file')),
-      'file_replace' => t('Option: <a href="@doc">Value of $replace in that file function. Defaults to FILE_EXISTS_RENAME.</a>',
-        array('@doc' => 'http://drupal.org/node/1540106#file_replace')),
-    );
+        'destination_dir' => t('Subfield: <a href="@doc">Path within Drupal files directory to store file</a>',
+          array('@doc' => 'http://drupal.org/node/1540106#destination_dir')),
+        'destination_file' => t('Subfield: <a href="@doc">Path within destination_dir to store the file.</a>',
+          array('@doc' => 'http://drupal.org/node/1540106#destination_file')),
+        'file_replace' => t('Option: <a href="@doc">Value of $replace in that file function. Defaults to FILE_EXISTS_RENAME.</a>',
+          array('@doc' => 'http://drupal.org/node/1540106#file_replace')),
+      );
   }
 
   /**
@@ -246,6 +253,7 @@ abstract class MigrateFile extends MigrateFileBase {
    *
    * @param $destination
    *  Destination path within Drupal.
+   *
    * @return bool
    *  TRUE if the file is successfully saved, FALSE otherwise.
    */
@@ -258,6 +266,7 @@ abstract class MigrateFile extends MigrateFileBase {
    *  The URI or local filespec of a file to be imported.
    * @param $owner
    *  User ID (uid) to be the owner of the file.
+   *
    * @return object
    *  The file entity being created or referenced.
    */
@@ -286,9 +295,9 @@ abstract class MigrateFile extends MigrateFileBase {
     // Prepare the destination directory.
     $destdir = drupal_dirname($destination);
     if (!file_prepare_directory($destdir,
-                                FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+      FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
       $migration->saveMessage(t('Could not create destination directory for !dest',
-                              array('!dest' => $destination)));
+        array('!dest' => $destination)));
       return FALSE;
     }
 
@@ -330,6 +339,7 @@ abstract class MigrateFile extends MigrateFileBase {
  * to be imported to Drupal.
  */
 class MigrateFileUri extends MigrateFile {
+
   /**
    * The source directory for the file, relative to which the value (source
    * file) will be taken.
@@ -390,13 +400,21 @@ class MigrateFileUri extends MigrateFile {
       $this->sourcePath = self::urlencode($this->sourcePath);
     }
     try {
-      copy($this->sourcePath, $destination);
-      return TRUE;
-    }
-    catch (Exception $e) {
+      $copied = copy($this->sourcePath, $destination);
+      if ($copied == FALSE) {
+        $migration = Migration::currentMigration();
+        $migration->saveMessage(t('The specified file %file could not be copied to %destination',
+          array('%file' => $this->sourcePath, '%destination' => $destination)));
+      }
+      return $copied;
+    } catch (Exception $e) {
       $migration = Migration::currentMigration();
       $migration->saveMessage(t('The specified file %file could not be copied to %destination: "%exception_msg"',
-              array('%file' => $this->sourcePath, '%destination' => $destination, '%exception_msg' => $e->getMessage())));
+        array(
+          '%file' => $this->sourcePath,
+          '%destination' => $destination,
+          '%exception_msg' => $e->getMessage(),
+        )));
       return FALSE;
     }
   }
@@ -431,6 +449,7 @@ class MigrateFileUri extends MigrateFile {
    *  The URI or local filespec of a file to be imported.
    * @param $owner
    *  User ID (uid) to be the owner of the file.
+   *
    * @return object
    *  The file entity being created or referenced.
    */
@@ -460,6 +479,7 @@ class MigrateFileUri extends MigrateFile {
  * such as image data) to be stored as a real file in Drupal.
  */
 class MigrateFileBlob extends MigrateFile {
+
   /**
    * The file contents we will be writing to a real file.
    *
@@ -472,6 +492,7 @@ class MigrateFileBlob extends MigrateFile {
    *
    * @param $destination
    *  Drupal destination path.
+   *
    * @return bool
    *  TRUE if the file contents were successfully written, FALSE otherwise.
    */
@@ -482,7 +503,7 @@ class MigrateFileBlob extends MigrateFile {
     else {
       $migration = Migration::currentMigration();
       $migration->saveMessage(t('Failed to write blob data to %destination',
-                              array('%destination' => $destination)));
+        array('%destination' => $destination)));
       return FALSE;
     }
   }
@@ -494,6 +515,7 @@ class MigrateFileBlob extends MigrateFile {
    *  The file contents to be saved as a file.
    * @param $owner
    *  User ID (uid) to be the owner of the file.
+   *
    * @return object
    *  File entity being created or referenced.
    */
@@ -508,12 +530,14 @@ class MigrateFileBlob extends MigrateFile {
  * Destination class implementing migration into the files table.
  */
 class MigrateDestinationFile extends MigrateDestinationEntity {
+
   /**
    * File class (MigrateFileUri etc.) doing the dirty wrk.
    *
    * @var string
    */
   protected $fileClass;
+
   public function setFileClass($file_class) {
     $this->fileClass = $file_class;
   }
@@ -554,10 +578,12 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
   }
 
   /**
-   * Returns a list of fields available to be mapped for the entity type (bundle)
+   * Returns a list of fields available to be mapped for the entity type
+   * (bundle)
    *
    * @param Migration $migration
    *  Optionally, the migration containing this destination.
+   *
    * @return array
    *  Keys: machine names of the fields (to be passed to addFieldMapping)
    *  Values: Human-friendly descriptions of the fields.
@@ -635,6 +661,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    *  File object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
    *  Raw source data object - passed through to prepare/complete handlers.
+   *
    * @return array
    *  Array of key fields (fid only in this case) of the file that was saved if
    *  successful. FALSE on failure.
@@ -646,7 +673,10 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
       if (isset($file->fid)) {
         if ($file->fid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming fid !fid and map destination fid !destid1 don't match",
-            array('!fid' => $file->fid, '!destid1' => $row->migrate_map_destid1)));
+            array(
+              '!fid' => $file->fid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
@@ -700,7 +730,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
     $file->preserve_files = FALSE;
 
     $file_class = $this->fileClass;
-    $source = new $file_class((array)$file, $file);
+    $source = new $file_class((array) $file, $file);
     $file = $source->processFile($file->value, $file->uid);
 
     if (is_object($file) && isset($file->fid)) {

@@ -123,10 +123,10 @@ function migrate_ui_migrate_migration_title($migration_name) {
 }
 
 /**
-* Implements hook_theme()
-*
-* @return array
-*/
+ * Implements hook_theme()
+ *
+ * @return array
+ */
 function migrate_ui_theme() {
   return array(
     'migrate_ui_field_mapping_form' => array(

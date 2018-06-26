@@ -13,6 +13,7 @@
  * Destination class implementing migration into terms.
  */
 class MigrateDestinationTerm extends MigrateDestinationEntity {
+
   /**
    * Boolean indicating whether to permit duplicate terms to be created.
    *
@@ -59,10 +60,12 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
   }
 
   /**
-   * Returns a list of fields available to be mapped for this vocabulary (bundle)
+   * Returns a list of fields available to be mapped for this vocabulary
+   * (bundle)
    *
    * @param Migration $migration
    *  Optionally, the migration containing this destination.
+   *
    * @return array
    *  Keys: machine names of the fields (to be passed to addFieldMapping)
    *  Values: Human-friendly descriptions of the fields.
@@ -71,20 +74,20 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
     $fields = array();
     // First the core (taxonomy_term_data table) properties
     $fields['tid'] = t('<a href="@doc">Existing term ID</a>',
-                array('@doc' => 'http://drupal.org/node/1349702#tid'));
+      array('@doc' => 'http://drupal.org/node/1349702#tid'));
     $fields['name'] = t('<a href="@doc">Name</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#name'));
+      array('@doc' => 'http://drupal.org/node/1349702#name'));
     $fields['description'] = t('<a href="@doc">Description</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#description'));
+      array('@doc' => 'http://drupal.org/node/1349702#description'));
     $fields['parent'] = t('<a href="@doc">Parent (by Drupal term ID)</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#parent'));
+      array('@doc' => 'http://drupal.org/node/1349702#parent'));
     // TODO: Remove parent_name, implement via arguments
     $fields['parent_name'] = t('<a href="@doc">Parent (by name)</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#parent_name'));
+      array('@doc' => 'http://drupal.org/node/1349702#parent_name'));
     $fields['format'] = t('<a href="@doc">Format</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#format'));
+      array('@doc' => 'http://drupal.org/node/1349702#format'));
     $fields['weight'] = t('<a href="@doc">Weight</a>',
-                    array('@doc' => 'http://drupal.org/node/1349702#weight'));
+      array('@doc' => 'http://drupal.org/node/1349702#weight'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('entity', 'fields', $this->entityType, $this->bundle, $migration);
@@ -131,6 +134,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
    *  Term object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
    *  Raw source data object - passed through to prepare/complete handlers.
+   *
    * @return array
    *  Array of key fields (tid only in this case) of the term that was saved if
    *  successful. FALSE on failure.
@@ -142,7 +146,10 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
       if (isset($term->tid)) {
         if ($term->tid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming tid !tid and map destination nid !destid1 don't match",
-            array('!tid' => $term->tid, '!destid1' => $row->migrate_map_destid1)));
+            array(
+              '!tid' => $term->tid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
@@ -167,7 +174,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
           array('!tid' => $term->tid)));
       }
       foreach ($rawterm as $field => $value) {
-        $old_term->$field = $term->$field;
+        $old_term->{$field} = $term->{$field};
       }
       $term = $old_term;
     }
@@ -230,8 +237,8 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
 
       if (!$this->allowDuplicateTerms && $existing_term = $this->findMatchingTerm($term)) {
         foreach ($existing_term as $field => $value) {
-          if (!isset($term->$field)) {
-            $term->$field = $existing_term->$field;
+          if (!isset($term->{$field})) {
+            $term->{$field} = $existing_term->{$field};
           }
         }
       }
@@ -243,8 +250,8 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
       if ($existing_term) {
         // Incoming data overrides existing data, so only copy non-existent fields
         foreach ($existing_term as $field => $value) {
-          if (!isset($term->$field)) {
-            $term->$field = $existing_term->$field;
+          if (!isset($term->{$field})) {
+            $term->{$field} = $existing_term->{$field};
           }
         }
       }

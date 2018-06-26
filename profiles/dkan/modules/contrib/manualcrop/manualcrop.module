@@ -134,7 +134,7 @@ function manualcrop_libraries_info() {
       'file' => 'imgareaselect.jquery.json',
       'pattern' => '#"version"[\t ]*:[\t ]*"([^"]+)"#',
       'lines' => 6,
-      'cols' => 30,
+      'cols' => 40,
     ),
     'files' => array(
       'js' => array(
@@ -277,7 +277,7 @@ function manualcrop_field_attach_submit($entity_type, $entity, $form, &$form_sta
     return;
   }
 
-  if (isset($form['#form_id']) && $form['#form_id'] == 'file_entity_edit') {
+  if (isset($form['#form_id']) && $form['#form_id'] === 'file_entity_edit' && module_exists('file_entity_revisions')) {
     // Skip the file_entity_edit form because it may use revisions and
     // we want to save our crop data when the revision id is known.
     return;
@@ -377,6 +377,11 @@ function manualcrop_media_element_after_build($element) {
 
   // Add the options to the element.
   $element['#media_options']['global'] += $data;
+
+  // Update the cached options.
+  $element_js_class = drupal_html_class('js-media-element-' . $element['#id']);
+  $cid = $element['browse_button']['#attached']['js'][0]['data']['media']['elements']['.' . $element_js_class]['global']['options'];
+  cache_set('media_options:' . $cid, $element['#media_options']['global'], 'cache_form', REQUEST_TIME + 21600);
 
   // Attach the options as javascript settings.
   if (!empty($element['#attached']['js'])) {

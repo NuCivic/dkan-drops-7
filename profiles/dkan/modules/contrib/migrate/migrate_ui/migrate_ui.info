@@ -6,9 +6,8 @@ core = 7.x
 dependencies[] = migrate
 files[] = migrate_ui.wizard.inc
 
-; Information added by Drupal.org packaging script on 2015-07-01
-version = "7.x-2.8"
+; Information added by Drupal.org packaging script on 2018-05-31
+version = "7.x-2.10"
 core = "7.x"
 project = "migrate"
-datestamp = "1435760949"
-
+datestamp = "1527801792"

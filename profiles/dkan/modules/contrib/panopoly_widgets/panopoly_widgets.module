@@ -99,8 +99,8 @@ function panopoly_widgets_field_default_field_instances_alter(&$instances) {
 function panopoly_widgets_page_build(&$page) {
 
   // Add our custom javascript to the footer to override other things.
-  drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets.js', array('scope' => 'footer'));
   drupal_add_library('system', 'ui.tabs');
+  drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets.js', array('scope' => 'footer'));
   drupal_add_js(drupal_get_path('module', 'panopoly_widgets') . '/panopoly-widgets-spotlight.js', array('scope' => 'footer'));
 }
     
@@ -161,6 +161,65 @@ function panopoly_widgets_ctools_content_subtype_alter(&$subtype, &$plugin) {
 }
 
 /**
+ * Implements hook_ctools_plugin_post_alter().
+ */
+function panopoly_widgets_ctools_plugin_post_alter(&$plugin, &$info) {
+  if ($info['module'] == 'ctools' && $info['type'] == 'content_types' && $plugin['module'] == 'fieldable_panels_panes' && $plugin['name'] == 'fieldable_panels_pane') {
+    $plugin['original render callback'] = $plugin['render callback'];
+    $plugin['render callback'] = 'panopoly_widgets_fieldable_panels_pane_render';
+  }
+}
+
+/**
+ * Gets a list of all the required file fields for the given bundle.
+ */
+function panopoly_widgets_get_required_file_fields($bundle) {
+  $required_file_fields = array();
+
+  $field_instances = field_info_instances('fieldable_panels_pane', $bundle);
+  foreach ($field_instances as $field_name => $field_instance) {
+    $field_info = field_info_field($field_name);
+    if (in_array($field_info['type'], array('file', 'image')) && !empty($field_instance['required'])) {
+      $required_file_fields[] = $field_name;
+    }
+  }
+
+  return $required_file_fields;
+}
+
+/**
+ * Render callback for fieldable panels panes.
+ */
+function panopoly_widgets_fieldable_panels_pane_render($subtype, $conf, $panels_args = array(), $context = array()) {
+  $entity = fieldable_panels_panes_load_from_subtype($subtype);
+
+  // If the entity has some required file fields, check them.
+  $required_file_fields = panopoly_widgets_get_required_file_fields($entity->bundle);
+  $missing_required = FALSE;
+  if (!empty($required_file_fields)) {
+    foreach ($required_file_fields as $required_file_field) {
+      $items = field_get_items('fieldable_panels_pane', $entity, $required_file_field);
+
+      // Check if the required file field is empty or the file doesn't exist.
+      if (empty($items[0]) || empty($items[0]['fid']) || !file_load($items[0]['fid'])) {
+        $missing_required = TRUE;
+        break;
+      }
+    }
+  }
+
+  // If a required file field is missing, then we return nothing.
+  if ($missing_required) {
+    return NULL;
+  }
+
+  // Otherwise, hand off to the original render callback.
+  $plugin = ctools_get_content_type('fieldable_panels_pane');
+  $original_render_callback = $plugin['original render callback'];
+  return $original_render_callback($subtype, $conf, $panels_args, $context);
+}
+
+/**
  * Implementation of hook_form_alter()
  */
 function panopoly_widgets_form_alter(&$form, &$form_state, $form_id) {
@@ -212,7 +271,13 @@ function panopoly_widgets_form_alter(&$form, &$form_state, $form_id) {
 
     // Add fields to the FPP object if we are adding a reusable object for the first time
     if ($form_state['entity']->reusable && $form_state['op'] == 'add' && $form_state['rebuild'] == FALSE) {
-      $form = fieldable_panels_panes_entity_edit_form($form, $form_state);
+      if (fieldable_panels_panes_access('update', $form_state['entity'])) {
+        $form = fieldable_panels_panes_entity_edit_form($form, $form_state);
+      }
+      else {
+        $form['message']['#markup'] = '<p>' . t("You don't have permission to edit this widget.") . '</p>';
+        return;
+      }
     }
 
     // Add a custom pre-render method to deal with "Content Settings" fieldset.

@@ -28,7 +28,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_basic_file_file',
     'label' => 'File',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'description_field' => 0,
       'file_directory' => 'general',
@@ -291,6 +291,7 @@ function panopoly_widgets_field_default_field_instances() {
         'module' => 'simple_gmap',
         'settings' => array(
           'iframe_height' => 400,
+          'iframe_title' => 'Google Map of [address]',
           'iframe_width' => 600,
           'include_link' => 0,
           'include_map' => 1,
@@ -310,7 +311,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_map_address',
     'label' => 'Address',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -379,7 +380,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_quick_links_links',
     'label' => 'Links',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'absolute_url' => 1,
       'attributes' => array(
@@ -531,20 +532,30 @@ function panopoly_widgets_field_default_field_instances() {
     'default_value' => array(
       0 => array(
         'tablefield' => array(
-          'cell_0_0' => '',
-          'cell_0_1' => '',
-          'cell_1_0' => '',
-          'cell_1_1' => '',
-          'cell_2_0' => '',
-          'cell_2_1' => '',
+          'caption' => NULL,
           'import' => array(
             'rebuild_field_basic_table_table_0' => 'Upload CSV',
             'tablefield_csv_field_basic_table_table_0' => '',
           ),
+          'paste' => NULL,
           'rebuild' => array(
             'count_cols' => 2,
             'count_rows' => 3,
             'rebuild' => 'Rebuild Table',
+          ),
+          'tabledata' => array(
+            'row_0' => array(
+              'col_0' => '',
+              'col_1' => '',
+            ),
+            'row_1' => array(
+              'col_0' => '',
+              'col_1' => '',
+            ),
+            'row_2' => array(
+              'col_0' => '',
+              'col_1' => '',
+            ),
           ),
         ),
       ),
@@ -555,7 +566,19 @@ function panopoly_widgets_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'tablefield',
-        'settings' => array(),
+        'settings' => array(
+          'export_csv' => 0,
+          'header_orientation' => 'Horizontal',
+          'hide_cols_skip_head' => 0,
+          'hide_empty_cols' => 0,
+          'hide_empty_rows' => 0,
+          'hide_header' => 0,
+          'sortable' => FALSE,
+          'sticky_header' => 1,
+          'striping' => 1,
+          'trim_trailing_cols' => 1,
+          'trim_trailing_rows' => 1,
+        ),
         'type' => 'tablefield_default',
         'weight' => 0,
       ),
@@ -563,14 +586,18 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_basic_table_table',
     'label' => 'Table',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
     'widget' => array(
       'active' => 0,
       'module' => 'tablefield',
-      'settings' => array(),
+      'settings' => array(
+        'cell_processing' => 0,
+        'lock_values' => 0,
+        'restrict_rebuild' => 0,
+      ),
       'type' => 'tablefield',
       'weight' => -4,
     ),
@@ -595,7 +622,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_basic_text_text',
     'label' => 'Text',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 1,
       'user_register_form' => FALSE,
@@ -630,7 +657,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_video_file',
     'label' => 'Video',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'description_field' => 0,
       'file_directory' => '',

@@ -6,6 +6,7 @@
  */
 
 class MigratePathEntityHandler extends MigrateDestinationHandler {
+
   public function __construct() {
     $this->registerTypes(array('entity'));
   }

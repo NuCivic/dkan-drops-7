@@ -6,7 +6,8 @@
  */
 
 /**
- * Registers your module as an implementor of Migrate-based classes and provides
+ * Registers your module as an implementor of Migrate-based classes and
+ * provides
  * default configuration for migration processes.
  *
  * @return
@@ -14,14 +15,16 @@
  *   required):
  *   - api: Always 2 for any module implementing the Migrate 2 API.
  *   - groups: An associative array, keyed by group machine name, defining one
- *     or more migration groups. Each value is an associative array - the 'title'
- *     key defines a user-visible name for the group; any other values are
- *     passed as arguments to all migrations in the group.
+ *     or more migration groups. Each value is an associative array - the
+ *   'title' key defines a user-visible name for the group; any other values
+ *   are passed as arguments to all migrations in the group.
  *   - migrations: An associative array, keyed by migration machine name,
- *     defining one or more migrations. Each value is an associative array - any
+ *     defining one or more migrations. Each value is an associative array -
+ *   any
  *     keys other than the following are passed as arguments to the migration
  *     constructor:
- *     - class_name (required): The name of the class implementing the migration.
+ *     - class_name (required): The name of the class implementing the
+ *   migration.
  *     - group_name: The machine name of the group containing the migration.
  *     - disable_hooks: An associative array, keyed by hook name, listing hook
  *       implementations to be disabled during migration. Each value is an

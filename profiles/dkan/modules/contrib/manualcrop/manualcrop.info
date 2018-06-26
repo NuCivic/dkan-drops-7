@@ -10,9 +10,9 @@ dependencies[] = libraries (>=2.1)
 
 files[] = includes/views/manualcrop.views.inc
 
-; Information added by Drupal.org packaging script on 2016-12-04
-version = "7.x-1.6"
+; Information added by Drupal.org packaging script on 2017-12-21
+version = "7.x-1.7"
 core = "7.x"
 project = "manualcrop"
-datestamp = "1480880890"
+datestamp = "1513858995"
 

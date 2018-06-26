@@ -9,6 +9,7 @@
  * Test node migration.
  */
 class MigrateImportOptionsTest extends DrupalWebTestCase {
+
   public static function getInfo() {
     return array(
       'name' => 'Import options',

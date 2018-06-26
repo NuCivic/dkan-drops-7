@@ -20,11 +20,13 @@
 /* ========================================================================== */
 /*                              List Method                                   */
 /* ========================================================================== */
+
 /**
  * Implementation of MigrateList, for retrieving a list of IDs to be migrated
  * from an XML document.
  */
 class MigrateListXML extends MigrateList {
+
   /**
    * A URL pointing to an XML document containing a list of IDs to be processed.
    *
@@ -157,6 +159,7 @@ class MigrateListXML extends MigrateList {
  * an ID provided by a MigrateList class.
  */
 class MigrateItemXML extends MigrateItem {
+
   /**
    * A URL pointing to an XML document containing the data for one item to be
    * migrated.
@@ -282,6 +285,7 @@ class MigrateItemXML extends MigrateItem {
  * Adds xpath info to field mappings for XML sources
  */
 class MigrateXMLFieldMapping extends MigrateFieldMapping {
+
   /**
    * The xpath used to retrieve the data for this field from the XML.
    *
@@ -315,6 +319,7 @@ class MigrateXMLFieldMapping extends MigrateFieldMapping {
  * Migrations using XML sources should extend this class instead of Migration.
  */
 abstract class XMLMigration extends Migration {
+
   /**
    * {@inheritdoc}
    *
@@ -370,7 +375,7 @@ abstract class XMLMigration extends Migration {
           // Derived class may override applyXpath().
           $source_value = $this->applyXpath($this->sourceValues, $xpath);
           if (!is_null($source_value)) {
-            $this->sourceValues->$source = $source_value;
+            $this->sourceValues->{$source} = $source_value;
           }
         }
       }
@@ -414,11 +419,13 @@ abstract class XMLMigration extends Migration {
 /* ========================================================================== */
 /*                            MultiItems Method                               */
 /* ========================================================================== */
+
 /**
  * Implementation of MigrateItems, for providing a list of IDs and for
  * retrieving a parsed XML document given an ID from this list.
  */
 class MigrateItemsXML extends MigrateItems {
+
   /**
    * An array with all urls to available xml files.
    *
@@ -813,7 +820,7 @@ class MigrateItemsXML extends MigrateItems {
         $this->getIdList();
       }
       foreach ($this->idsMap as $url => $ids) {
-        if (in_array($id, $ids)) {
+        if (in_array($id, $ids, TRUE)) {
           $this->currentItems = NULL;
           $this->currentUrl = $url;
           $items = $this->getAllItems();
@@ -972,7 +979,7 @@ class MigrateXMLReader implements Iterator {
     if ($attribute_query) {
       // Matches [@attribute="value"] (with either single- or double-quotes).
       preg_match_all('|^\[@([^=]+)=[\'"](.*)[\'"]\]$|', $attribute_query,
-                     $matches);
+        $matches);
       $this->attributeName = $matches[1][0];
       $this->attributeValue = $matches[2][0];
     }
@@ -1002,7 +1009,7 @@ class MigrateXMLReader implements Iterator {
     }
     else {
       Migration::displayMessage(t('Could not open XML file !url',
-                                array('!url' => $this->url)));
+        array('!url' => $this->url)));
     }
   }
 
@@ -1028,7 +1035,7 @@ class MigrateXMLReader implements Iterator {
           // attribute, check that as well before accepting this element.
           if (empty($this->attributeName) ||
             ($this->reader->getAttribute($this->attributeName) ==
-             $this->attributeValue)
+              $this->attributeValue)
           ) {
             // We've found a matching element - get a SimpleXML object
             // representing it.We must associate the DOMNode with a
@@ -1249,8 +1256,8 @@ class MigrateSourceXML extends MigrateSource {
     // a lot of urls, may need to hash.
     $urls = implode(', ', $this->sourceUrls);
     return 'urls = ' . $urls .
-           ' | item xpath = ' . $this->elementQuery .
-           ' | item ID xpath = ' . $this->idQuery;
+      ' | item xpath = ' . $this->elementQuery .
+      ' | item ID xpath = ' . $this->idQuery;
   }
 
   /**
@@ -1283,7 +1290,7 @@ class MigrateSourceXML extends MigrateSource {
     $count = 0;
     foreach ($this->sourceUrls as $url) {
       $reader = new $this->readerClass($url, $this->elementQuery,
-                                       $this->idQuery);
+        $this->idQuery);
       foreach ($reader as $element) {
         $count++;
       }
@@ -1326,7 +1333,7 @@ class MigrateSourceXML extends MigrateSource {
     // Test the reader for a valid row.
     if (isset($this->reader) && $this->reader->valid()) {
       $row = new stdClass();
-      $row->$key_name = $this->reader->key();
+      $row->{$key_name} = $this->reader->key();
       $row->xml = $this->reader->current();
       $this->registerNamespaces($row->xml);
     }
@@ -1334,7 +1341,7 @@ class MigrateSourceXML extends MigrateSource {
       // The current source is at the end, try to load the next source.
       if ($this->getNextSource()) {
         $row = new stdClass();
-        $row->$key_name = $this->reader->key();
+        $row->{$key_name} = $this->reader->key();
         $row->xml = $this->reader->current();
         $this->registerNamespaces($row->xml);
       }

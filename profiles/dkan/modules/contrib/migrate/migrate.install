@@ -226,12 +226,12 @@ function migrate_uninstall() {
 function migrate_update_7001() {
   if (!db_field_exists('migrate_status', 'highwater')) {
     db_add_field('migrate_status', 'highwater', array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => '',
-          'description' => 'Highwater mark for detecting updated content',
-        )
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Highwater mark for detecting updated content',
+      )
     );
   }
 
@@ -293,8 +293,8 @@ function migrate_update_7004() {
 
     if (db_field_exists('migrate_status', 'lastimported')) {
       $result = db_select('migrate_status', 'ms')
-                ->fields('ms', array('machine_name', 'lastimported'))
-                ->execute();
+        ->fields('ms', array('machine_name', 'lastimported'))
+        ->execute();
       foreach ($result as $row) {
         $lastimportedtime = strtotime($row->lastimported);
         db_update('migrate_status')
@@ -334,12 +334,12 @@ function migrate_update_7006() {
   $ret = '';
   if (!db_field_exists('migrate_status', 'class_name')) {
     db_add_field('migrate_status', 'class_name', array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => '',
-          'description' => 'Name of class to instantiate for this migration',
-        )
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Name of class to instantiate for this migration',
+      )
     );
 
     db_query("UPDATE {migrate_status}
@@ -357,12 +357,12 @@ function migrate_update_7007() {
   $ret = '';
   if (!db_field_exists('migrate_status', 'arguments')) {
     db_add_field('migrate_status', 'arguments', array(
-          'type' => 'blob',
-          'not null' => FALSE,
-          'size' => 'big',
-          'serialize' => TRUE,
-          'description' => 'A serialized array of arguments to the migration constructor',
-          )
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of arguments to the migration constructor',
+      )
 
     );
     $ret = t('Added arguments column to migrate_status table');
@@ -394,18 +394,18 @@ function migrate_update_7008() {
         $field = 'destid' . $index++;
         $field_schema['not null'] = FALSE;
         $map_connection->schema()->changeField($map_table, $field, $field,
-                                               $field_schema);
+          $field_schema);
         $ret .= "\n" . t('Changed !table.!field to be non-null',
-          array('!table' => $map_table, '!field' => $field));
+            array('!table' => $map_table, '!field' => $field));
       }
 
       // Add any existing failures to the map table
       $msg_table = $map->getMessageTable();
       $msg_marked = FALSE;
       $result = $map_connection->select($msg_table, 'msg')
-                ->fields('msg')
-                ->condition('level', Migration::MESSAGE_INFORMATIONAL, '<>')
-                ->execute();
+        ->fields('msg')
+        ->condition('level', Migration::MESSAGE_INFORMATIONAL, '<>')
+        ->execute();
       foreach ($result as $row) {
         $keys = array();
         $index = 1;
@@ -415,9 +415,9 @@ function migrate_update_7008() {
           }
         }
         $map_connection->merge($map_table)
-                       ->key($keys)
-                       ->fields(array('needs_update' => MigrateMap::STATUS_FAILED))
-                       ->execute();
+          ->key($keys)
+          ->fields(array('needs_update' => MigrateMap::STATUS_FAILED))
+          ->execute();
         $msg_marked = TRUE;
       }
       if ($msg_marked) {
@@ -472,14 +472,14 @@ function migrate_update_7203() {
     db_create_table('migrate_group', migrate_schema_group());
   }
   if (!db_field_exists('migrate_status', 'group_name')) {
-    $ret .= t('Add group relationship to migrate_status table'). "\n";
+    $ret .= t('Add group relationship to migrate_status table') . "\n";
     db_add_field('migrate_status', 'group_name', array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => 'default',
-          'description' => 'Name of group containing migration',
-        )
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'default',
+        'description' => 'Name of group containing migration',
+      )
     );
     // Populate each migration's group_name field
     $groups = array();
@@ -497,17 +497,17 @@ function migrate_update_7203() {
     // Populate the migrate_group table
     foreach ($groups as $group_name) {
       $title = db_select('migrate_group', 'mg')
-               ->fields('mg', array('title'))
-               ->condition('name', $group_name)
-               ->execute()
-               ->fetchField();
+        ->fields('mg', array('title'))
+        ->condition('name', $group_name)
+        ->execute()
+        ->fetchField();
       if (!$title) {
         db_insert('migrate_group')
           ->fields(array(
-              'name' => $group_name,
-              'title' => $group_name,
-              'arguments' => serialize(array()),
-            ))
+            'name' => $group_name,
+            'title' => $group_name,
+            'arguments' => serialize(array()),
+          ))
           ->execute();
       }
     }
@@ -559,20 +559,20 @@ function migrate_update_7206() {
  */
 function migrate_update_7207() {
   $rows = db_select('migrate_group', 'mg')
-          ->fields('mg', array('name'))
-          ->condition('name', 'default')
-          ->execute()
-          ->rowCount();
+    ->fields('mg', array('name'))
+    ->condition('name', 'default')
+    ->execute()
+    ->rowCount();
   if ($rows > 0) {
     $rows = db_select('migrate_status', 'ms')
-            ->fields('ms', array('machine_name'))
-            ->condition('group_name', 'default')
-            ->execute()
-            ->rowCount();
+      ->fields('ms', array('machine_name'))
+      ->condition('group_name', 'default')
+      ->execute()
+      ->rowCount();
     if ($rows == 0) {
       db_delete('migrate_group')
-      ->condition('name', 'default')
-      ->execute();
+        ->condition('name', 'default')
+        ->execute();
     }
   }
 }

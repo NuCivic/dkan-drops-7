@@ -9,6 +9,7 @@
  * Test node migration.
  */
 class MigrateXMLUnitTest extends DrupalWebTestCase {
+
   public static function getInfo() {
     return array(
       'name' => 'XML migration',
@@ -139,16 +140,16 @@ class MigrateXMLUnitTest extends DrupalWebTestCase {
     $rawnodes = node_load_multiple(FALSE, array('type' => 'migrate_example_producer'), TRUE);
     $this->assertEqual(count($rawnodes), 0, t('All nodes deleted'));
     $count = db_select('migrate_map_wineproducerxml', 'map')
-              ->fields('map', array('sourceid1'))
-              ->countQuery()
-              ->execute()
-              ->fetchField();
+      ->fields('map', array('sourceid1'))
+      ->countQuery()
+      ->execute()
+      ->fetchField();
     $this->assertEqual($count, 0, t('Map cleared'));
     $count = db_select('migrate_message_wineproducerxml', 'msg')
-              ->fields('msg', array('sourceid1'))
-              ->countQuery()
-              ->execute()
-              ->fetchField();
+      ->fields('msg', array('sourceid1'))
+      ->countQuery()
+      ->execute()
+      ->fetchField();
     $this->assertEqual($count, 0, t('Messages cleared'));
   }
 }

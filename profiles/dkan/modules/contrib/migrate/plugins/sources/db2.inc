@@ -9,6 +9,7 @@
  * Implementation of MigrateSource, to handle imports from remote DB2 servers.
  */
 class MigrateSourceDB2 extends MigrateSource {
+
   /**
    * Array containing information for connecting to DB2:
    *  database - Database to connect to
@@ -25,6 +26,7 @@ class MigrateSourceDB2 extends MigrateSource {
    * @var resource
    */
   protected $connection;
+
   public function getConnection() {
     return $this->connection;
   }
@@ -54,7 +56,7 @@ class MigrateSourceDB2 extends MigrateSource {
    * Simple initialization.
    */
   public function __construct(array $configuration, $query, $count_query,
-      array $fields, array $options = array()) {
+                              array $fields, array $options = array()) {
     parent::__construct($options);
     $this->query = $query;
     $this->countQuery = $count_query;

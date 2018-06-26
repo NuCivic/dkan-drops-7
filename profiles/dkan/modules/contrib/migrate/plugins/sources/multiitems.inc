@@ -14,7 +14,9 @@
  * to obtain the data for a given migratable item given its ID.
  */
 abstract class MigrateItems {
-  public function __construct() {}
+
+  public function __construct() {
+  }
 
   /**
    * Implementors are expected to return a string representing where the listing
@@ -33,7 +35,8 @@ abstract class MigrateItems {
   abstract public function getIdList();
 
   /**
-   * Implementors are expected to return a count of IDs available to be migrated.
+   * Implementors are expected to return a count of IDs available to be
+   * migrated.
    *
    * @return int
    */
@@ -70,6 +73,7 @@ abstract class MigrateItems {
  * IDs provided by a MigrateItems and retrieving data from a MigrateItems.
  */
 class MigrateSourceMultiItems extends MigrateSource {
+
   /**
    * MigrateItems object used to obtain the list of IDs and source for
    * all objects.
@@ -137,7 +141,7 @@ class MigrateSourceMultiItems extends MigrateSource {
    * @return int
    */
   public function computeCount() {
-      // @API: Support old count method for now.
+    // @API: Support old count method for now.
     if (method_exists($this->itemsClass, 'computeCount')) {
       return $this->itemsClass->computeCount();
     }
@@ -156,8 +160,8 @@ class MigrateSourceMultiItems extends MigrateSource {
     if ($this->idList) {
       $this->idsToProcess = $this->idList;
     }
-    else {
-      $this->idsToProcess = $this->itemsClass->getIdList();
+    elseif (!$this->idsToProcess = $this->itemsClass->getIdList()) {
+      $this->idsToProcess = array();
     }
     $this->idIterator = ($this->idsToProcess instanceof Iterator) ?
       $this->idsToProcess : new ArrayIterator($this->idsToProcess);
@@ -186,7 +190,7 @@ class MigrateSourceMultiItems extends MigrateSource {
         // Save the ID using the map source key - it will be used for mapping
         $sourceKey = $this->activeMap->getSourceKey();
         $key_name = key($sourceKey);
-        $row->$key_name = $id;
+        $row->{$key_name} = $id;
         break;
       }
     }

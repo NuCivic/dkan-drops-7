@@ -34,10 +34,12 @@
  *
  * In any serious migration project, you will find there are some options
  * which are common to the individual migrations you're implementing. You can
- * define an abstract intermediate class derived from Migration, then derive your
- * individual migrations from that, to share settings, utility functions, etc.
+ * define an abstract intermediate class derived from Migration, then derive
+ * your individual migrations from that, to share settings, utility functions,
+ * etc.
  */
 abstract class BasicExampleMigration extends Migration {
+
   // A Migration constructor takes an array of arguments as its first parameter.
   // The arguments must be passed through to the parent constructor.
   public function __construct($arguments) {
@@ -48,9 +50,9 @@ abstract class BasicExampleMigration extends Migration {
     // list in the shared class; it can be overridden for specific migrations.
     $this->team = array(
       new MigrateTeamMember('Liz Taster', 'ltaster@example.com',
-                            t('Product Owner')),
+        t('Product Owner')),
       new MigrateTeamMember('Larry Brewer', 'lbrewer@example.com',
-                            t('Implementor')),
+        t('Implementor')),
     );
 
     // Individual mappings in a migration can be linked to a ticket or issue
@@ -76,6 +78,7 @@ abstract class BasicExampleMigration extends Migration {
  *    information associated with the mappings.
  */
 class BeerTermMigration extends BasicExampleMigration {
+
   public function __construct($arguments) {
     parent::__construct($arguments);
     // Human-friendly description of your migration process. Be as detailed as
@@ -91,10 +94,15 @@ class BeerTermMigration extends BasicExampleMigration {
     // style_parent, we guarantee root terms are migrated first, so the
     // parent_name mapping below will find that the parent exists.
     $query = db_select('migrate_example_beer_topic', 'met')
-             ->fields('met', array('style', 'details', 'style_parent', 'region',
-                                   'hoppiness'))
-             // This sort assures that parents are saved before children.
-             ->orderBy('style_parent', 'ASC');
+      ->fields('met', array(
+        'style',
+        'details',
+        'style_parent',
+        'region',
+        'hoppiness',
+      ))
+      // This sort assures that parents are saved before children.
+      ->orderBy('style_parent', 'ASC');
 
     // Create a MigrateSource object, which manages retrieving the input data.
     $this->source = new MigrateSourceSQL($query);
@@ -112,15 +120,16 @@ class BeerTermMigration extends BasicExampleMigration {
     // destination - we need to be explicit for our source, but the destination
     // class knows its schema already.
     $this->map = new MigrateSQLMap($this->machineName,
-        array(
-          'style' => array('type' => 'varchar',
-                           'length' => 255,
-                           'not null' => TRUE,
-                           'description' => 'Topic ID',
-                          )
+      array(
+        'style' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Topic ID',
         ),
-        MigrateDestinationTerm::getKeySchema()
-      );
+      ),
+      MigrateDestinationTerm::getKeySchema()
+    );
 
     // Assign mappings TO destination fields FROM source fields. To discover
     // the names used in these calls, use the drush commands
@@ -133,7 +142,7 @@ class BeerTermMigration extends BasicExampleMigration {
     // Documenting your mappings makes it easier for the whole team to see
     // exactly what the status is when developing a migration process.
     $this->addFieldMapping('parent_name', 'style_parent')
-         ->description(t('The incoming style_parent field is the name of the term parent'));
+      ->description(t('The incoming style_parent field is the name of the term parent'));
 
     // Mappings are assigned issue groups, by which they are grouped on the
     // migration info page when the migrate_ui module is enabled. The default
@@ -147,8 +156,8 @@ class BeerTermMigration extends BasicExampleMigration {
     //  necessary information, and now the implementor needs to complete the
     //  work.
     $this->addFieldMapping(NULL, 'hoppiness')
-         ->description(t('This info will not be maintained in Drupal'))
-         ->issueGroup(t('DNM'));
+      ->description(t('This info will not be maintained in Drupal'))
+      ->issueGroup(t('DNM'));
 
     // Open mapping issues can be assigned priorities (the default is
     // MigrateFieldMapping::ISSUE_PRIORITY_OK). If you're using an issue
@@ -156,11 +165,11 @@ class BeerTermMigration extends BasicExampleMigration {
     // above), you can specify a ticket/issue number in the system on the
     // mapping and migrate_ui will link directly to it.
     $this->addFieldMapping(NULL, 'region')
-         ->description('Will a field be added to the vocabulary for this?')
-         ->issueGroup(t('Client Issues'))
-         // This priority wil cause the mapping to be highlighted in the UI.
-         ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_MEDIUM)
-         ->issueNumber(770064);
+      ->description('Will a field be added to the vocabulary for this?')
+      ->issueGroup(t('Client Issues'))
+      // This priority wil cause the mapping to be highlighted in the UI.
+      ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_MEDIUM)
+      ->issueNumber(770064);
 
     // It is good practice to account for all source and destination fields
     // explicitly - this makes sure that everyone understands exactly what is
@@ -170,21 +179,21 @@ class BeerTermMigration extends BasicExampleMigration {
     // immediately visible, and you can decide if anything needs to be
     // migrated into it.
     $this->addFieldMapping('format')
-         ->issueGroup(t('DNM'));
+      ->issueGroup(t('DNM'));
     $this->addFieldMapping('weight')
-         ->issueGroup(t('DNM'));
+      ->issueGroup(t('DNM'));
     $this->addFieldMapping('parent')
-         ->issueGroup(t('DNM'));
+      ->issueGroup(t('DNM'));
 
     // We conditionally DNM these fields, so your field mappings will be clean
     // whether or not you have path and/or pathauto enabled.
     $destination_fields = $this->destination->fields();
     if (isset($destination_fields['path'])) {
       $this->addFieldMapping('path')
-           ->issueGroup(t('DNM'));
+        ->issueGroup(t('DNM'));
       if (isset($destination_fields['pathauto'])) {
         $this->addFieldMapping('pathauto')
-             ->issueGroup(t('DNM'));
+          ->issueGroup(t('DNM'));
       }
     }
   }
@@ -201,23 +210,34 @@ class BeerTermMigration extends BasicExampleMigration {
  * transformations of the data.
  */
 class BeerUserMigration extends BasicExampleMigration {
+
   public function __construct($arguments) {
     // The basic setup is similar to BeerTermMigraiton
     parent::__construct($arguments);
     $this->description = t('Beer Drinkers of the world');
     $query = db_select('migrate_example_beer_account', 'mea')
-             ->fields('mea', array('aid', 'status', 'posted', 'name',
-               'nickname', 'password', 'mail', 'sex', 'beers'));
+      ->fields('mea', array(
+        'aid',
+        'status',
+        'posted',
+        'name',
+        'nickname',
+        'password',
+        'mail',
+        'sex',
+        'beers',
+      ));
     $this->source = new MigrateSourceSQL($query);
     $this->destination = new MigrateDestinationUser();
     $this->map = new MigrateSQLMap($this->machineName,
-        array('aid' => array(
-              'type' => 'int',
-              'not null' => TRUE,
-              'description' => 'Account ID.'
-              )
+      array(
+        'aid' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'description' => 'Account ID.',
         ),
-        MigrateDestinationUser::getKeySchema()
+      ),
+      MigrateDestinationUser::getKeySchema()
     );
 
     // One good way to organize your mappings in the constructor is in three
@@ -239,7 +259,7 @@ class BeerUserMigration extends BasicExampleMigration {
     // 'test_1'.
     // dedupe() takes the Drupal table and column for determining uniqueness.
     $this->addFieldMapping('name', 'name')
-         ->dedupe('users', 'name');
+      ->dedupe('users', 'name');
 
     // The migrate module automatically converts date/time strings to UNIX
     // timestamps.
@@ -252,7 +272,7 @@ class BeerUserMigration extends BasicExampleMigration {
     // value is provided in addition to a source field, the default value will
     // be applied to any rows where the source field is empty or NULL.
     $this->addFieldMapping('roles')
-         ->defaultValue(DRUPAL_AUTHENTICATED_RID);
+      ->defaultValue(DRUPAL_AUTHENTICATED_RID);
 
     $this->addFieldMapping('field_migrate_example_gender', 'sex');
 
@@ -262,16 +282,16 @@ class BeerUserMigration extends BasicExampleMigration {
     // user.
     if (module_exists('node_reference')) {
       $this->addFieldMapping('field_migrate_example_favbeers', 'beers')
-           ->separator('|');
+        ->separator('|');
     }
     else {
       $this->addFieldMapping(NULL, 'beers')
-           ->issueGroup(t('DNM'));
+        ->issueGroup(t('DNM'));
     }
 
     // Unmapped source fields
     $this->addFieldMapping(NULL, 'nickname')
-         ->issueGroup(t('DNM'));
+      ->issueGroup(t('DNM'));
 
     // Unmapped destination fields
 
@@ -297,15 +317,15 @@ class BeerUserMigration extends BasicExampleMigration {
     // list of destination fields", and also lists "1 unmapped" under Destination,
     // where it highlights "init" as unmapped.
     $this->addFieldMapping('int')
-         ->issueGroup(t('DNM'));
+      ->issueGroup(t('DNM'));
 
     $destination_fields = $this->destination->fields();
     if (isset($destination_fields['path'])) {
       $this->addFieldMapping('path')
-           ->issueGroup(t('DNM'));
+        ->issueGroup(t('DNM'));
       if (isset($destination_fields['pathauto'])) {
         $this->addFieldMapping('pathauto')
-             ->issueGroup(t('DNM'));
+          ->issueGroup(t('DNM'));
       }
     }
   }
@@ -316,6 +336,7 @@ class BeerUserMigration extends BasicExampleMigration {
  * and creates Drupal nodes of type 'Beer' as destination.
  */
 class BeerNodeMigration extends BasicExampleMigration {
+
   public function __construct($arguments) {
     parent::__construct($arguments);
     $this->description = t('Beers of the world');
@@ -326,9 +347,18 @@ class BeerNodeMigration extends BasicExampleMigration {
     // each node? One way (valid for MySQL only) is to pull them into a single
     // comma-separated list.
     $query = db_select('migrate_example_beer_node', 'b')
-             ->fields('b', array('bid', 'name', 'body', 'excerpt', 'aid',
-               'countries', 'image', 'image_alt', 'image_title',
-               'image_description'));
+      ->fields('b', array(
+        'bid',
+        'name',
+        'body',
+        'excerpt',
+        'aid',
+        'countries',
+        'image',
+        'image_alt',
+        'image_title',
+        'image_description',
+      ));
     $query->leftJoin('migrate_example_beer_topic_node', 'tb', 'b.bid = tb.bid');
     // Gives a single comma-separated list of related terms
     $query->groupBy('tb.bid');
@@ -355,19 +385,19 @@ class BeerNodeMigration extends BasicExampleMigration {
           'not null' => TRUE,
           'description' => 'Beer ID.',
           'alias' => 'b',
-        )
+        ),
       ),
       MigrateDestinationNode::getKeySchema()
     );
 
     // Mapped fields
     $this->addFieldMapping('title', 'name')
-         ->description(t('Mapping beer name in source to node title'));
+      ->description(t('Mapping beer name in source to node title'));
     $this->addFieldMapping('sticky')
-         ->description(t('Should we default this to 0 or 1?'))
-         ->issueGroup(t('Client questions'))
-         ->issueNumber(765736)
-         ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_LOW);
+      ->description(t('Should we default this to 0 or 1?'))
+      ->issueGroup(t('Client questions'))
+      ->issueNumber(765736)
+      ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_LOW);
 
     // References to related objects (such as the author of the content) are
     // most likely going to be identifiers from the source data, not Drupal
@@ -377,17 +407,17 @@ class BeerNodeMigration extends BasicExampleMigration {
     // find a corresponding uid for the aid, the owner will be the administrative
     // account.
     $this->addFieldMapping('uid', 'aid')
-         // Note this is the machine name of the user migration.
-         ->sourceMigration('BeerUser')
-         ->defaultValue(1);
+      // Note this is the machine name of the user migration.
+      ->sourceMigration('BeerUser')
+      ->defaultValue(1);
 
     // This is a multi-value text field - in the source data the values are
     // separated by |, so we tell migrate to split it by that character.
     $this->addFieldMapping('field_migrate_example_country', 'countries')
-         ->separator('|');
+      ->separator('|');
     // These are related terms, which by default will be looked up by name.
     $this->addFieldMapping('migrate_example_beer_styles', 'terms')
-         ->separator(',');
+      ->separator(',');
 
     // Some fields may have subfields such as text formats or summaries. These
     // can be individually mapped as we see here.
@@ -407,10 +437,10 @@ class BeerNodeMigration extends BasicExampleMigration {
     // other options are available. In this case, MigrateFileUri indicates that
     // the 'image' value is a URI.
     $this->addFieldMapping('field_migrate_example_image:file_class')
-         ->defaultValue('MigrateFileUri');
+      ->defaultValue('MigrateFileUri');
     // Here we specify the directory containing the source files.
     $this->addFieldMapping('field_migrate_example_image:source_dir')
-         ->defaultValue(drupal_get_path('module', 'migrate_example'));
+      ->defaultValue(drupal_get_path('module', 'migrate_example'));
     // And we map the alt and title values in the database to those on the image.
     $this->addFieldMapping('field_migrate_example_image:alt', 'image_alt');
     $this->addFieldMapping('field_migrate_example_image:title', 'image_title');
@@ -424,20 +454,20 @@ class BeerNodeMigration extends BasicExampleMigration {
     // subfields of the same field may be grouped on the same line), and indent
     // subfields to distinguish them from top-level fields.
     $this->addUnmigratedDestinations(array(
-        'body:format',
+      'body:format',
       'changed',
       'comment',
       'created',
-        'field_migrate_example_image:destination_dir',
-        'field_migrate_example_image:destination_file',
-        'field_migrate_example_image:file_replace',
-        'field_migrate_example_image:preserve_files',
-        'field_migrate_example_image:urlencode',
+      'field_migrate_example_image:destination_dir',
+      'field_migrate_example_image:destination_file',
+      'field_migrate_example_image:file_replace',
+      'field_migrate_example_image:preserve_files',
+      'field_migrate_example_image:urlencode',
       'is_new',
       'language',
       'log',
-        'migrate_example_beer_styles:source_type',
-        'migrate_example_beer_styles:create_term',
+      'migrate_example_beer_styles:source_type',
+      'migrate_example_beer_styles:create_term',
       'promote',
       'revision',
       'revision_uid',
@@ -448,10 +478,10 @@ class BeerNodeMigration extends BasicExampleMigration {
     $destination_fields = $this->destination->fields();
     if (isset($destination_fields['path'])) {
       $this->addFieldMapping('path')
-           ->issueGroup(t('DNM'));
+        ->issueGroup(t('DNM'));
       if (isset($destination_fields['pathauto'])) {
         $this->addFieldMapping('pathauto')
-             ->issueGroup(t('DNM'));
+          ->issueGroup(t('DNM'));
       }
     }
     if (module_exists('statistics')) {
@@ -466,14 +496,23 @@ class BeerNodeMigration extends BasicExampleMigration {
  * Drupal comment objects.
  */
 class BeerCommentMigration extends BasicExampleMigration {
+
   public function __construct($arguments) {
     parent::__construct($arguments);
     $this->description = 'Comments about beers';
 
     $query = db_select('migrate_example_beer_comment', 'mec')
-             ->fields('mec', array('cid', 'cid_parent', 'name', 'mail', 'aid',
-               'body', 'bid', 'subject'))
-             ->orderBy('cid_parent', 'ASC');
+      ->fields('mec', array(
+        'cid',
+        'cid_parent',
+        'name',
+        'mail',
+        'aid',
+        'body',
+        'bid',
+        'subject',
+      ))
+      ->orderBy('cid_parent', 'ASC');
     $this->source = new MigrateSourceSQL($query);
     // Note that the machine name passed for comment migrations is
     // 'comment_node_' followed by the machine name of the node type these
@@ -482,29 +521,30 @@ class BeerCommentMigration extends BasicExampleMigration {
       new MigrateDestinationComment('comment_node_migrate_example_beer');
 
     $this->map = new MigrateSQLMap($this->machineName,
-      array('cid' => array(
-            'type' => 'int',
-            'not null' => TRUE,
-           )
-         ),
+      array(
+        'cid' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+        ),
+      ),
       MigrateDestinationComment::getKeySchema()
     );
 
     // Mapped fields
     $this->addSimpleMappings(array('name', 'subject', 'mail'));
     $this->addFieldMapping('status')
-         ->defaultValue(COMMENT_PUBLISHED);
+      ->defaultValue(COMMENT_PUBLISHED);
 
     $this->addFieldMapping('nid', 'bid')
-         ->sourceMigration('BeerNode');
+      ->sourceMigration('BeerNode');
 
     $this->addFieldMapping('uid', 'aid')
-         ->sourceMigration('BeerUser')
-         ->defaultValue(0);
+      ->sourceMigration('BeerUser')
+      ->defaultValue(0);
 
     $this->addFieldMapping('pid', 'cid_parent')
-         ->sourceMigration('BeerComment')
-         ->description('Parent comment.');
+      ->sourceMigration('BeerComment')
+      ->description('Parent comment.');
 
     $this->addFieldMapping('comment_body', 'body');
 
@@ -513,7 +553,7 @@ class BeerCommentMigration extends BasicExampleMigration {
     // Unmapped destination fields
     $this->addUnmigratedDestinations(array(
       'changed',
-        'comment_body:format',
+      'comment_body:format',
       'created',
       'homepage',
       'hostname',
@@ -524,10 +564,10 @@ class BeerCommentMigration extends BasicExampleMigration {
     $destination_fields = $this->destination->fields();
     if (isset($destination_fields['path'])) {
       $this->addFieldMapping('path')
-           ->issueGroup(t('DNM'));
+        ->issueGroup(t('DNM'));
       if (isset($destination_fields['pathauto'])) {
         $this->addFieldMapping('pathauto')
-             ->issueGroup(t('DNM'));
+          ->issueGroup(t('DNM'));
       }
     }
   }

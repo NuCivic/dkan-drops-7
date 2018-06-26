@@ -4,7 +4,7 @@ dependencies[] = file
 package = Fields
 core = 7.x
 
-; Information added by drush on 2016-11-18
-version = "6cf030c2c139374c75527221775965ff0242df15"
+; Information added by drush on 2018-05-03
+version = "fd5aad6bd26ca84303bb07c3f757cd24a5cb5c01"
 project = "file_resup"
-datestamp = "1479460139"
+datestamp = "1525336381"

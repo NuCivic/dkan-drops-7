@@ -30,6 +30,7 @@ Drupal.behaviors.horizontalTabs = {
       // Transform each fieldset into a tab.
       $fieldsets.each(function (i) {
         var $legend = $('> legend', this);
+        $('.element-invisible', $legend).remove();
         var horizontal_tab = new Drupal.horizontalTab({
           title: $legend.text(),
           fieldset: $(this)

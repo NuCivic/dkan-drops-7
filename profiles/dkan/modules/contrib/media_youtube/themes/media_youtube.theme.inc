@@ -35,7 +35,7 @@ function media_youtube_preprocess_media_youtube_video(&$variables) {
   // Checked existing function.
   if(function_exists('file_uri_to_object')) {
     // Make the file object available.
-    $file_object = file_uri_to_object($variables['uri']);
+    $file_object = file_uri_to_object($variables['uri'], TRUE);
   }
   else {
     $file_object = media_youtube_file_uri_to_object($variables['uri']);
@@ -60,7 +60,7 @@ function media_youtube_preprocess_media_youtube_video(&$variables) {
   }
   // These queries default to 0. If the option is true, set value to 1.
   foreach (array('autoplay', 'enablejsapi', 'loop', 'modestbranding') as $option) {
-    if ($variables['options'][$option]) {
+    if (isset($variables['options'][$option]) && $variables['options'][$option]) {
       $query[$option] = 1;
     }
   }

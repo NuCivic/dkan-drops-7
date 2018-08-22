@@ -4,7 +4,8 @@ dependencies[] = file
 package = Fields
 core = 7.x
 
-; Information added by drush on 2018-05-03
-version = "fd5aad6bd26ca84303bb07c3f757cd24a5cb5c01"
+; Information added by Drupal.org packaging script on 2018-05-03
+version = "7.x-1.5"
+core = "7.x"
 project = "file_resup"
-datestamp = "1525336381"
+datestamp = "1525336987"

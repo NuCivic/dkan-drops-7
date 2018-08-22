@@ -467,10 +467,10 @@ function select_or_other_field_formatter_view($entity_type, $entity, $field, $in
 
   foreach ($items as $delta => $item) {
     if (array_key_exists($item['value'], $field_options)) {
-      $element[$delta] = array('#markup' => $field_options[$item['value']]);
+      $element[$delta] = array('#markup' => filter_xss_admin($field_options[$item['value']]));
     }
     else {
-      $element[$delta] = array('#markup' => $item['value']);
+      $element[$delta] = array('#markup' => check_plain($item['value']));
     }
   }
 

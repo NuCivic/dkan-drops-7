@@ -1,0 +1,72 @@
+Drafty 7.x-1.0-rc1, 2017-11-09
+------------------------------
+#2911357 by joseph.olstad, jollysolutions: Fix tests; update for latest to
+  Entity Translation changes.
+#2579205 by smustgrave, DamienMcKenna, bsains, cboyden, das-peter, paranojik,
+  LittleRedHen, dsnopek, davewilly, stefan.r, jfalkner, lstirk, hass, Tessa
+  Bakker, unknownguy, joseph.olstad, kwfinken, catch, Deciphered, gdaw, Paul
+  Broon, sri@re: Delete redundant revisions.
+#2919947 by DamienMcKenna: Tidy up the tests.
+#2865390 by DamienMcKenna: Add dependencies for Workbench Moderation.
+By DamienMcKenna: Added a CHANGELOG.txt file.
+#2865390 by DamienMcKenna: Run all of the Workbench Moderation tests along with
+  Drafty's tests.
+By DamienMcKenna; Corrected the CHANGELOG.txt.
+
+
+Drafty 7.x-1.0-beta4, 2017-02-17
+--------------------------------
+#2468907 by Tessa Bakker, MiroslavBanov: Refactor tests to remove dependencies.
+
+
+Drafty 7.x-1.0-beta3, 2016-05-18
+--------------------------------
+#2429427 by catch, damiankloip: Drafty relies on is_new, but some core entities
+  (file) do not have is_new.
+#2534318 by catch: Add versioned test dependency for title.
+#2460395 by David_Rothstein: Drafty Enforce doesn't force new revisions of files
+  to be created.
+By Fabianx: Update .travis.yml.
+#2535716 by catch: drafty tests fail with entity_translation-7.x-1.0-beta4
+#2430181 by catch: drafy_enforce implements drafty_field_attach_submit()
+By Fabianx: Merge pull request #1 from LionsAd/use-drupal-ti
+By Fabianx: Allow failures on PHP 7.
+By Fabianx: Test beta3.
+By Fabianx: Try dev version.
+By Fabianx: Add drafty testing.
+#2399737 by David_Rothstein: Incorrect hook documentation for
+  hook_field_attach_load() implementation
+
+
+Drafty 7.x-1.0-beta2, 2015-01-29
+--------------------------------
+#2416427 by catch: drafty_1992010_update() is broken.
+
+
+Drafty 7.x-1.0-beta1, 2014-12-16
+--------------------------------
+By catch: Better workaround for title module revision publishing issue.
+By catch: Fix a copy/paste error in the test.
+By catch: Add tests and fixes for title module + entity translation.
+
+
+Drafty 7.x-1.0-alpha4, 2014-12-08
+---------------------------------
+Add helper function isDraftRevision.
+
+
+Drafty 7.x-1.0-alpha3, 2014-12-03
+---------------------------------
+Add drafty_1992010 module and associated test coverage.
+
+
+Drafty 7.x-1.0-alpha2, 2014-12-02
+---------------------------------
+Remove scope methods and usage, no-op now that there's recursion protection.
+Add stub entity translation test.
+Move draft enforcement to hook_field_attach_submit() so that programmatic entity saves don't result in a new draft.
+
+
+Drafty 7.x-1.0-alpha1, 2014-11-28
+---------------------------------
+First release.

@@ -83,8 +83,12 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface
         $dateTimeFormat = isset($context[self::FORMAT_KEY]) ? $context[self::FORMAT_KEY] : null;
         $timezone = $this->getTimezone($context);
 
+        if ('' === $data || null === $data) {
+            throw new NotNormalizableValueException('The data is either an empty string or null, you should pass a string that can be parsed with the passed format or a valid DateTime string.');
+        }
+
         if (null !== $dateTimeFormat) {
-            if (null === $timezone && PHP_VERSION_ID < 70000) {
+            if (null === $timezone && \PHP_VERSION_ID < 70000) {
                 // https://bugs.php.net/bug.php?id=68669
                 $object = \DateTime::class === $class ? \DateTime::createFromFormat($dateTimeFormat, $data) : \DateTimeImmutable::createFromFormat($dateTimeFormat, $data);
             } else {

@@ -1,5 +1,5 @@
 name = Drafty http://drupal.org/node/1992010
-description = Works around http://drupal.org/node/1992010
+description = Works around a core bug related to field translations via Entity Translation, see http://drupal.org/node/1992010 for full details.
 core = 7.x
 
 dependencies[] = drafty
@@ -7,14 +7,13 @@ dependencies[] = entity_translation
 
 weight = -50
 
-test_dependencies[] = field_collection
 test_dependencies[] = entity_translation
 
-files[] = drafty_1992010.test
+files[] = Drafty1992010Test.test
 
-; Information added by Drupal.org packaging script on 2017-02-17
-version = "7.x-1.0-beta4"
+; Information added by Drupal.org packaging script on 2017-11-09
+version = "7.x-1.0-rc1"
 core = "7.x"
 project = "drafty"
-datestamp = "1487368194"
+datestamp = "1510238214"
 

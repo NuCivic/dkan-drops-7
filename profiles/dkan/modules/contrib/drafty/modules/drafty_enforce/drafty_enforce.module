@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Hook implementations and API functions for drafty module.
+ * Hook implementations and API functions for Drafty Enforce module.
  */
 
 /**

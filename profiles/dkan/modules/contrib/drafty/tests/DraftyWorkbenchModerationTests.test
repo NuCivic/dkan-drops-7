@@ -1,0 +1,185 @@
+<?php
+
+/**
+ * @file
+ * Run all of the Workbench Moderation tests.
+ */
+
+/**
+ * Duplicate all of the Workbench Moderation tests so that we can automatically
+ * do regression testing with that module for any changes proposed to Drafty.
+ * Most sites only install Drafty because of Workbench Moderation, so it is in
+ * everyone's best interests to avoid regressions.
+ */
+
+/**
+ * Duplicate the WorkbenchModerationExternalNodeUpdateTestCase tests.
+ */
+class DraftyWMExternalNodeUpdateTestCase extends WorkbenchModerationExternalNodeUpdateTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationFilesTestCase tests.
+ */
+class DraftyWMFilesTestCase extends WorkbenchModerationFilesTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationNodeAccessTestCase tests.
+ */
+class DraftyWMNodeAccessTestCase extends WorkbenchModerationNodeAccessTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationViewUnpublishedTestCase tests.
+ */
+class DraftyWMViewUnpublishedTestCase extends WorkbenchModerationViewUnpublishedTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationModerateTabTestCase tests.
+ */
+class DraftyWMModerateTabTestCase extends WorkbenchModerationModerateTabTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationDraftTabTestCase tests.
+ */
+class DraftyWMDraftTabTestCase extends WorkbenchModerationDraftTabTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationPublishFromNodeFormTestCase tests.
+ */
+class DraftyWMPublishFromNodeFormTestCase extends WorkbenchModerationPublishFromNodeFormTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationUnpublishTestCase tests.
+ */
+class DraftyWMUnpublishTestCase extends WorkbenchModerationUnpublishTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchRedirectAfterTitleChangeTestCase tests.
+ */
+class DraftyWMRedirectAfterTitleChangeTestCase extends WorkbenchRedirectAfterTitleChangeTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    $info = parent::getInfo();
+    $info['name'] = 'WM: ' . $info['name'];
+    $info['group'] = 'Drafty';
+    return $info;
+  }
+
+}
+
+/**
+ * Duplicate the WorkbenchModerationTransitionTestCase tests.
+ */
+// @todo Fix this, it fails on drupalci.
+// @see https://www.drupal.org/pift-ci-job/805329
+// class DraftyWMTransitionTestCase extends WorkbenchModerationTransitionTestCase {
+//
+//   /**
+//    * {@inheritdoc}
+//    */
+//   public static function getInfo() {
+//     $info = parent::getInfo();
+//     $info['name'] = 'WM: ' . $info['name'];
+//     $info['group'] = 'Drafty';
+//     return $info;
+//   }
+//
+// }

@@ -72,12 +72,11 @@ function workbench_moderation_states_features_enable_feature($module) {
  * Store each exported transition in the database.
  */
 function workbench_moderation_states_features_rebuild($module) {
-  if ($defaults = features_get_default('workbench_moderation_states', $module)) {
-    foreach ($defaults as $state) {
-      workbench_moderation_state_save((object) $state);
-    }
-    drupal_static_reset('workbench_moderation_states');
+  $defaults = features_get_default('workbench_moderation_states', $module);
+  foreach ($defaults as $state) {
+    workbench_moderation_state_save((object) $state);
   }
+  drupal_static_reset('workbench_moderation_states');
 }
 
 /**
@@ -158,10 +157,9 @@ function workbench_moderation_transitions_features_enable_feature($module) {
  * Store each exported transition in the database.
  */
 function workbench_moderation_transitions_features_rebuild($module) {
-  if ($defaults = features_get_default('workbench_moderation_transitions', $module)) {
-    foreach ($defaults as $machine_name => $transition) {
-      workbench_moderation_transition_save((object) $transition);
-    }
-    drupal_static_reset('workbench_moderation_transitions');
+  $defaults = features_get_default('workbench_moderation_transitions', $module);
+  foreach ($defaults as $machine_name => $transition) {
+    workbench_moderation_transition_save((object) $transition);
   }
+  drupal_static_reset('workbench_moderation_transitions');
 }

@@ -1,23 +1,40 @@
 name = Drafty
-description = Facilitates handling of draft revisions.
+description = Facilitates handling of draft revisions, aka forward revisions.
 core = 7.x
 
 dependencies[] = entity
 
-test_dependencies[] = field_collection
+configure = admin/config/system/drafty
+
+
+; Tests.
+
+; Helper for simplifying other tests.
+files[] = tests/DraftyWebTestCase.test
+
+; Test the basic functionality.
+files[] = tests/DraftyTestCase.test
+
+; Integration with the Entity Translation module.
 test_dependencies[] = entity_translation
-test_dependencies[] = title (>7.x-1.0-alpha7)
-test_dependencies[] = taxonomy
+files[] = tests/DraftyEntityTranslationTest.test
 
-; Tests
-files[] = tests/drafty.test
-files[] = tests/drafty.entity_translation.test
-files[] = tests/drafty.field_collection.test
-files[] = tests/drafty.title.test
+; Integration with the Field Collection module.
+test_dependencies[] = field_collection
+files[] = tests/DraftyFieldCollectionTest.test
 
-; Information added by Drupal.org packaging script on 2017-02-17
-version = "7.x-1.0-beta4"
+; Integration with the Title module.
+test_dependencies[] = title
+files[] = tests/DraftyTitleTestCase.test
+
+; Integration with the Workbench Moderation module suite.
+test_dependencies[] = workbench
+test_dependencies[] = workbench_moderation
+files[] = tests/DraftyWorkbenchModerationTests.test
+
+; Information added by Drupal.org packaging script on 2017-11-09
+version = "7.x-1.0-rc1"
 core = "7.x"
 project = "drafty"
-datestamp = "1487368194"
+datestamp = "1510238214"
 

@@ -3,7 +3,7 @@ api: '2'
 core: 7.x
 includes:
 - https://raw.githubusercontent.com/NuCivic/visualization_entity/7.x-2.0/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-2.0/open_data_schema_map.make
+- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-2.1/open_data_schema_map.make
 - https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
 - https://raw.githubusercontent.com/NuCivic/recline/7.x-2.0/recline.make
 projects:
@@ -68,6 +68,8 @@ projects:
     version: '3.3'
   double_field:
     version: '2.5'
+  drafty:
+    version: 1.0-rc1
   draggableviews:
     version: '2.1'
   entity:
@@ -84,6 +86,10 @@ projects:
     version: '1.5'
   entityreference_filter:
     version: '1.7'
+  environment:
+    version: '1.0'
+  environment_indicator:
+    version: '2.9'
   facetapi:
     version: '1.5'
     patch:
@@ -237,7 +243,7 @@ projects:
       url: https://git.drupal.org/project/multistep.git
       revision: 3b0d40a
   og:
-    version: '2.9'
+    version: '2.10'
     patch:
       1090438: https://drupal.org/files/issues/og-add_users_and_entities_with_drush-1090438-12.patch
       2549071: https://www.drupal.org/files/issues/og_actions-bug-vbo-delete.patch
@@ -250,7 +256,7 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/open_data_schema_map.git
-      tag: 7.x-2.0
+      tag: 7.x-2.1
   panelizer:
     version: '3.4'
   panels:
@@ -273,6 +279,8 @@ projects:
   radix:
     type: theme
     version: '3.6'
+    patch:
+      1: patches/radix-bootstrap.patch
   radix_layouts:
     version: '3.4'
   recline:
@@ -357,11 +365,7 @@ projects:
     version: '3.12'
   workbench_moderation:
     version: '3.0'
-    patch:
-      2360973: https://www.drupal.org/files/issues/workbench_moderation-install-warnings-2360973-3.patch
-      1512442: https://www.drupal.org/files/issues/1512442-20-workbench_moderation-fix_access_check.patch
-  drafty:
-    version: 1.0-beta4
+    revision: 3fcb1a66e87a539f06664502141abc8f37712929
 libraries:
   chosen:
     download:

@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Installation, uninstall and update hooks for the Drafty module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function drafty_uninstall() {
+  variable_del('drafty_delete_old_revisions');
+  variable_del('drafty_delete_with_cron');
+}

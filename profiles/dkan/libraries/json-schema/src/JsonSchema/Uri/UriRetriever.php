@@ -9,25 +9,48 @@
 
 namespace JsonSchema\Uri;
 
-use JsonSchema\Uri\Retrievers\FileGetContents;
-use JsonSchema\Uri\Retrievers\UriRetrieverInterface;
-use JsonSchema\Validator;
 use JsonSchema\Exception\InvalidSchemaMediaTypeException;
 use JsonSchema\Exception\JsonDecodingException;
+use JsonSchema\Exception\ResourceNotFoundException;
+use JsonSchema\Uri\Retrievers\FileGetContents;
+use JsonSchema\Uri\Retrievers\UriRetrieverInterface;
+use JsonSchema\UriRetrieverInterface as BaseUriRetrieverInterface;
+use JsonSchema\Validator;
 
 /**
  * Retrieves JSON Schema URIs
  *
  * @author Tyler Akins <fidian@rumkin.com>
  */
-class UriRetriever
+class UriRetriever implements BaseUriRetrieverInterface
 {
+    /**
+     * @var array Map of URL translations
+     */
+    protected $translationMap = array(
+        // use local copies of the spec schemas
+        '|^https?://json-schema.org/draft-(0[34])/schema#?|' => 'package://dist/schema/json-schema-draft-$1.json'
+    );
+
+    /**
+     * @var null|UriRetrieverInterface
+     */
     protected $uriRetriever = null;
+
+    /**
+     * @var array|object[]
+     *
+     * @see loadSchema
+     */
+    private $schemaCache = array();
 
     /**
      * Guarantee the correct media type was encountered
      *
-     * @throws InvalidSchemaMediaTypeException
+     * @param UriRetrieverInterface $uriRetriever
+     * @param string                $uri
+     *
+     * @return bool|void
      */
     public function confirmMediaType($uriRetriever, $uri)
     {
@@ -38,7 +61,7 @@ class UriRetriever
             return;
         }
 
-        if (Validator::SCHEMA_MEDIA_TYPE === $contentType) {
+        if (in_array($contentType, array(Validator::SCHEMA_MEDIA_TYPE, 'application/json'))) {
             return;
         }
 
@@ -61,7 +84,7 @@ class UriRetriever
     public function getUriRetriever()
     {
         if (is_null($this->uriRetriever)) {
-            $this->setUriRetriever(new FileGetContents);
+            $this->setUriRetriever(new FileGetContents());
         }
 
         return $this->uriRetriever;
@@ -75,36 +98,37 @@ class UriRetriever
      * the first object then the 'to' and 'object' properties.
      *
      * @param object $jsonSchema JSON Schema contents
-     * @param string $uri JSON Schema URI
-     * @return object JSON Schema after walking down the fragment pieces
+     * @param string $uri        JSON Schema URI
      *
-     * @throws \JsonSchema\Exception\ResourceNotFoundException
+     * @throws ResourceNotFoundException
+     *
+     * @return object JSON Schema after walking down the fragment pieces
      */
     public function resolvePointer($jsonSchema, $uri)
     {
         $resolver = new UriResolver();
         $parsed = $resolver->parse($uri);
-        if (empty($parsed['fragment']))  {
+        if (empty($parsed['fragment'])) {
             return $jsonSchema;
         }
 
         $path = explode('/', $parsed['fragment']);
         while ($path) {
             $pathElement = array_shift($path);
-            if (! empty($pathElement)) {
+            if (!empty($pathElement)) {
                 $pathElement = str_replace('~1', '/', $pathElement);
                 $pathElement = str_replace('~0', '~', $pathElement);
-                if (! empty($jsonSchema->$pathElement)) {
+                if (!empty($jsonSchema->$pathElement)) {
                     $jsonSchema = $jsonSchema->$pathElement;
                 } else {
-                    throw new \JsonSchema\Exception\ResourceNotFoundException(
+                    throw new ResourceNotFoundException(
                         'Fragment "' . $parsed['fragment'] . '" not found'
                         . ' in ' . $uri
                     );
                 }
 
-                if (! is_object($jsonSchema)) {
-                    throw new \JsonSchema\Exception\ResourceNotFoundException(
+                if (!is_object($jsonSchema)) {
+                    throw new ResourceNotFoundException(
                         'Fragment part "' . $pathElement . '" is no object '
                         . ' in ' . $uri
                     );
@@ -116,13 +140,9 @@ class UriRetriever
     }
 
     /**
-     * Retrieve a URI
-     *
-     * @param string $uri JSON Schema URI
-     * @return object JSON Schema contents
-     * @throws InvalidSchemaMediaType for invalid media tyeps
+     * {@inheritdoc}
      */
-    public function retrieve($uri, $baseUri = null)
+    public function retrieve($uri, $baseUri = null, $translate = true)
     {
         $resolver = new UriResolver();
         $resolvedUri = $fetchUri = $resolver->resolve($uri, $baseUri);
@@ -134,11 +154,19 @@ class UriRetriever
             $fetchUri = $resolver->generate($arParts);
         }
 
+        // apply URI translations
+        if ($translate) {
+            $fetchUri = $this->translate($fetchUri);
+        }
+
         $jsonSchema = $this->loadSchema($fetchUri);
 
         // Use the JSON pointer if specified
         $jsonSchema = $this->resolvePointer($jsonSchema, $resolvedUri);
-        $jsonSchema->id = $resolvedUri;
+
+        if ($jsonSchema instanceof \stdClass) {
+            $jsonSchema->id = $resolvedUri;
+        }
 
         return $jsonSchema;
     }
@@ -167,6 +195,7 @@ class UriRetriever
         }
 
         $this->schemaCache[$fetchUri] = $jsonSchema;
+
         return $jsonSchema;
     }
 
@@ -174,6 +203,7 @@ class UriRetriever
      * Set the URI Retriever
      *
      * @param UriRetrieverInterface $uriRetriever
+     *
      * @return $this for chaining
      */
     public function setUriRetriever(UriRetrieverInterface $uriRetriever)
@@ -187,6 +217,7 @@ class UriRetriever
      * Parses a URI into five main components
      *
      * @param string $uri
+     *
      * @return array
      */
     public function parse($uri)
@@ -217,6 +248,7 @@ class UriRetriever
      * Builds a URI based on n array with the main components
      *
      * @param array $components
+     *
      * @return string
      */
     public function generate(array $components)
@@ -239,8 +271,9 @@ class UriRetriever
     /**
      * Resolves a URI
      *
-     * @param string $uri Absolute or relative
-     * @param type $baseUri Optional base URI
+     * @param string $uri     Absolute or relative
+     * @param string $baseUri Optional base URI
+     *
      * @return string
      */
     public function resolve($uri, $baseUri = null)
@@ -255,66 +288,43 @@ class UriRetriever
         $baseComponents = $this->parse($baseUri);
         $basePath = $baseComponents['path'];
 
-        $baseComponents['path'] = self::combineRelativePathWithBasePath($path, $basePath);
+        $baseComponents['path'] = UriResolver::combineRelativePathWithBasePath($path, $basePath);
 
         return $this->generate($baseComponents);
     }
 
     /**
-     * Tries to glue a relative path onto an absolute one
-     *
-     * @param string $relativePath
-     * @param string $basePath
-     * @return string Merged path
-     * @throws UriResolverException
-     */
-    private static function combineRelativePathWithBasePath($relativePath, $basePath)
-    {
-        $relativePath = self::normalizePath($relativePath);
-        $basePathSegments = self::getPathSegments($basePath);
-
-        preg_match('|^/?(\.\./(?:\./)*)*|', $relativePath, $match);
-        $numLevelUp = strlen($match[0]) /3 + 1;
-        if ($numLevelUp >= count($basePathSegments)) {
-            throw new \JsonSchema\Exception\UriResolverException(sprintf("Unable to resolve URI '%s' from base '%s'", $relativePath, $basePath));
-        }
-
-        $basePathSegments = array_slice($basePathSegments, 0, -$numLevelUp);
-        $path = preg_replace('|^/?(\.\./(\./)*)*|', '', $relativePath);
-
-        return implode('/', $basePathSegments) . '/' . $path;
-    }
-
-    /**
-     * Normalizes a URI path component by removing dot-slash and double slashes
-     *
-     * @param string $path
-     * @return string
-     */
-    private static function normalizePath($path)
-    {
-        $path = preg_replace('|((?<!\.)\./)*|', '', $path);
-        $path = preg_replace('|//|', '/', $path);
-
-        return $path;
-    }
-
-    /**
-     * @return array
-     */
-    private static function getPathSegments($path)
-    {
-        return explode('/', $path);
-    }
-
-    /**
      * @param string $uri
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValid($uri)
     {
         $components = $this->parse($uri);
 
         return !empty($components);
+    }
+
+    /**
+     * Set a URL translation rule
+     */
+    public function setTranslation($from, $to)
+    {
+        $this->translationMap[$from] = $to;
+    }
+
+    /**
+     * Apply URI translation rules
+     */
+    public function translate($uri)
+    {
+        foreach ($this->translationMap as $from => $to) {
+            $uri = preg_replace($from, $to, $uri);
+        }
+
+        // translate references to local files within the json-schema package
+        $uri = preg_replace('|^package://|', sprintf('file://%s/', realpath(__DIR__ . '/../../..')), $uri);
+
+        return $uri;
     }
 }

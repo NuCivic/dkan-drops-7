@@ -1,7 +1,5 @@
 <?php
 
-use JsonSchema\Uri\UriRetriever;
-use JsonSchema\RefResolver;
 use JsonSchema\Validator;
 
 /**
@@ -110,13 +108,8 @@ abstract class OdsmValidator implements OdsmValidatorInterface {
   private function validateDataset($dataset) {
     $id = $this->getDatasetId($dataset);
 
-    $retriever = new UriRetriever();
-
     $schema_info = $this->getSchemaInfo();
 
-    RefResolver::$maxDepth = 10;
-    $ref_resolver = new RefResolver($retriever);
-    $ref_resolver->resolve($schema_info->schema, 'file://' . $schema_info->schema_folder . '/');
     $validator = new Validator();
     $validator->check($dataset, $schema_info->schema);
 

@@ -1,8 +1,38 @@
 <?php
+
 /**
  * @file
- * Hook implementations and API functions for drafty module.
+ * Hook implementations and API functions for the Drafty module.
  */
+
+/**
+ * Implements hook_menu().
+ */
+function drafty_menu() {
+  $items = array();
+
+  $items['admin/config/system/drafty'] = array(
+    'title' => 'Drafty',
+    'description' => 'Manage Drafty settings.',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('drafty_form'),
+    'access arguments' => array('administer drafty'),
+    'file' => 'includes/drafty.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function drafty_permission() {
+  return array(
+    'administer drafty' => array(
+      'title' => t('Administer Drafty'),
+    ),
+  );
+}
 
 /**
  * Implements hook_module_implements_alter().
@@ -78,6 +108,60 @@ function drafty_field_attach_load($entity_type, $entities, $age, $options) {
   foreach ($entities as $entity) {
     $entity->_drafty_revision_requested = $age;
   }
+}
+
+/**
+ * Callback function to delete a single temporary-draft revision.
+ *
+ * Could be called either from a batch job or from a cron-queue.
+ */
+function drafty_queue_delete_revision($drafty_queue_item, &$context = NULL) {
+  try {
+    // Trigger hook_drafty_predelete_revision(). Allow other modules to
+    // preserve information on the old revision before it's deleted.
+    module_invoke_all('drafty_predelete_revision', $drafty_queue_item['entity_type'], $drafty_queue_item['entity_id'], $drafty_queue_item['revision_id'], $drafty_queue_item['replaced_by']);
+
+    // Delete the old revision.
+    entity_revision_delete($drafty_queue_item['entity_type'], $drafty_queue_item['revision_id']);
+
+    // Document the successful batch operation for the batch-finished function
+    // to use.
+    if (!empty($context) && isset($context['results'])){
+      $context['results'][] = $drafty_queue_item;
+    }
+  }
+  catch (Exception $ex){
+    // Log the problem.
+    $message = 'An error occurred while deleting temporary revision: @args. Exception details: @error';
+    $args = array(
+      '@args' => print_r($drafty_queue_item, TRUE),
+      '@error' => print_r($ex, TRUE),
+    );
+    watchdog('drafty', $message, $args, WATCHDOG_ERROR);
+    throw $ex;  // Batch API will pass $success = FALSE.
+  }
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function drafty_cron_queue_info() {
+  $queues['drafty_revision_delete'] = array(
+    'worker callback' => 'drafty_queue_delete_revision',
+    'time' => 60,
+  );
+  return $queues;
+}
+
+/**
+ * Batch completion callback for when draft-deletes happen in a batch job.
+ * $results contains info about successfully deleted revisions, and
+ * exception objects for revision-delete options that caused problems.
+ * $operations contains the operations that remained unprocessed.
+ */
+function drafty_delete_batch_finished($success, $results, $operations) {
+  // TODO: Display a message about temporary-revision-cleanup here?
+  // Note that logging of failed deletes is handled by the operation callback.
 }
 
 /**
@@ -241,20 +325,51 @@ class Drafty {
    * Publish revisions previously set with setRevisionToBePublished().
    */
   public function restorePublishedRevisions() {
+    $delete_old_revisions = variable_get('drafty_delete_old_revisions', FALSE);
+    $delete_with_cron = variable_get('drafty_delete_with_cron', TRUE);
+    $queue = NULL;
+    $operations = array();
     foreach ($this->revisionsToPublish as $type => $value) {
       foreach ($value as $id => $vid) {
         unset($this->revisionsToPublish[$type][$id]);
-        $this->publishRevision($type, $id, $vid);
+        $published_revision = $this->publishRevision($type, $id, $vid);
         // Now that the revision is deleted, there are two identical copies of
         // the revision in the system. The original 'draft' revision and the
-        // newly saved published revision. Delete the draft revision now since
-        // it's not needed.
-        // @todo: make this configurable?
+        // newly saved published revision.
+        if ($delete_old_revisions) {
+          list (, $replaced_by) = entity_extract_ids($type, $published_revision);
+          // Deletion must be done on a different request thread, or any other
+          // hooks called for the revision-to-be-deleted will fail.
+          $drafty_queue_item = array(
+            'entity_type' => $type,
+            'entity_id' => $id,
+            'revision_id' => $vid,
+            'replaced_by' => $replaced_by,
+          );
+          if ($delete_with_cron) {
+            if (empty($queue)) {
+              $queue = DrupalQueue::get('drafty_revision_delete');
+            }
+            $queue->createItem($drafty_queue_item);
+          }
+          else {
+            $operations[] = array(
+              'drafty_queue_delete_revision',
+              array($drafty_queue_item),
+            );
+          }
+        }
         // @todo: when restoring a published revision, should the revision
         // timestamp be set to the old value?
-        // @todo: move this to a queue since the deletion doesn't strictly have
-        // to happen inline.
       }
     }
+    if (!empty($operations)) {
+      $batch = array(
+        'operations' => $operations,
+        'finished' => 'drafty_delete_batch_finished',
+      );
+      batch_set($batch);
+    }
   }
+
 }

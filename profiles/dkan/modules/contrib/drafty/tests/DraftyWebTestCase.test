@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Defines a base class for testing Drafty revision support.
+ */
+class DraftyWebTestCase extends NodeWebTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  function setUp(array $modules = array()) {
+    $modules[] = 'drafty';
+    parent::setUp($modules);
+  }
+
+  /**
+   * Make it easy for drafty_enforce to subclass.
+   *
+   * @param $entity
+   *   An entity object.
+   */
+  protected function setRevision($entity) {
+    $entity->revision = TRUE;
+  }
+
+}

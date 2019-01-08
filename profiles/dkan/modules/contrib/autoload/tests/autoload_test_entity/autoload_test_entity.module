@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Autoload Entity Test.
+ */
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function autoload_test_entity_entity_info() {
+  $info = array();
+
+  $info['autoload_test_entity'] = array(
+    'label' => t('Autoload Test Entity'),
+    'base table' => 'autoload_test_entity',
+    'controller class' => 'EntityAPIController',
+    'entity keys' => array('id' => 'id'),
+  );
+
+  return $info;
+}

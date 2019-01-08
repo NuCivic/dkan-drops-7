@@ -1,0 +1,12 @@
+<?php
+
+namespace Drupal\autoload_test_extensions;
+
+/**
+ * Class PSR4.
+ *
+ * @package Drupal\autoload_test_extensions
+ */
+class PSR4 {
+
+}

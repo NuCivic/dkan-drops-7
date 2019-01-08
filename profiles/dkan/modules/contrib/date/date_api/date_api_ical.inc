@@ -535,7 +535,7 @@ function date_ical_parse_duration(&$subgroup, $field = 'DURATION') {
     $timezone = 'UTC';
   }
   $date = new DateObject($start_date, $timezone);
-  $date2 = clone($date);
+  $date2 = clone $date;
   foreach ($items as $item => $count) {
     if ($count > 0) {
       date_modify($date2, '+' . $count . ' ' . $item);

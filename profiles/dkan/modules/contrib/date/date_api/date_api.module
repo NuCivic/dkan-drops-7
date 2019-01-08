@@ -998,8 +998,8 @@ class DateObject extends DateTime {
   public function difference($date2_in, $measure = 'seconds', $absolute = TRUE) {
     // Create cloned objects or original dates will be impacted by the
     // date_modify() operations done in this code.
-    $date1 = clone($this);
-    $date2 = clone($date2_in);
+    $date1 = clone $this;
+    $date2 = clone $date2_in;
     if (is_object($date1) && is_object($date2)) {
       $diff = date_format($date2, 'U') - date_format($date1, 'U');
       if ($diff == 0) {
@@ -2060,7 +2060,7 @@ function date_week_range($week, $year) {
   date_modify($min_date, '-' . strval((7 + $day_wday - $first_day) % 7) . ' days');
 
   // Move forwards to the last day of the week.
-  $max_date = clone($min_date);
+  $max_date = clone $min_date;
   date_modify($max_date, '+6 days');
 
   if (date_format($min_date, 'Y') != $year) {
@@ -2097,7 +2097,7 @@ function date_iso_week_range($week, $year) {
   }
 
   // Move forwards to the last day of the week.
-  $max_date = clone($min_date);
+  $max_date = clone $min_date;
   date_modify($max_date, '+6 days');
   return array($min_date, $max_date);
 }
@@ -2148,7 +2148,7 @@ function date_week($date) {
 
   // Remove the leap week if it's present.
   if ($date_year > intval($parts[0])) {
-    $last_date = clone($date);
+    $last_date = clone $date;
     date_modify($last_date, '-7 days');
     $week = date_format($last_date, 'W') + 1;
   }

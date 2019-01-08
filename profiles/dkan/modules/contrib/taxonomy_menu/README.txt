@@ -187,7 +187,7 @@ MENU PATH TYPE: HIERARCHY
  when clicking on the menu items. It produces nice breadcrumbs and page titles (remember to set 
  the titles for the arguments in views as described) - and it always displays descendants.
  The only module that supports the saving of a whole term lineage when selecting a deep level 
- item seems to be HIERACHICAL SELECT. See chapter INTEGRATION WITH OTHER MODULES
+ item seems to be HIERARCHICAL SELECT. See chapter INTEGRATION WITH OTHER MODULES
  
 INTEGRATION WITH OTHER MODULES
 ==============================
@@ -205,7 +205,7 @@ CONTENT TAXONOMY
 It is a nice and very helpful module to link taxonomy terms to nodes. 
 Taxonomy Menu does not interface with the content taxonomy tables, so be sure to enable the option 
 "Save values additionally to the core taxonomy system (into the 'term_node' table)" 
-otherwise the related taxonomy terms will not be accessable for Taxonomy Menu.
+otherwise the related taxonomy terms will not be accessible for Taxonomy Menu.
 (http://drupal.org/project/content_taxonomy)
  
 HIERARCHICAL SELECT with submodule HS_TAXONOMY
@@ -241,7 +241,7 @@ ADDITIONAL NOTES
 ================
  * Taxonomy Menu does not handle the menu call backs. It only creates the links to the menus.
    This means that everythign that is displayed on the page (including title, content, breadcrumbs, etc)
-   are not controled by Taxonony Menu.
+   are not controlled by Taxonony Menu.
  * The router item must be created before Taxonomy Menu creates the links.  Failure to so so 
    will cause the menu items to not be created.
  * Router items can be created by either a view or another modules hook_menu.

@@ -1,18 +1,14 @@
-core          = "7.x"
+name = Taxonomy menu
+description = Adds links to taxonomy terms into a menu.
+core = 7.x
+
 dependencies[] = taxonomy
 dependencies[] = menu
-description   = "Adds links to taxonomy terms to a menu."
-name          = "Taxonomy menu"
-package       = Taxonomy menu
-files[] = taxonomy_menu.batch.inc
-files[] = taxonomy_menu.database.inc
-files[] = taxonomy_menu.module
-files[] = taxonomy_menu.test
-files[] = taxonomy_menu.install
 
-; Information added by Drupal.org packaging script on 2014-04-01
-version = "7.x-1.5"
+files[] = taxonomy_menu.test
+
+; Information added by Drupal.org packaging script on 2018-12-22
+version = "7.x-1.6"
 core = "7.x"
 project = "taxonomy_menu"
-datestamp = "1396359247"
-
+datestamp = "1545492784"

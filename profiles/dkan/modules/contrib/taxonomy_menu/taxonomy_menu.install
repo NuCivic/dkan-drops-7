@@ -9,34 +9,57 @@
  * Implements hook_uninstall().
  */
 function taxonomy_menu_uninstall() {
-
-  //remove menu items
+  // Remove menu items.
   db_delete('menu_links')->condition('module', 'taxonomy_menu', '=')->execute();
 
-  //rebuild the menus
+  // Rebuild the menus.
   variable_set('menu_rebuild_needed', TRUE);
 
-  // Delete variables
-  $query = db_select('variable', 'v')->fields('v')->execute();
+  // Gets array of more specific variables set by Taxonomy Menu module.
+  // This prevents known issue https://www.drupal.org/node/1966684
+  // where uninstalling Taxonomy Menu will delete variables related
+  // to the Taxonomy Menu Block module.
+  $variable_suffixes = array(
+    'vocab_menu',
+    'vocab_parent',
+    'voc_item',
+    'display_num',
+    'hide_empty_terms',
+    'expanded',
+    'rebuild',
+    'path',
+    'menu_end_all',
+    'display_descendants',
+    'voc_name',
+    'sync',
+    'end_all',
+    'flat',
+    'max_depth',
+    'term_item_description',
+  );
+
+  // Delete variables.
+  $query = db_select('variable', 'v')
+           ->fields('v', array('name', 'value'))
+           ->condition('name', '%' . db_like('taxonomy_menu') . '%', 'LIKE')
+           ->execute();
   $variables = $query->fetchAll();
   foreach ($variables as $variable) {
-    if (strpos($variable->name, 'taxonomy_menu') !== FALSE) {
-      variable_del($variable->name);
+    // Add check to make sure we only delete variables for Taxonomy Menu,
+    // not variables for Taxonomy Menu Block.
+    foreach ($variable_suffixes as $suffix) {
+      $taxonomy_menu_variable_name = 'taxonomy_menu_' . $suffix;
+      if (strpos($variable->name, $taxonomy_menu_variable_name) !== FALSE) {
+        variable_del($variable->name);
+      }
     }
   }
-}
-
-/**
- * Implements hook_install().
- */
-function taxonomy_menu_install() {
 }
 
 /**
  * Implements hook_schema().
  */
 function taxonomy_menu_schema() {
-
   $schema['taxonomy_menu'] = array(
     'description' => 'Links a taxonomy term to a menu item.',
     'fields' => array(

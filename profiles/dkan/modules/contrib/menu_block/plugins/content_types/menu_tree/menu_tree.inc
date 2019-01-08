@@ -33,8 +33,8 @@ function menu_block_menu_tree_content_type_content_types() {
     'defaults' => menu_block_get_config(),
 
     // JavaScript and CSS for the config form.
-    'js' => array(drupal_get_path('module', 'menu_block') . '/menu-block.js'),
-    'css' => array(drupal_get_path('module', 'menu_block') . '/menu-block-admin.css'),
+    'js' => array(drupal_get_path('module', 'menu_block') . '/js/menu-block.js'),
+    'css' => array(drupal_get_path('module', 'menu_block') . '/css/menu-block.admin.css'),
   );
 
   $menus = menu_block_get_all_menus();

@@ -86,11 +86,11 @@ stated otherwise.
 
 This format is intended to provide table data as a service:
 
-- directly by enabling the submodule TableField Themeless. It provides
-  themeless output of a node's tablefield on the path 'node/%/themeless' (HTML,
-  JSON or XML).
+- directly by enabling the Themeless module
+  (https://www.drupal.org/project/themeless). It provides themeless output of a
+  node's tablefield on the path 'node/%/themeless' (HTML, JSON or XML).
 - using a View (e.g. with https://www.drupal.org/project/views_datasource) that
-  outputs JSON or XML. The Views field settings includes 'Formatter'.
+  outputs JSON or XML. The Views field settings includes 'Formatter'
 - using a custom service (e.g. with https://www.drupal.org/project/services).
 
 
@@ -125,23 +125,18 @@ service.
 
 ### Themeless output ###
 
-Enabling the submodule TableField Themeless provides themeless output of a
-node's tablefield on the path 'node/%/themeless' (HTML, JSON or XML). This is
-useful to embed the table's HTML elsewhere (as an iFrame) or to provide the
-table data as a service (JSON or XML) directly without the need of Views or a
-Service.
+Themeless module https://www.drupal.org/project/themeless provides themeless
+output of a node's tablefield on the path 'node/%/themeless' (HTML, JSON or
+XML). This is useful to embed the table's HTML elsewhere (as an iFrame) or to
+provide the table data as a service (JSON or XML) directly without the need of
+Views or a Service.
 
-- Enable the submodule TableField Themeless.
+- Enable the module Themeless.
 - Go to ../admin/structure/types/manage/[your-content-type]/display.
 - Uncollapse the CUSTOM DISPLAY SETTINGS and select 'Themeless'.
 - Save.
 - Now a new display mode appears besides Default and Teaser. Go and configure.
 - Save.
-
-Install and enable https://www.drupal.org/project/subpathauto to have the
-themeless output available under the alias path like 'some/alias/themeless'
-besides 'node/%/themeless'.
-
 
 ## CREDITS ##
 

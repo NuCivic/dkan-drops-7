@@ -415,7 +415,11 @@ function panopoly_widgets_field_default_field_instances() {
   // 'fieldable_panels_pane-spotlight-field_basic_spotlight_duration'.
   $field_instances['fieldable_panels_pane-spotlight-field_basic_spotlight_duration'] = array(
     'bundle' => 'spotlight',
-    'default_value' => NULL,
+    'default_value' => array(
+      0 => array(
+        'value' => 5,
+      ),
+    ),
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -429,7 +433,7 @@ function panopoly_widgets_field_default_field_instances() {
     'entity_type' => 'fieldable_panels_pane',
     'field_name' => 'field_basic_spotlight_duration',
     'label' => 'Slide Duration',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'max' => 60,
       'min' => 1,

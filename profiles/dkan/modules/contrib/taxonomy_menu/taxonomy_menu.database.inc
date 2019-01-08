@@ -6,12 +6,15 @@
  * Database functions
  */
 
- /**
- *  helper function to insert a menu item
+/**
+ * Inserts a menu item.
  *
- * @param $mlid
- * @param $tid
- * @param $vid
+ * @param int $mlid
+ *   Menu link ID.
+ * @param int $tid
+ *   Taxonomy term ID.
+ * @param int $vid
+ *   Vocabulary ID.
  */
 function _taxonomy_menu_insert_menu_item($mlid, $tid, $vid) {
   $fields = array(
@@ -23,10 +26,14 @@ function _taxonomy_menu_insert_menu_item($mlid, $tid, $vid) {
 }
 
 /**
- * Return the corresponding menu link id.
+ * Returns the corresponding menu link id.
  *
- * @param $tid
- *   the term's id
+ * @param int $tid
+ *   Taxonomy term ID.
+ * @param int $vid
+ *   Vocabulary ID.
+ * @return int
+ *   Menu link ID for that taxonomy term.
  */
 function _taxonomy_menu_get_mlid($tid, $vid) {
   $where = array(
@@ -37,28 +44,26 @@ function _taxonomy_menu_get_mlid($tid, $vid) {
 }
 
 /**
- * Retrieve the term / menu relations for a vocab.
+ * Retrieves the term / menu relations for a vocab.
  *
  * @param $vid
- *   vocabulary's id
- * @return
- *   array(tid => mlid)
+ *   Vocabulary ID.
+ *
+ * @return array
+ *   Relations to menu link ID as an array keyed by taxonomy term ID.
+ *     array(tid => mlid)
  */
 function _taxonomy_menu_get_menu_items($vid) {
-
-  $result = db_query('SELECT tid, mlid FROM {taxonomy_menu} WHERE vid = :vid', array(':vid' => $vid));
-  $menu_items = array();
-  $menu_items = $result->fetchAllKeyed();
-  return $menu_items;
+  return db_query('SELECT tid, mlid FROM {taxonomy_menu} WHERE vid = :vid', array(':vid' => $vid))->fetchAllKeyed();
 }
 
- /**
-  * Delete all links associated with this vocab from both the taxonomy_menu
-  * table and the menu_link table.
-  *
-  * @param $vid
-  *   vocabulary's id
-  */
+/**
+ * Deletes all links associated with this vocab from both the taxonomy_menu
+ * table and the menu_link table.
+ *
+ * @param int $vid
+ *   Vocabulary ID.
+ */
 function _taxonomy_menu_delete_all($vid) {
   $menu_terms = _taxonomy_menu_get_menu_items($vid);
   if (!empty($menu_terms)) {
@@ -74,10 +79,13 @@ function _taxonomy_menu_delete_all($vid) {
 }
 
 /**
- * Get an array of the tid's related to the node
+ * Gets an array of the tid's related to the node
  *
- * @param $node
- * @return array of tids
+ * @param object $node
+ *   Node object.
+ *
+ * @return array
+ *   Array of taxonomy term IDs.
  */
 function _taxonomy_menu_get_node_terms($node) {
   // Get the taxonomy fields.
@@ -89,10 +97,8 @@ function _taxonomy_menu_get_node_terms($node) {
     if (isset($node->$field_name)) {
       $tid_field = $node->$field_name;
       // Loop through all the languages.
-
       foreach ($tid_field as $tid_field_languages) {
         // Loop through all the tids
-
         foreach ($tid_field_languages as $tid) {
           $tids[] = $tid['tid'];
         }
@@ -103,10 +109,13 @@ function _taxonomy_menu_get_node_terms($node) {
 }
 
 /**
- * Get an array of the tid's from the parent
+ * Gets the parent tids for a taxonomy term.
  *
- * @param $tid
- * @return array of tid
+ * @param int $tid
+ *   Taxonomy term ID.
+ *
+ * @return array
+ *   Array of taxonomy term IDs.
  */
 function _taxonomy_menu_get_parents($tid) {
   $output = array();
@@ -118,21 +127,28 @@ function _taxonomy_menu_get_parents($tid) {
 }
 
 /**
-  * Delete all rows from {taxomony_menu} associated with this tid
-  *
-  * @param $vid
-  * @param $tid
-  */
+ * Deletes all rows from {taxomony_menu} associated with this tid
+ *
+ * @param $vid
+ * @param $tid
+ * @param int $vid
+ *   Vocabulary ID.
+ * @param int $tid
+ *   Taxonomy term ID.
+ */
 function _taxonomy_menu_delete_item($vid, $tid) {
   $and = db_and()->condition('vid', $vid)->condition('tid', $tid);
   db_delete('taxonomy_menu')->condition($and)->execute();
 }
 
 /**
- * Get all of the tid for a given vid
+ * Gets all taxonomy terms for a given vocabulary.
  *
- * @param $vid
- * @return array of $tid
+ * @param int $vid
+ *   Vocabulary ID.
+ *
+ * @return array
+ *   Array of taxonomy term IDs.
  */
 function _taxonomy_menu_get_terms($vid) {
   $result = db_select('taxonomy_term_data', 'td')
@@ -143,11 +159,15 @@ function _taxonomy_menu_get_terms($vid) {
 }
 
 /**
- * @TODO Needs Updating since terms are related via node fields
+ * Gets the count of nodes for each term (without children).
  *
- * used to get the count without children
+ * @param int $tid
+ *   Taxonomy term ID.
  *
- * @param $tid
+ * @return int
+ *   Count of nodes that reference the term.
+ *
+ * @todo Needs updating since terms are related via fields now.
  */
 function _taxonomy_menu_term_count($tid) {
   $result = db_select('taxonomy_index', 'tn');
@@ -160,36 +180,44 @@ function _taxonomy_menu_term_count($tid) {
 }
 
 /**
- * Get tid for a given mlid
+ * Gets tid for a given mlid.
  *
- * @param $mlid
- * @return $tid
+ * @param int $mlid
+ *   Menu link ID.
+ *
+ * @return int $tid
+ *   Taxonomy term ID.
  */
 function _taxonomy_menu_get_tid($mlid) {
-  $where = array(
-    ':mlid' => $mlid,
-  );
-  return db_query('SELECT tid FROM {taxonomy_menu} WHERE mlid = :mlid', $where)->fetchField();
+  return db_query('SELECT tid FROM {taxonomy_menu} WHERE mlid = :mlid', array(':mlid' => $mlid))->fetchField();
 }
 
 /**
- * Get vid, tid for a given mlid
+ * Gets the vocabulary ID and taxonomy term ID for a given menu link ID.
  *
- * @param $mlid
- * @return array of vid, tid
+ * @param int $mlid
+ *   Menu link ID.
+ *
+ * @return array
+ *   array(vid, tid)
  */
 function _taxonomy_menu_get_item($mlid) {
   $result = db_select('taxonomy_menu', 'tm')
     ->condition('mlid', $mlid, '=')
     ->fields('tm', array('tid', 'vid'))
     ->execute();
+
   return $result->fetch();
 }
 
 /**
- * Get the vocabulary for a tid
- * @param $tid array of tids
+ * Gets the vocabulary for a taxonomy term ID.
+ *
+ * @param array $tids
+ *   Taxonomy term IDs.
+ *
  * @return $vid
+ *   Vocabulary ID.
  */
 function _taxonomy_menu_get_vid_by_tid($tids) {
   if ($tids) {
@@ -198,11 +226,6 @@ function _taxonomy_menu_get_vid_by_tid($tids) {
       ->fields('term_data', array('vid'))
       ->distinct()
       ->execute();
-    $vids = array();
     return $result->fetchAllAssoc('vid');
   }
 }
-
-/**
- * Options functions
- */

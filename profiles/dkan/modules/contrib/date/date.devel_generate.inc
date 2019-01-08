@@ -41,7 +41,7 @@ function date_devel_generate($entity, $field, $instance, $bundle) {
 
   // Modify End date by 1 hour to 3 days, shorter for repeating dates
   // longer for others.
-  $start2 = clone($start);
+  $start2 = clone $start;
   $max = !empty($field['settings']['repeat']) ? 720 : 4320;
   $max = 240;
   date_modify($start2, '+' . mt_rand(60, $max) . ' minutes');

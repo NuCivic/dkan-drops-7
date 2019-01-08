@@ -375,7 +375,7 @@ function date_field_validate($entity_type, $entity, $field, $instance, $langcode
         $process = date_process_values($field, $instance);
         $date1 = new DateObject($item['value'], $item['timezone'], date_type_format($field['type']));
         if (count($process) == 1 || (empty($item['value2']) && $item['value2'] !== 0)) {
-          $date2 = clone($date1);
+          $date2 = clone $date1;
         }
         else {
           $date2 = new DateObject($item['value2'], $item['timezone'], date_type_format($field['type']));

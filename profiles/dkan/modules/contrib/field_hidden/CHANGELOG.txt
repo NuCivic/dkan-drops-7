@@ -1,3 +1,8 @@
+field_hidden 7.x-1.x, 2018-12-22
+--------------------------------
+- create_function() deprecated (issue #3022047).
+- Release 7.x-1.8.
+
 field_hidden 7.x-1.x, 2015-01-24
 --------------------------------
 - Issue #1472050 by jacobfriis: Fixed Rules integration for numeric field types.

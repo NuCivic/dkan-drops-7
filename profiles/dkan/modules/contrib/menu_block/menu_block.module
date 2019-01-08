@@ -5,7 +5,7 @@
  */
 
 /**
- * Denotes that the tree should use the menu picked by the curent page.
+ * Denotes that the tree should use the menu picked by the current page.
  */
 define('MENU_TREE__CURRENT_PAGE_MENU', '_active');
 
@@ -241,6 +241,7 @@ function menu_block_default_config() {
     'admin_title' => '',
     'level' => 1,
     'follow' => 0,
+    'display_empty' => 0,
     'depth' => 0,
     'depth_relative' => 0,
     'expanded' => 0,
@@ -532,13 +533,18 @@ function menu_tree_build(array &$config) {
   $data['subject_array'] = $title;
   $data['subject'] = drupal_render($title);
   $data['content'] = array();
-  if (!empty($tree) && $output = menu_block_tree_output($tree, $config)) {
-    $data['content']['#content'] = $output;
-    $data['content']['#theme'] = array(
-      'menu_block_wrapper__' . str_replace('-', '_', $config['delta']),
-      'menu_block_wrapper__' . str_replace('-', '_', $config['menu_name']),
-      'menu_block_wrapper'
-    );
+  if (!empty($tree) || !empty($config['display_empty'])) {
+    if ($output = menu_block_tree_output($tree, $config)) {
+      $data['content']['#content'] = $output;
+      $data['content']['#theme'] = array(
+        'menu_block_wrapper__' . str_replace('-', '_', $config['delta']),
+        'menu_block_wrapper__' . str_replace('-', '_', $config['menu_name']),
+        'menu_block_wrapper'
+      );
+    }
+    else {
+      $data['content']['#content'] = NULL;
+    }
     $data['content']['#config'] = $config;
     $data['content']['#delta'] = $config['delta'];
   }

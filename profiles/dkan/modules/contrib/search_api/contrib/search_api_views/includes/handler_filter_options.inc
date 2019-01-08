@@ -121,6 +121,7 @@ class SearchApiViewsHandlerFilterOptions extends SearchApiViewsHandlerFilter {
    */
   public function option_definition() {
     $options = parent::option_definition();
+    $options['value'] = array('default' => '');
     $options['expose']['contains']['reduce'] = array('default' => FALSE);
     return $options;
   }

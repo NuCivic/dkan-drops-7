@@ -132,7 +132,7 @@ function _date_repeat_calc($rrule, $start, $end, $exceptions, $timezone, $additi
 
   if (!empty($rrule['BYMONTHDAY'])) {
     $finished = FALSE;
-    $current_day = clone($start_date);
+    $current_day = clone $start_date;
     $direction_days = array();
     // Deconstruct the day in case it has a negative modifier.
     foreach ($rrule['BYMONTHDAY'] as $day) {
@@ -193,7 +193,7 @@ function _date_repeat_calc($rrule, $start, $end, $exceptions, $timezone, $additi
 
   elseif (empty($rrule['BYDAY'])) {
     // $current_day will keep track of where we are in the calculation.
-    $current_day = clone($start_date);
+    $current_day = clone $start_date;
     $finished = FALSE;
     $months = !empty($rrule['BYMONTH']) ? $rrule['BYMONTH'] : array();
     while (!$finished) {
@@ -275,7 +275,7 @@ function _date_repeat_calc($rrule, $start, $end, $exceptions, $timezone, $additi
     // need to be processed one month or year at a time.
     if (!empty($direction_days) && in_array($rrule['FREQ'], array('MONTHLY', 'YEARLY'))) {
       $finished = FALSE;
-      $current_day = clone($start_date);
+      $current_day = clone $start_date;
       while (!$finished) {
         foreach ($direction_days as $day) {
           // Find the BYDAY date in the current month.
@@ -314,7 +314,7 @@ function _date_repeat_calc($rrule, $start, $end, $exceptions, $timezone, $additi
     if (!empty($week_days) &&
       in_array($rrule['FREQ'], array('MONTHLY', 'WEEKLY', 'YEARLY'))) {
       $finished = FALSE;
-      $current_day = clone($start_date);
+      $current_day = clone $start_date;
       $format = $rrule['FREQ'] == 'YEARLY' ? 'Y' : 'n';
       $current_period = date_format($current_day, $format);
 

@@ -56,4 +56,4 @@ features[variable][] = user_pictures
 features[views_view][] = dkan_administration_files
 features[views_view][] = dkan_administration_nodes
 features[views_view][] = popular_tags
-version = 7.x-1.15.5
+version = 7.x-1.16.1

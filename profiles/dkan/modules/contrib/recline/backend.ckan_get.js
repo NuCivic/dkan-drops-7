@@ -46,7 +46,7 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
       wrapper = my.DataStore(out.endpoint);
     }
     var dfd = new Deferred();
-    var jqxhr = wrapper.search({resource_id: dataset.id, limit: 0});
+    var jqxhr = wrapper.search({resource_id: dataset.id, limit: 0, q: ''});
 
     jqxhr.done(function(results, status, req) {
       if(results.error) {

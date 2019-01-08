@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Autoload Entity Test UI.
+ */
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function autoload_test_entity_ui_entity_info_alter(array &$entity_info) {
+  $entity_info['autoload_test_entity']['views controller class'] = 'Drupal\autoload_test_entity_ui\ViewsController';
+}

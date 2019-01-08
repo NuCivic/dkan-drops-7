@@ -503,7 +503,7 @@ function date_repeat_build_dates($rrule = NULL, $rrule_values = NULL, $field, $i
     $date_start = new DateObject($date, $timezone, DATE_FORMAT_DATETIME);
     $date_start->limitGranularity($field['settings']['granularity']);
     date_timezone_set($date_start, timezone_open($timezone_db));
-    $date_end = clone($date_start);
+    $date_end = clone $date_start;
     date_modify($date_end, '+' . $duration . ' seconds');
     $value[$delta] = array(
       'value' => date_format($date_start, date_type_format($field['type'])),

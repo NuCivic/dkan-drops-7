@@ -725,8 +725,9 @@ abstract class Migration extends MigrationBase {
       $this->source->rewind();
     } catch (Exception $e) {
       self::displayMessage(
-        t('Migration failed with source plugin exception: %e, in %file:%line',
+        t('Migration for %class failed with source plugin exception: %e, in %file:%line',
           array(
+            '%class' => get_class($this),
             '%e' => $e->getMessage(),
             '%file' => $e->getFile(),
             '%line' => $e->getLine(),
@@ -760,7 +761,7 @@ abstract class Migration extends MigrationBase {
         else {
           $this->map->saveIDMapping($this->sourceValues, array(),
             MigrateMap::STATUS_FAILED, $this->rollbackAction,
-            $data_row->migrate_map_hash);
+            NULL);
           if ($this->map->messageCount() == 0) {
             $message = t('New object was not saved, no error provided');
             $this->saveMessage($message);
@@ -775,7 +776,7 @@ abstract class Migration extends MigrationBase {
       } catch (Exception $e) {
         $this->map->saveIDMapping($this->sourceValues, array(),
           MigrateMap::STATUS_FAILED, $this->rollbackAction,
-          $data_row->migrate_map_hash);
+          NULL);
         $this->handleException($e);
       }
       $this->total_processed++;
@@ -807,8 +808,9 @@ abstract class Migration extends MigrationBase {
         $this->source->next();
       } catch (Exception $e) {
         self::displayMessage(
-          t('Migration failed with source plugin exception: %e, in %file:%line',
+          t('Migration for %class failed with source plugin exception: %e, in %file:%line',
             array(
+              '%class' => get_class($this),
               '%e' => $e->getMessage(),
               '%file' => $e->getFile(),
               '%line' => $e->getLine(),
@@ -1543,12 +1545,12 @@ abstract class Migration extends MigrationBase {
     }
     $i = 1;
     $candidate = $original;
-    while ($candidate_found = db_select($dedupe['table'], 't')
+    while (db_select($dedupe['table'], 't')
       ->fields('t', array($dedupe['column']))
       ->range(0, 1)
       ->condition('t.' . $dedupe['column'], $candidate)
       ->execute()
-      ->fetchField()) {
+      ->rowCount() > 0) {
       // We already have the candidate value. Find a non-existing value.
       $i++;
       // @TODO: support custom replacement pattern instead of just append.

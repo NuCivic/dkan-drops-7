@@ -53,7 +53,7 @@ class MigrateListJSON extends MigrateList {
     migrate_instrument_stop("Retrieve $this->listUrl");
     if ($json) {
       $data = drupal_json_decode($json);
-      if ($data) {
+      if ($data !== NULL) {
         return $this->getIDsFromJSON($data);
       }
     }

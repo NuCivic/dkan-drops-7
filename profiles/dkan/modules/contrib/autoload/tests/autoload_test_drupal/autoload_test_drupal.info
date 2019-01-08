@@ -1,0 +1,13 @@
+name = Autolaod Drupal Test
+description = Testing autoloading of Drupal namespaces.
+hidden = TRUE
+core = 7.x
+
+autoload = TRUE
+
+dependencies[] = autoload
+
+; Information added by drush on 2017-07-24
+version = "7.x-2.0+0-dev"
+project = "autoload"
+datestamp = "1500910353"

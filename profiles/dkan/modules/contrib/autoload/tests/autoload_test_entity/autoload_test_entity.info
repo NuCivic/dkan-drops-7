@@ -1,0 +1,14 @@
+name = Autoload Entity Test
+description = Ensure that autoloading will work for controllers, provided by "entity" module.
+hidden = TRUE
+core = 7.x
+
+autoload = TRUE
+
+dependencies[] = autoload
+dependencies[] = entity
+
+; Information added by drush on 2017-07-24
+version = "7.x-2.0+0-dev"
+project = "autoload"
+datestamp = "1500910353"

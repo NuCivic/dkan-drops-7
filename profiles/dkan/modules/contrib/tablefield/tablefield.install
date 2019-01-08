@@ -401,3 +401,16 @@ function tablefield_update_7006() {
   field_cache_clear();
   drupal_set_message(t('All Table Field fields have their field settings converted to widget settings.'), 'warning');
 }
+
+/**
+ * New Themeless module will subtitute submodule.
+ */
+function tablefield_update_7007() {
+  $themeless = l(t('Themeless'), 'https://www.drupal.org/project/themeless', array(
+    'attributes' => array(
+      'title' => t('Themeless module'),
+      'target' => '_blank',
+    ),
+  ));
+  drupal_set_message(t('Module !themeless will substitute tablefield_themeless submodule. If you are using tablefield_themeless submodule then disable it and use !themeless', array('!themeless' => $themeless)), 'status');
+}

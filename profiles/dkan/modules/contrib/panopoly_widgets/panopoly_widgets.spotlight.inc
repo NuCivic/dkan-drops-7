@@ -159,7 +159,7 @@ function panopoly_widgets_field_formatter_view($entity_type, $entity, $field, $i
     $duration = $duration_field['value'];
   }
   if (empty($duration)) {
-    $duration = variable_get('panopoly_widgets_spotlight_rotation_time', 4);
+    $duration = variable_get('panopoly_widgets_spotlight_rotation_time', 5);
   }
 
   $pager_style = 'full'; // Default to the Full pager if field isn't filled out (i.e., legacy data).
@@ -208,6 +208,12 @@ function panopoly_widgets_field_formatter_view($entity_type, $entity, $field, $i
 
   // Assemble the spotlight items (rendered in panopoly_spotlight_wrapper())
   foreach ($items as $delta => $item_data) {
+    if (isset($item_data['field_title'])) {
+      $item_data['title'] = $item_data['field_title'];
+    }
+    if (isset($item_data['field_alt'])) {
+      $item_data['alt'] = $item_data['field_alt'];
+    }
     $element[0]['slides'][] = array(
       '#theme' => 'panopoly_spotlight_view',
       '#items' => $item_data,
@@ -235,7 +241,7 @@ function panopoly_widgets_field_widget_form(&$form, &$form_state, $field, $insta
     $element['title'] = array(
       '#title' => t('Title'),
       '#type' => 'textfield',
-      '#default_value' => isset($items[$delta]['title']) ? $items[$delta]['title'] : NULL,
+      '#default_value' => isset($items[$delta]['field_title']) ? $items[$delta]['field_title'] : NULL,
     );
 
     $element['link'] = array(
@@ -283,7 +289,7 @@ function panopoly_widgets_field_widget_form(&$form, &$form_state, $field, $insta
     $element['alt'] = array(
       '#title' => t('Alt text'),
       '#type' => 'textfield',
-      '#default_value' => isset($items[$delta]['alt']) ? $items[$delta]['alt'] : NULL,
+      '#default_value' => isset($items[$delta]['field_alt']) ? $items[$delta]['field_alt'] : NULL,
     );
 
     $element['description'] = array(
@@ -327,6 +333,12 @@ function panopoly_widgets_field_presave($entity_type, $entity, $field, $instance
           $item['fid'] = $fid;
         }
       }
+      if (isset($item['field_title'])) {
+        $item['title'] = $item['field_title'];
+      }
+      if (isset($item['field_alt'])) {
+        $item['alt'] = $item['field_alt'];
+      }
     }
     image_field_presave($entity_type, $entity, $field, $instance, $langcode, $items);
   }
@@ -338,11 +350,13 @@ function panopoly_widgets_field_presave($entity_type, $entity, $field, $instance
 function panopoly_widgets_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   $entity_items_copy = $items;
   image_field_load($entity_type, $entities, $field, $instances, $langcode, $items, $age);
-  // image_field_load() will overwrite 'title' with the image title. Here we
-  // return it to the item title.
+  // Both image_field_load() and file_entity_entity_load() will overwrite the
+  // 'title' and 'alt' with the one from the file. Here we save the originals
+  // for later.
   foreach ($entity_items_copy as $entity_id => $items_copy) {
     foreach ($items_copy as $delta => $item) {
-      $items[$entity_id][$delta]['title'] = $item['title'];
+      $items[$entity_id][$delta]['field_title'] = $item['title'];
+      $items[$entity_id][$delta]['field_alt'] = $item['alt'];
     }
   }
 }

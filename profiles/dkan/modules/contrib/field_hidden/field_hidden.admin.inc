@@ -152,14 +152,11 @@ function _field_hidden_readme2html($readme_txt, $headline_tag = 'h5') {
     //echo $s_toc; exit;
     $s_toc = preg_replace_callback(
       '/ \* ([^\n]+)\n/',
-      create_function(
-        '$ms',
-        '
-        return \' * <a href="#\' .
-            strtolower( preg_replace(\'/[^a-zA-Z_\-]/\', \'_\', $ms[1]) )
-            . \'">\' . $ms[1] . \'</a>\' . "\n";
-        '
-      ),
+      function($ms) {
+          return ' * <a href="#' .
+              strtolower( preg_replace('/[^a-zA-Z_\-]/', '_', $ms[1]) )
+              . '">' . $ms[1] . '</a>' . "\n";
+      },
       $s_toc
     );
     $s_start = substr($s, 0, $pos_start);
@@ -170,16 +167,13 @@ function _field_hidden_readme2html($readme_txt, $headline_tag = 'h5') {
   //  Format headlines, and insert anchor.
   $s = preg_replace_callback(
     '/\n([^\n\-])([^\n]*[^\n\-])\n[\-]{2,}\n+/',
-    create_function(
-      '$ms',
-      '
-      return \'</p><a name="\'
-        . strtolower( preg_replace(\'/[^a-zA-Z_\-]/\', \'_\', $ms[1] . $ms[2]) )
-        . \'"></a><headlineTag style="margin-top:20px;">\'
-        . $ms[1]
-        . \'<span style="text-transform:lowercase;">\' . $ms[2] . \'</span></headlineTag><p>\';
-      '
-    ),
+    function($ms) {
+        return '</p><a name="'
+            . strtolower( preg_replace('/[^a-zA-Z_\-]/', '_', $ms[1] . $ms[2]) )
+            . '"></a><headlineTag style="margin-top:20px;">'
+            . $ms[1]
+            . '<span style="text-transform:lowercase;">' . $ms[2] . '</span></headlineTag><p>';
+    },
     $s
   );
   $s = str_replace('headlineTag', $headline_tag, $s);
@@ -197,23 +191,20 @@ function _field_hidden_readme2html($readme_txt, $headline_tag = 'h5') {
   //  And http://your-drupal-site.tld/path should become /path
   $s = preg_replace_callback(
     '/(https?\:\/\/)(\S+)([\x20\t\n])/',
-    create_function(
-      '$ms',
-      '
-      $protocol = $ms[1];
-      $le = strlen($addr = $ms[2]);
-      $dot = \'\';
-      if (!preg_match(\'/[\/a-zA-Z\d]/\', $addr{$le - 1})) {
-        $dot = $addr{$le - 1};
-        $addr = substr($addr, 0, $le - 1);
-      }
-      if (strpos($addr, \'your-drupal-site.tld/\') === 0) {
-        $protocol = \'/\';
-        $addr = str_replace(\'your-drupal-site.tld/\', \'\', $addr);
-      }
-      return \'<a href="\' . $protocol . $addr . \'">\' . $addr . \'</a>\' . $dot . $ms[3];
-      '
-    ),
+    function($ms) {
+        $protocol = $ms[1];
+        $le = strlen($addr = $ms[2]);
+        $dot = '';
+        if (!preg_match('/[\/a-zA-Z\d]/', $addr{$le - 1})) {
+            $dot = $addr{$le - 1};
+            $addr = substr($addr, 0, $le - 1);
+        }
+        if (strpos($addr, 'your-drupal-site.tld/') === 0) {
+            $protocol = '/';
+            $addr = str_replace('your-drupal-site.tld/', '', $addr);
+        }
+        return '<a href="' . $protocol . $addr . '">' . $addr . '</a>' . $dot . $ms[3];
+    },
     $s
   );
   $ndls = array(

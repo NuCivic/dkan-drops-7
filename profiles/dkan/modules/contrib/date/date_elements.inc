@@ -292,6 +292,9 @@ function date_combo_element_process($element, &$form_state, $form) {
   $process = date_process_values($field, $instance);
   foreach ($process as $processed) {
     if (!isset($element['#default_value'][$processed])) {
+      if (empty($element['#default_value']) || !is_array($element['#default_value'])) {
+        $element['#default_value'] = array();
+      }
       $element['#default_value'][$processed] = '';
     }
     $date = date_local_date($element['#default_value'], $element['#date_timezone'], $field, $instance, $processed);

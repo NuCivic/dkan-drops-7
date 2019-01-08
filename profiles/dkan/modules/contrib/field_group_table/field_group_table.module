@@ -186,7 +186,7 @@ function field_group_table_field_group_pre_render(&$element, $group, &$form) {
     '#groups' => array_keys($form['#groups']),
     '#settings' => $settings,
     '#attributes' => array(
-      'class' => array_merge(array('field-group-table', $group->group_name), explode(' ', $settings['classes'])),
+      'class' => isset($settings['classes']) ? array_merge(array('field-group-table', $group->group_name), explode(' ', $settings['classes'])) : array_merge(array('field-group-table', $group->group_name)),
     ),
     '#caption' => $caption,
     // We will add the table rows upon rendering, as doing it here means

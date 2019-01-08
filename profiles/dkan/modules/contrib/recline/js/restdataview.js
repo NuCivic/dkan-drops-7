@@ -16,9 +16,9 @@
         var bounds = L.latLngBounds([]);
 
         fl.metadata(function(error, metadata){
-          let layersIds = metadata.layers.map(l => l.id);
+          let layersIds = metadata.layers.map(function(l) {return l.id});
           let counter = sl.length;
-          layersIds.forEach(id => {
+          layersIds.forEach(function(id) {
             L.esri.query({
               url: Drupal.settings.recline.url + '/' + id
             }).bounds(function(error, latLngBounds, response){

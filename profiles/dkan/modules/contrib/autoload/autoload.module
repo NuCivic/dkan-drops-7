@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * PHP 5.3+ autoloader for objects.
+ */
+
+require_once 'autoload.cache.inc';
+
+try {
+  $_autoload = autoload();
+  $_module_list = module_list();
+
+  // Do not set an autoloading callback in a case when something went wrong.
+  // An exception might be thrown during module installation when no database
+  // schema available yet.
+  spl_autoload_register(function ($namespace) use ($_autoload, $_module_list) {
+    if (isset($_autoload[$namespace])) {
+      // Report about the problem but load class in any way.
+      if (!isset($_module_list[$_autoload[$namespace]['provider']]) && 'cli' !== PHP_SAPI) {
+        trigger_error(sprintf('You are autoloading the "%s" from the "%s" module which is currently disabled!', $namespace, $_autoload[$namespace]['provider']), E_USER_WARNING);
+      }
+
+      // The "DRUPAL_ROOT" constant is not prepended to allow including files
+      // relative to the Drupal root as well as those, which located outside.
+      require_once $_autoload[$namespace]['file'];
+    }
+    // Make this autoloader first to omit execution of Drupal ones.
+  }, TRUE, TRUE);
+}
+catch (\Exception $e) {
+}
+
+/**
+ * Returns the autoloading class map.
+ *
+ * @param bool $rebuild
+ *   Tells whether the autoloading class map has to be rebuilt.
+ *
+ * @return \AutoloadCache
+ *   The autoloading class map.
+ */
+function autoload($rebuild = FALSE) {
+  $map =& drupal_static(__FUNCTION__);
+
+  if (NULL === $map) {
+    $map = new AutoloadCache(variable_get('autoload_file', sprintf('%s/%s.php', DRUPAL_ROOT, __FUNCTION__)));
+  }
+
+  if ($rebuild) {
+    $map->rebuild();
+  }
+
+  return $map;
+}
+
+/**
+ * Get list of file extensions which allowed for autoloading.
+ *
+ * @return string[]
+ *   List of extensions.
+ */
+function autoload_extensions() {
+  $extensions = array_filter(explode(',', spl_autoload_extensions()), 'trim');
+  // Make sure the basic extensions are registered!
+  $extensions[] = '.php';
+  $extensions[] = '.inc';
+
+  return array_unique($extensions);
+}

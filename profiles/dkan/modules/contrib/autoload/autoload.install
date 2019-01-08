@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Installation and updating tasks.
+ */
+
+if (!class_exists('AutoloadCache')) {
+  require_once 'autoload.cache.inc';
+}
+
+/**
+ * Implements hook_schema().
+ */
+function autoload_schema() {
+  return AutoloadCache::schema();
+}

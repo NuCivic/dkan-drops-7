@@ -1,0 +1,221 @@
+{
+    "name": "getdkan/recline",
+    "description": "recline.js module for DKAN/Drupal",
+    "version": "2.x-dev",
+    "type": "drupal-module",
+    "require": {
+        "composer/installers": "~1.0",
+        "library/recline": "1.0",
+        "library/lodash": "1.0",
+        "library/backbone": "1.0",
+        "library/csv": "1.0",
+        "library/slickgrid": "1.0",
+        "library/mustache": "1.0",
+        "library/moment": "1.0",
+        "library/leaflet": "1.0",
+        "library/flot": "1.0",
+        "library/deep_diff": "1.0",
+        "library/recline_deeplink": "1.0",
+        "library/leaflet_markercluster": "1.0",
+        "library/xls": "1.0",
+        "library/jsxlsx": "1.0",
+        "library/jsonview": "1.0"
+    },
+    "repositories": {
+        "libraries/recline": {
+            "type": "package",
+            "package": {
+                "name": "getdkan/recline.js",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/NuCivic/recline.js.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+        "libraries/lodash": {
+            "type": "package",
+            "package": {
+                "name": "library/lodash",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/lodash/lodash.git",
+                    "type": "git",
+                    "reference": "e21e993729861a2bc1d01c858cfabce7a27d2861"
+                }
+            }
+        },
+        "libraries/backbone": {
+            "type": "package",
+            "package": {
+                "name": "library/backbone",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/jashkenas/backbone.git",
+                    "type": "git",
+                    "reference": "e109f6d3e7a366f933f1f34405ca97effecae6c5"
+                }
+            }
+        },
+        "libraries/csv": {
+            "type": "package",
+            "package": {
+                "name": "library/csv",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/okfn/csv.js.git",
+                    "type": "git",
+                    "reference": "7150de4c8d5e02626ac6a7fb9c178e955c964faf"
+                }
+            }
+        },
+        "libraries/slickgrid": {
+            "type": "package",
+            "package": {
+                "name": "library/slickgrid",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/mleibman/SlickGrid.git",
+                    "type": "git",
+                    "reference": "e004912b5ce29ac0d0cb04df50fe66db5e3af9ea"
+                }
+            }
+        },
+        "libraries/mustache": {
+            "type": "package",
+            "package": {
+                "name": "library/mustache",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/janl/mustache.js.git",
+                    "type": "git",
+                    "reference": "d4ba5a19d4d04b139bbf7840fe342bb43930aee3"
+                }
+            }
+        },
+        "libraries/moment": {
+            "type": "package",
+            "package": {
+                "name": "library/moment",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/moment/moment.git",
+                    "type": "git",
+                    "reference": "78a53b8cb53e967c6dac2e7325e18da2a472fc2d"
+                }
+            }
+        },
+        "libraries/leaflet": {
+            "type": "package",
+            "package": {
+                "name": "library/leaflet",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/NuCivic/Leaflet.git",
+                    "type": "git",
+                    "reference": "v1.0.2-alt-marker-shadow-5258"
+                }
+            }
+        },
+        "libraries/flot": {
+            "type": "package",
+            "package": {
+                "name": "library/flot",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/flot/flot.git",
+                    "type": "git",
+                    "reference": "7f5f90384ed6d6c30b232580d358c84e355919ab"
+                }
+            }
+        },
+        "libraries/deep_diff": {
+            "type": "package",
+            "package": {
+                "name": "library/deep_diff",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/flitbit/diff.git",
+                    "type": "git",
+                    "reference": "07e91c624e5016be5c5c6560a9eabe49ef3ba2d0"
+                }
+            }
+        },
+        "libraries/recline_deeplink": {
+            "type": "package",
+            "package": {
+                "name": "library/recline_deeplink",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/NuCivic/recline-deeplink.git",
+                    "type": "git",
+                    "reference": "c1695d669f8314ed8b66e5907eb4f1bc4a8a9495"
+                }
+            }
+        },
+        "libraries/leaflet_markercluster": {
+            "type": "package",
+            "package": {
+                "name": "library/leaflet_markercluster",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/Leaflet/Leaflet.markercluster.git",
+                    "type": "git",
+                    "reference": "eb922a3646d2e1ef9ed9de99e20200709f1f9bb5"
+                }
+            }
+        },
+        "libraries/xls": {
+            "type": "package",
+            "package": {
+                "name": "library/xls",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/NuCivic/recline.backend.xlsx",
+                    "type": "git",
+                    "reference": "a5d49f7305895f147c3e9a12115c2456a897f941"
+                }
+            }
+        },
+        "libraries/jsxlsx": {
+            "type": "package",
+            "package": {
+                "name": "library/jsxlsx",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/SheetJS/js-xlsx",
+                    "type": "git",
+                    "reference": "53f7f6d9446ccd680c9b13992d6dcdccde49a8f6"
+                }
+            }
+        },
+        "libraries/jsonview": {
+            "type": "package",
+            "package": {
+                "name": "library/jsonview",
+                "version": "1.0",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/yesmeck/jquery-jsonview.git",
+                    "type": "git",
+                    "reference": "84fb68cc25e4749d2adf5af8dc3adefd80b4c430"
+                }
+            }
+        }
+    }
+}

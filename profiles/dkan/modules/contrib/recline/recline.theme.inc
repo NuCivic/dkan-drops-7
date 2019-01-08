@@ -5,6 +5,10 @@
  * Recline theme functions.
  */
 
+use Dkan\Datastore\Manager\Factory;
+use Dkan\Datastore\Resource;
+use Dkan\Datastore\Manager\ManagerInterface;
+
 /**
  * File size limit for remote zip files preview.
  *
@@ -71,14 +75,24 @@ function theme_recline_default_formatter($vars) {
   elseif (isset($vars['item']['fid'])) {
     $url = file_create_url($file['uri']);
   }
+  
+  switch ($type) {
+    case 'html':
+      $link_text = t('Web Page');
+      break;
+    case 'api':
+      $link_text = t('API');
+      break;
+    default:
+      $link_text = '';
+  }
 
-  $file['filename'] = isset($file['filename']) ? $file['filename'] : $url;
+  $file['filename'] = !empty($file['filename']) ? $file['filename'] : $link_text;
   $description = isset($file['description']) ? $file['description'] : '';
   $output = recline_build_icon($url, $type, $file['filename'], $file['filemime'], $file['filesize'], $description);
 
   //If is a API then return without preview.
   if ($api) {
-    $output['preview'] = recline_format_link_api($url);
     return drupal_render($output);
   }
 
@@ -178,7 +192,6 @@ function theme_recline_default_formatter($vars) {
       break;
 
     case 'html':
-      $output['preview'] = recline_format_link_api($url);
       break;
 
     case 'png':
@@ -197,7 +210,6 @@ function theme_recline_default_formatter($vars) {
       break;
 
     case 'pdf':
-      $output['preview'] = recline_format_link_api($url);
       break;
 
     case 'wms':
@@ -298,25 +310,6 @@ function recline_format_image($url) {
   return array(
     '#type' => 'markup',
     '#markup' => '<div  id="recline-image-preview"><img src="' . $url . '" alt="image preview"/></div>',
-  );
-}
-
-/**
- * Builds output for a link of an api.
- */
-function recline_format_link_api($url) {
-  return array(
-    'iframe' => array(
-      '#type' => 'html_tag',
-      '#tag' => 'iframe',
-      '#attributes' => array(
-        'src' => $url,
-        'height' => 600,
-        'width' => 900,
-        'style' => '',
-      ),
-      '#value' => '',
-    ),
   );
 }
 
@@ -548,12 +541,17 @@ function recline_preview_multiview($variables) {
   $node = $item['entity'];
   $embed_markup = theme('recline_embed_button', array('node' => $node));
   // See if datastore is loaded, if so, prepare recline to view from it.
-  if (module_exists('dkan_datastore_api') && module_exists('feeds_flatstore_processor') && function_exists('dkan_datastore_api_get_feeds_source')) {
-    $source_id = dkan_datastore_api_get_feeds_source($node->nid);
-    if ($table = feeds_flatstore_processor_table_name($source_id, $node->nid)) {
-      if (db_table_exists($table)) {
-        $datastoreStatus = $table;
+  if (module_exists('dkan_datastore_api')) {
+    try {
+      /* @var  $manager ManagerInterface */
+      $manager = (new Factory(Resource::createFromDrupalNode($node)))->get();
+      $t = $manager->getTableName();
+      if (db_table_exists($t)) {
+        $datastoreStatus = $t;
       }
+    }
+    catch (\Exception $e) {
+      $datastoreStatus = FALSE;
     }
   }
 

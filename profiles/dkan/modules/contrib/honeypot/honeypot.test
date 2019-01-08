@@ -387,6 +387,39 @@ class HoneypotCssTestCase extends DrupalWebTestCase {
     // Make sure the Honeypot CSS file exists.
     $this->assertTrue(file_exists($honeypot_css));
   }
+
+  /**
+   * Test CSS file availability.
+   */
+  public function testHoneypotCssAvailability() {
+    // Public CSS file can be consumed.
+    variable_set('file_default_scheme', 'public');
+    if ($wrapper = file_stream_wrapper_get_instance_by_uri(honeypot_get_css_file_path())) {
+      $url = $wrapper->getExternalUrl();
+    }
+    $this->drupalGet($url);
+    $this->assertResponse(200);
+
+
+    // Private CSS file can not be consumed.
+    variable_set('file_default_scheme', 'private');
+    honeypot_cron();
+    if ($wrapper = file_stream_wrapper_get_instance_by_uri(honeypot_get_css_file_path())) {
+      $url = $wrapper->getExternalUrl();
+    }
+    $this->drupalGet($url);
+    $this->assertNoResponse(200);
+
+    // Site default is private, but override honeypot's to public to consume.
+    variable_set('honeypot_file_default_scheme', 'public');
+    honeypot_cron();
+    if ($wrapper = file_stream_wrapper_get_instance_by_uri(honeypot_get_css_file_path())) {
+      $url = $wrapper->getExternalUrl();
+    }
+    $this->drupalGet($url);
+    $this->assertResponse(200);
+  }
+
 }
 
 /**
@@ -444,4 +477,5 @@ class HoneypotTriggerTestCase extends DrupalWebTestCase {
     $this->drupalGet('node');
     $this->assertText(t('has been banned'), 'User banned successfully.');
   }
+
 }

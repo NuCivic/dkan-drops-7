@@ -1,3 +1,19 @@
+7.x-1.58, 2018-12-11
+-------------------
+- No changes since last release.
+
+7.x-1.57, 2018-10-18
+-------------------
+- No changes since last release.
+
+7.x-1.56, 2018-10-10
+-------------------
+- No changes since last release.
+
+7.x-1.55, 2018-07-04
+-------------------
+- No changes since last release.
+
 7.x-1.54, 2018-05-10
 -------------------
 - Update manualcrop to version 1.7.

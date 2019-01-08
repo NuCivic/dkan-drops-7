@@ -78,7 +78,7 @@ function honeypot_form_alter(&$form, &$form_state, $form_id) {
   if (variable_get('honeypot_protect_all_forms', 0) && !in_array($form_id, $unprotected_forms)) {
     // Don't protect system forms - only admins should have access, and system
     // forms may be programmatically submitted by drush and other modules.
-    if (strpos($form_id, 'system_') === FALSE && strpos($form_id, 'search_') === FALSE && strpos($form_id, 'views_exposed_form_') === FALSE) {
+    if (preg_match('/[^a-zA-Z]system_/', $form_id) === 0 && preg_match('/[^a-zA-Z]search_/', $form_id) === 0 && preg_match('/[^a-zA-Z]views_exposed_form_/', $form_id) === 0) {
       honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
     }
   }
@@ -503,7 +503,7 @@ function honeypot_log_failure($form_id, $type) {
  *   The path to the honeypot.css file.
  */
 function honeypot_get_css_file_path() {
-  return file_default_scheme() . '://honeypot/honeypot.css';
+  return honeypot_file_default_scheme() . '://honeypot/honeypot.css';
 }
 
 /**
@@ -513,7 +513,7 @@ function honeypot_get_css_file_path() {
  *   The honeypot element class name (e.g. 'url').
  */
 function honeypot_create_css($element_name) {
-  $path = file_default_scheme() . '://honeypot';
+  $path = honeypot_file_default_scheme() . '://honeypot';
 
   if (!file_prepare_directory($path, FILE_CREATE_DIRECTORY)) {
     drupal_set_message(t('Unable to create Honeypot CSS directory, %path. Check the permissions on your files directory.', array('%path' => file_uri_target($path))), 'error');
@@ -591,4 +591,16 @@ function honeypot_get_time_from_signed_timestamp($signed_timestamp) {
   }
 
   return $honeypot_time;
+}
+
+/**
+ * Gets the default file stream for honeypot.
+ *
+ * @return
+ *   'public', 'private' or any other file scheme defined as the default.
+ *
+ * @see file_default_scheme()
+ */
+function honeypot_file_default_scheme() {
+  return variable_get('honeypot_file_default_scheme', file_default_scheme());
 }

@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Module installation and updates.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function autoload_test_entity_schema() {
+  $schema = array();
+
+  $schema['autoload_test_entity'] = array(
+    'description' => 'Autoload Test Entity',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier.',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}

@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Autoload Lookup Test.
+ */
+
+/**
+ * Implements hook_autoload_lookup_alter().
+ */
+function autoload_test_lookup_autoload_lookup_alter(\AutoloadCache $autoload) {
+  $autoload['ArchiverInterface'] = array(
+    'file' => DRUPAL_ROOT . '/includes/archiver.inc',
+    'provider' => 'autoload_test_lookup',
+  );
+}

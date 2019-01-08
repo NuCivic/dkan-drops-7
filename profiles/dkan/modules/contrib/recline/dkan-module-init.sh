@@ -1,4 +1,3 @@
-
 # Name of the current module.
 DKAN_MODULE=`ls *.info | cut -d'.' -f1`
 
@@ -30,6 +29,7 @@ if wget -q "$URL"; then
   bash dkan-init.sh dkan --skip-init --deps
   cd ..
   echo -ne 'y\n' | ahoy dkan drupal-rebuild $DATABASE_URL
+  ahoy dkan remake
   echo -ne 'N\n' | ahoy dkan reinstall
 else
   wget -O /tmp/dkan-init.sh https://raw.githubusercontent.com/NuCivic/dkan/$DKAN_VERSION/dkan-init.sh
@@ -46,6 +46,7 @@ else
   bash /tmp/dkan-init.sh $DKAN_MODULE $@ --skip-reinstall --branch=$DKAN_VERSION
 fi
 
+echo "Linking/Building Module..."
 ahoy dkan module-link $DKAN_MODULE
 ahoy dkan module-make $DKAN_MODULE
 
@@ -59,6 +60,7 @@ else
 fi
 
 ahoy drush en $DKAN_MODULE -y
+ahoy drush updb -y
 
  #Fix for behat bug not recognizing symlinked feature files or files outside it's root. See https://jira.govdelivery.com/browse/CIVIC-1005
 #cp dkan_workflow/test/features/dkan_workflow.feature dkan/test/features/.

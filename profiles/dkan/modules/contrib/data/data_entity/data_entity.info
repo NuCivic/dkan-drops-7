@@ -12,9 +12,8 @@ files[] = data_entity.entity.inc
 files[] = views/data_entity.views.inc
 files[] = views/data_entity_views_handler_field_edit_link.inc
 
-; Information added by Drupal.org packaging script on 2016-10-26
-version = "7.x-1.0-alpha8+1-dev"
+; Information added by Drupal.org packaging script on 2019-01-16
+version = "7.x-1.0-alpha8+4-dev"
 core = "7.x"
 project = "data"
-datestamp = "1477465151"
-
+datestamp = "1547656684"

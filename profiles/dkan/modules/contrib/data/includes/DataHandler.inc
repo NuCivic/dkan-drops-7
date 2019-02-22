@@ -168,7 +168,6 @@ class DataHandler {
    * Empty data table.
    */
   public function truncate() {
-    // TODO Please convert this statement to the D7 database API syntax.
-    db_query('TRUNCATE TABLE {' . db_escape_table($this->table) . '}');
+    db_truncate($this->table)->execute();
   }
 }

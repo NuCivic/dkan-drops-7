@@ -191,6 +191,7 @@ class RestWSEntityResourceController implements RestWSQueryResourceControllerInt
     if (!empty($diff)) {
       throw new RestWSException('Unknown data properties: ' . implode(' ', array_keys($diff)) . '.', 406);
     }
+    $this->validateFields($wrapper);
     $wrapper->save();
     return $wrapper->getIdentifier();
   }
@@ -219,6 +220,7 @@ class RestWSEntityResourceController implements RestWSQueryResourceControllerInt
     catch (EntityMetadataWrapperException $e) {
       throw new RestWSException($e->getMessage(), 406);
     }
+    $this->validateFields($wrapper);
     $wrapper->save();
   }
 
@@ -436,4 +438,22 @@ class RestWSEntityResourceController implements RestWSQueryResourceControllerInt
     }
     return TRUE;
   }
+
+  /**
+   * Validates an entity's fields before they are saved.
+   *
+   * @param EntityDrupalWrapper $wrapper
+   *   A metadata wrapper for the entity.
+   *
+   * @throws RestWSException
+   */
+  protected function validateFields($wrapper) {
+    try {
+      field_attach_validate($wrapper->type(), $wrapper->value());
+    }
+    catch (FieldValidationException $e) {
+      throw new RestWSException($e->getMessage(), 422);
+    }
+  }
+
 }

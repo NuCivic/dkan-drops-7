@@ -551,6 +551,12 @@ class DataTable {
     if ($field == NULL) {
       $field = $left_table;
     }
+    // Remove previous join being overwritten.
+    foreach ($this->meta['join'] as $joined_table_name => $joined_table_data) {
+      if ($joined_table_data['field'] == $field) {
+        unset($this->meta['join'][$joined_table_name]);
+      }
+    }
     $this->meta['join'][$left_table] = array(
       'left_field' => $left_field,
       'field' => $field,

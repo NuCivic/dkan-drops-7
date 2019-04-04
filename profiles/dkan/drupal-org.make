@@ -61,7 +61,7 @@ projects:
   context:
     version: '3.7'
   ctools:
-    version: '1.14'
+    version: '1.15'
   data:
     version: 1.x
   date:
@@ -73,7 +73,7 @@ projects:
   defaultconfig:
     version: 1.0-alpha11
   devel:
-    version: '1.5'
+    version: '1.7'
   diff:
     version: '3.4'
   double_field:
@@ -161,7 +161,7 @@ projects:
   font_icon_select:
     download:
       type: git
-      url: https://git.drupal.org/sandbox/wolffereast/2319993.git
+      url: https://github.com/GetDKAN/font_icon_select.git
       branch: 7.x-1.x
   fontyourface:
     version: '2.8'
@@ -245,7 +245,7 @@ projects:
   migrate_extras:
     version: '2.5'
   module_filter:
-    version: '2.1'
+    version: '2.2'
   multistep:
     download:
       type: git
@@ -280,7 +280,7 @@ projects:
   panopoly_images:
     version: '1.58'
   path_breadcrumbs:
-    version: '3.3'
+    version: '3.4'
   pathauto:
     version: '1.3'
   r4032login:
@@ -329,7 +329,7 @@ projects:
   select_or_other:
     version: '2.24'
   services:
-    version: '3.20'
+    version: '3.24'
   simple_gmap:
     version: '1.4'
   strongarm:
@@ -350,7 +350,9 @@ projects:
   uuid:
     version: '1.2'
   views:
-    version: '3.20'
+    version: '3.21'
+    patch:
+      2885660: https://www.drupal.org/files/issues/2018-06-28/2885660-13.patch
   views_autocomplete_filters:
     version: '1.2'
     patch:
@@ -375,6 +377,7 @@ projects:
     patch:
       2360973: https://www.drupal.org/files/issues/workbench_moderation-install-warnings-2360973-3.patch
       1512442: https://www.drupal.org/files/issues/1512442-20-workbench_moderation-fix_access_check.patch
+      2252871: https://www.drupal.org/files/issues/2252871-workbench_moderation-db_update-6.patch
   xautoload:
     version: '5.7'
 libraries:

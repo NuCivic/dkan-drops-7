@@ -817,20 +817,23 @@ function workbench_moderation_save($node) {
 
   // If this is the new 'current' moderation record, it should be the only one
   // flagged 'current' in {workbench_moderation_node_history}.
+  $update_fields = array();
   if ($new_revision->is_current) {
-    $query = db_update('workbench_moderation_node_history')
-      ->condition('nid', $node->nid)
-      ->fields(array('is_current' => 0))
-      ->execute();
+    $update_fields['is_current'] = 0;
   }
 
   // If this revision is to be published, the new moderation record should be
   // the only one flagged 'published' in {workbench_moderation_node_history}.
   // Also applies in the case where we unpublish a live revision.
   if ($new_revision->published || !$node->status) {
+    $update_fields['published'] = 0;
+  }
+
+  // Update previous revision history if there is this is an existing node.
+  if ($update_fields && empty($node->is_new)) {
     $query = db_update('workbench_moderation_node_history')
       ->condition('nid', $node->nid)
-      ->fields(array('published' => 0))
+      ->fields($update_fields)
       ->execute();
   }
 

@@ -72,4 +72,4 @@ files[] = includes/HarvestItem.php
 files[] = includes/HarvestCache.php
 files[] = includes/HarvestMigrateSQLMap.php
 files[] = includes/HarvestMigrateSourceList.php
-version = 7.x-1.16.3
+version = 7.x-1.16.8

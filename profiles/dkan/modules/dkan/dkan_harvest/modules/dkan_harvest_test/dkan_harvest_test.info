@@ -3,4 +3,4 @@ description = Test module for dkan_harvest
 core = 7.x
 
 dependencies[] = 'dkan_harvest'
-version = 7.x-1.16.3
+version = 7.x-1.16.8

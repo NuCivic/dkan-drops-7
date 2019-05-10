@@ -7,8 +7,8 @@ package = Fields
 dependencies[] = field
 configure = admin/config/content/tablefield
 
-; Information added by Drupal.org packaging script on 2018-12-08
-version = "7.x-3.2"
+; Information added by Drupal.org packaging script on 2019-04-16
+version = "7.x-3.4"
 core = "7.x"
 project = "tablefield"
-datestamp = "1544293992"
+datestamp = "1555444847"

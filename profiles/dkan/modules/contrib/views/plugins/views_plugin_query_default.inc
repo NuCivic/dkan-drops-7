@@ -1129,7 +1129,7 @@ class views_plugin_query_default extends views_plugin_query {
     $has_arguments = FALSE;
     $has_filter = FALSE;
 
-    $main_group = db_and();
+    $main_group = $this->group_operator == 'OR' ? db_or() : db_and();
     $filter_group = $this->group_operator == 'OR' ? db_or() : db_and();
 
     foreach ($this->$where as $group => $info) {

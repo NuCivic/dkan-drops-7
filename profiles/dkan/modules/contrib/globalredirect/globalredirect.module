@@ -227,7 +227,7 @@ function globalredirect_init() {
     // If it's not just a slash or user has deslash on, redirect, but avoid
     // redirecting to a directory if we are only deslashing, as apache mod_dir
     // can cause an infinite loop.
-    if (str_replace($prefix . $alias, '', $request_path) != '/' || ($settings['deslash'] && !is_dir($alias))) {
+    if (str_replace($prefix . $alias, '', $request_path) != '/' || (!globalredirect_url_is_external($alias) && $settings['deslash'] && !is_dir($alias))) {
       globalredirect_goto($alias, $options);
     }
   }

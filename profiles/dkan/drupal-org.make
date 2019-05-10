@@ -172,6 +172,8 @@ projects:
       2816837: https://www.drupal.org/files/issues/font_your_face-remove_div_general_text_option-D7.patch
   globalredirect:
     version: '1.6'
+    patch:
+      3053515: https://www.drupal.org/files/issues/2019-05-08/globalredirect-3053515-is-dir-external-check.patch
   gravatar:
     download:
       type: git
@@ -335,7 +337,7 @@ projects:
   strongarm:
     version: '2.0'
   tablefield:
-    version: '3.2'
+    version: '3.4'
   taxonomy_menu:
     version: '1.6'
   taxonomy_fixtures:
@@ -353,6 +355,7 @@ projects:
     version: '3.21'
     patch:
       2885660: https://www.drupal.org/files/issues/2018-06-28/2885660-13.patch
+      2543562: https://www.drupal.org/files/issues/views-use_query_group_operator_for_main_group-2543562-2.patch
   views_autocomplete_filters:
     version: '1.2'
     patch:

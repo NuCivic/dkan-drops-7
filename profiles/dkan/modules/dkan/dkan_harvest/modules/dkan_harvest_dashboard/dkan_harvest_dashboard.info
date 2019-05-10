@@ -22,5 +22,5 @@ features[views_view][] = dkan_harvest_dashboard
 features[views_view][] = dkan_harvest_datasets
 files[] = views/handlers/views_handler_field_date_harvest_date.inc
 files[] = views/handlers/views_handler_field_numeric_harvest_count.inc
-files[] = views/handlers/views_handler_field_boolean_harvest_status.inc
-version = 7.x-1.16.8
+files[] = views/handlers/views_handler_field_harvest_status.inc
+version = 7.x-1.16.10

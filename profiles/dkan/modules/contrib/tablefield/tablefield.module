@@ -96,6 +96,13 @@ function tablefield_permission() {
  *   The field delta to load.
  */
 function tablefield_export_csv($entity_type, $entity_id, $field_name, $langcode, $delta) {
+
+  // Ensure this is a tablefield.
+  $field_info = field_info_field($field_name);
+  if (!$field_info || $field_info['type'] != 'tablefield') {
+    return drupal_not_found();
+  }
+
   $filename = sprintf('%s_%s_%s_%s_%s.csv', $entity_type, $entity_id, $field_name, $langcode, $delta);
   $uri = 'temporary://' . $filename;
 

@@ -96,20 +96,25 @@ function tablefield_permission() {
  *   The field delta to load.
  */
 function tablefield_export_csv($entity_type, $entity_id, $field_name, $langcode, $delta) {
-
   // Ensure this is a tablefield.
   $field_info = field_info_field($field_name);
   if (!$field_info || $field_info['type'] != 'tablefield') {
     return drupal_not_found();
   }
 
+  // Attempt to load the entity.
+  $entities = entity_load($entity_type, array($entity_id));
+  if (empty($entities)) return MENU_NOT_FOUND;
+  $entity = reset($entities);
+
+  // Ensure the user has access to view this field on this entity.
+  if (!_tablefield_entity_access('view', $entity_type, $entity) ||
+      !field_access('view', $field_info, $entity_type, $entity)) {
+    return MENU_ACCESS_DENIED;
+  }
+
   $filename = sprintf('%s_%s_%s_%s_%s.csv', $entity_type, $entity_id, $field_name, $langcode, $delta);
   $uri = 'temporary://' . $filename;
-
-  // Attempt to load the entity.
-  $ids = array($entity_id);
-  $entity = entity_load($entity_type, $ids);
-  $entity = array_pop($entity);
 
   // Ensure that the data is available and that we can load a
   // temporary file to stream the data.
@@ -148,6 +153,36 @@ function tablefield_export_csv($entity_type, $entity_id, $field_name, $langcode,
   drupal_add_http_header('Status', '500 Internal Server Error');
   print t('Error generating CSV.');
   drupal_exit();
+}
+
+/**
+ * Helper function: A sort-of copy of entity_access() from entity API.
+ * @todo Remove if entity_acess() ends up in core.
+ */
+function _tablefield_entity_access($op, $entity_type, $entity = NULL, $account = NULL) {
+  $info = entity_get_info($entity_type);
+  // Use entity API access callbacks if provided.
+  if (isset($info[$entity_type]['access callback'])) {
+    $access_callback = $info[$entity_type]['access callback'];
+    return $access_callback($op, $entity, $account, $entity_type);
+  }
+  // Fall back to core entity access callbacks if EntityAPI is not available.
+  elseif ($entity_type == 'node') {
+    return node_access($op, $entity, $account);
+  }
+  elseif ($entity_type == 'user') {
+    return user_view_access($entity);
+  }
+  elseif ($entity_type == 'taxonomy_term') {
+    if (user_access('administer taxonomy', $account)) {
+      return TRUE;
+    }
+    if (user_access('access content', $account)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 /**
@@ -1084,7 +1119,7 @@ function tablefield_field_formatter_view($entity_type, $entity, $field, $instanc
           drupal_alter('tablefield_output', $markup, $context);
           $element[0] = array(
           // See http://php.net/manual/en/json.constants.php#119565.
-            '#markup' => $markup,
+            '#markup' => check_plain($markup),
           );
         }
         break;
@@ -1284,6 +1319,8 @@ function tablefield_field_widget_form(&$form, &$form_state, $field, $instance, $
       // Importing CSV data.
       tablefield_import_csv($form, $form_state, $langcode, $import_id, $tablefield_parents);
       $default_value = drupal_array_get_nested_value($form_state['input'], $tablefield_parents);
+      $identifier = implode('--', $tablefield_parents);
+      $form_state['_tablefield_imported_values'][$identifier] = $default_value;
     }
     elseif ($form_state['triggering_element']['#name'] == $pasted_id) {
       // Importing pasted data.
@@ -1667,7 +1704,93 @@ function tablefield_field_widget_form(&$form, &$form_state, $field, $instance, $
     }
   }
 
+  $form['element']['#element_validate'][] = 'tablefield_field_widget_form_validate';
+
   return $element;
+}
+
+ /**
+ * Validation callback.
+ *
+ * If the POST request exceeds the server's limit of max_input_vars, the tablefield
+ * values that were computed by a CSV import will be directly get set by the
+ * CSV table, bypassing the form submission step, and also any changes that the
+ * user made on browser.
+ *
+ * @param $form
+ * @param $form_state
+ * @param $element
+ */
+function tablefield_field_widget_form_validate(&$form, &$form_state, &$element) {
+  if (tablefield_post_exceeds_max_input_vars()) {
+    // Check if the values have been imported from a CSV file. If so, original
+    // values still exist in $form_state['_tablefield_imported_values'].
+    $values_from_csv = FALSE;
+    if (isset($form_state['_tablefield_imported_values'])) {
+      $values_from_csv = $form_state['_tablefield_imported_values'];
+    }
+
+    if ($values_from_csv) {
+      // Each key is one of the fields multiple values
+      $elements = array_keys($values_from_csv);
+      foreach ($elements as $key) {
+        $table_values = $values_from_csv[$key];
+        // Reconstruct in the same form as the array is passed in $form_state.
+        $table_values_format = array();
+        $i_row = 0;
+        foreach ($table_values as $row) {
+          $i_col = 0;
+          foreach ($row as $cell) {
+            $table_values_format['cell_' . $i_row . '_' . $i_col] = $cell;
+            $i_col++;
+          }
+          $i_row++;
+        }
+
+        $keys = explode('--', $key);
+        tablefield_replace_csv_values($form_state['values'], $keys, $table_values_format);
+        $message_warning = t('This table is too large to be safely edited. The original CSV values are stored. Please import a new CSV file to make changes to this table.');
+        drupal_set_message($message_warning, 'warning');
+      }
+    }
+    else {
+      $message_error = t('This table is too large to be safely edited. To assure that no data is lost, please import a new CSV file to make changes to this table.');
+      drupal_set_message($message_error, 'error');
+    }
+  }
+}
+
+/**
+ * Helper function that uses recursion to replace table field values from
+ * $form_state['values'] with the values that were saved right after the csv
+ * upload.
+ *
+ * The function is used if the size of the table is so large, that on the form
+ * submission the max_input_vars is exceeded.
+ *
+ * @param array $destination
+ *   It should only contain the $form_state['values'].
+ *
+ * @param array $keys
+ *   Array with the nested keys of the field's location into $form_state['values'].
+ *
+ * @param array $value
+ *   The table to be placed.
+ */
+function tablefield_replace_csv_values(array &$destination, array &$keys, array $value) {
+  $cur_key = array_shift($keys);
+  if (!isset($destination[$cur_key])) {
+    return;
+  }
+
+  if (!empty($keys)) {
+    tablefield_replace_csv_values( $destination[$cur_key], $keys, $value);
+    return;
+  }
+
+  foreach ($value as $key => $value2) {
+    $destination[$cur_key][$key] = $value2;
+  }
 }
 
 /**
@@ -2449,4 +2572,17 @@ function array_to_xml($data, &$xml_data) {
       $xml_data->addChild("$key", htmlspecialchars("$value"));
     }
   }
+}
+
+/**
+ * Helper function, that checks if the POST request contains more input variables
+ * than the max_input_vars configuration on the server.
+ *
+ * @return bool
+ */
+function tablefield_post_exceeds_max_input_vars() {
+  $posted_vars = count($_POST, COUNT_RECURSIVE);
+  $max_input_vars = get_cfg_var('max_input_vars');
+
+  return ($posted_vars > $max_input_vars) ? TRUE : FALSE;
 }

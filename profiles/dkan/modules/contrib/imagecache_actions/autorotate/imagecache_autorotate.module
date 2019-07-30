@@ -39,17 +39,13 @@ function imagecache_autorotate_theme() {
     'imagecache_autorotate_summary' => array(
       'variables' => array('data' => NULL),
     ),
-    'imagecache_subroutine_summary' => array(
-      'variables' => array('data' => NULL),
-    ),
   );
 }
-
 
 /**
  * Builds the auto-rotate form.
  *
- * This effect has no options, only some help text,so the form is displayed
+ * This effect has no options, only some help text, so the form is displayed
  * anyway.
  */
 function imagecache_autorotate_form() {
@@ -95,13 +91,13 @@ function imagecache_autorotate_form() {
  * @ingroup themeable
  */
 function theme_imagecache_autorotate_summary(/*array $variables*/) {
-  return 'Autorotate image based on its EXIF data.';
+  return 'image based on its EXIF data.';
 }
 
 /**
  * Autorotate image based on EXIF Orientation tag.
  */
-function imagecache_autorotate_effect(stdClass $image, $data) {
+function imagecache_autorotate_effect(stdClass $image /*, $data*/) {
   // Test to see if EXIF is supported by the current image type.
   if (in_array($image->info['mime_type'], array('image/jpeg', 'image/tiff'))) {
     // Hand over to toolkit.
@@ -130,10 +126,17 @@ function imagecache_autorotate_effect(stdClass $image, $data) {
  */
 function image_gd_imagecache_autorotate(stdClass $image) {
   if (!function_exists('exif_read_data')) {
-    watchdog('image', 'Image %file could not be auto-rotated: !message', array('%file' => $image->source, '!message' => t('The exif_read_data() function is not available in this PHP installation. You probably have to enable the exif extension.')));
+    watchdog('imagecache_actions', 'Image %file could not be auto-rotated: !message', array('%file' => $image->source, '!message' => t('The exif_read_data() function is not available in this PHP installation. You probably have to enable the exif extension.')));
     return FALSE;
   }
-  $exif = exif_read_data(drupal_realpath($image->source));
+
+  // Read and check result.
+  $exif = @exif_read_data(drupal_realpath($image->source));
+  if ($exif === FALSE && $image->extension === 'jpg') {
+    watchdog('imagecache_actions', 'Image %file could not be auto-rotated: !message', array('%file' => $image->source, '!message' => t('The exif_read_data() function returned FALSE.')));
+    return FALSE;
+  }
+
   if (isset($exif['Orientation'])) {
     // http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html:
     // 1 = Horizontal (normal)
@@ -180,26 +183,46 @@ function image_gd_imagecache_autorotate(stdClass $image) {
  * @see http://www.imagemagick.org/script/command-line-options.php#auto-orient
  */
 function image_imagemagick_imagecache_autorotate(stdClass $image) {
-  $image->ops[] = '-auto-orient';
   // Use the exif extension, if enabled, to figure out the new dimensions.
+  // Moreover (see [#2366163]): to prevent a bug in IM to incorrectly rotate the
+  // image when it should not, we only pass the auto-orient argument when the
+  // exif extension could detect the 'Orientation' tag.
   if (function_exists('exif_read_data')) {
-    $exif = exif_read_data(drupal_realpath($image->source));
+    $exif = @exif_read_data(drupal_realpath($image->source));
     if (isset($exif['Orientation'])) {
       switch ($exif['Orientation']) {
+        case 1:
+          // Normal orientation: no need to rotate or to change the dimensions.
+          break;
+        case 5:
         case 6:
+        case 7:
         case 8:
-          // 90 or 270 degrees rotation: swap dimensions.
+          // 90 or 270 degrees rotation (+ optional mirror): swap dimensions.
+          $image->ops[] = '-auto-orient';
           $tmp = $image->info['width'];
           $image->info['width'] = $image->info['height'];
           $image->info['height'] = $tmp;
           break;
         default:
+          // All other orientations: pass the arguments, but the dimensions
+          // remain the same.
+          $image->ops[] = '-auto-orient';
           break;
       }
     }
+    elseif ($exif === FALSE && $image->extension === 'jpg') {
+      watchdog('imagecache_actions', 'Image %file could not be auto-rotated: !message', array('%file' => $image->source, '!message' => t('The exif_read_data() function returned FALSE.')));
+    }
   }
   else {
-    $image->info['width'] = $image->info['height'] = NULL;
+    // We do add the auto-orient argument to IM. IM will determine itself
+    // whether to rotate or not.
+    $image->ops[] = '-auto-orient';
+    // However we cannot keep track of the dimensions anymore.
+    if ($image->info['width'] !== $image->info['height']) {
+      $image->info['width'] = $image->info['height'] = NULL;;
+    }
   }
   return TRUE;
 }

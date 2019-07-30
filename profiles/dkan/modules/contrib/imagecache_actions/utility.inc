@@ -4,6 +4,40 @@
  * image processing.
  */
 
+/**
+ * Validates that the element is a positive number.
+ *
+ * This is a Form API #element_validate callback.
+ *
+ * @param array $element
+ * param array $form_status
+ */
+function imagecache_actions_validate_number_positive(&$element/*, &$form_status*/) {
+  $value = $element['#value'];
+  if ($value != '') {
+    if (!is_numeric($value) || (float) $value <= 0.0) {
+      form_error($element, t('%name must be a positive number.', array('%name' => $element['#title'])));
+    }
+  }
+}
+
+/**
+ * Validates that the element is a non negative number.
+ *
+ * This is a Form API #element_validate callback.
+ *
+ * @param array $element
+ * param array $form_status
+ */
+function imagecache_actions_validate_number_non_negative(&$element/*, &$form_status*/) {
+  $value = $element['#value'];
+  if ($value != '') {
+    if (!is_numeric($value) || (float) $value < 0.0) {
+      form_error($element, t('%name must be a non negative number.', array('%name' => $element['#title'])));
+    }
+  }
+}
+
 /*
  * File field handling.
  */
@@ -21,11 +55,11 @@ function imagecache_actions_file_field_description() {
  * This is a Form API #element_validate callback.
  *
  * @param array $element
- * @param array $form_status
+ * param array $form_status
  */
-function imagecache_actions_validate_file(&$element, &$form_status) {
+function imagecache_actions_validate_file(&$element/*, &$form_status*/) {
   if (!imagecache_actions_find_file($element['#value'])) {
-    form_error($element, t("Unable to find the file '%file'. Please check the path.", array('%file' => $element['#value'])) );
+    form_error($element, t("Unable to find the file '%file'. Please check the path.", array('%file' => $element['#value'])));
   }
 }
 
@@ -109,7 +143,7 @@ function imagecache_actions_get_style_label($style_name) {
 }
 
 /**
- * Return an array with context information about the image.
+ * Returns an array with context information about the image.
  *
  * This information is called by effects that need contextual information or
  * that allow custom PHP:
@@ -140,11 +174,11 @@ function imagecache_actions_get_style_label($style_name) {
 function imagecache_actions_get_image_context($image, $data) {
   // Store context about the image.
   $image_context = array(
-        'effect_data' => $data,
-        'managed_file' => NULL,
-        'referring_entities' => array(),
-        'entity' => NULL,
-        'image_field' => NULL,
+    'effect_data' => $data,
+    'managed_file' => NULL,
+    'referring_entities' => array(),
+    'entity' => NULL,
+    'image_field' => NULL,
   );
 
   // Find the managed file object (at most 1 object as 'uri' is a unique index).
@@ -158,26 +192,33 @@ function imagecache_actions_get_image_context($image, $data) {
       + file_get_file_references($managed_file, NULL, FIELD_LOAD_CURRENT, 'file');
 
     if ($references) {
-      // Load referring entities.
+      // Load referring entities., keep track of 1st reference separately.
+      $entity_type_first = '';
+      $field_name_first = '';
       foreach ($references as $field_name => $field_references) {
         foreach ($field_references as $entity_type => $entity_stubs) {
-          $image_context['referring_entities'][$field_name][$entity_type] = entity_load($entity_type, array_keys($entity_stubs));
+          $entities = entity_load($entity_type, array_keys($entity_stubs));
+          if (!empty($entities)) {
+            $image_context['referring_entities'][$field_name][$entity_type] = $entities;
+            // Make it easy to access the '1st' entity and its referring image
+            // field, part 1: entity.
+            if (empty($entity_type_first)) {
+              $entity_type_first = $entity_type;
+              $field_name_first = $field_name;
+              $image_context['entity'] = reset($entities);
+            }
+          }
         }
       }
 
-      // Make it easy to access the '1st' entity and its referring image field.
-      reset($image_context['referring_entities']);
-      list($field_name, $field_references) = each($image_context['referring_entities']);
-      reset($field_references);
-      list($entity_type, $entities) = each($field_references);
-      reset($entities);
-      list(, $image_context['entity']) = each($entities);
-      $image_field = field_get_items($entity_type, $image_context['entity'], $field_name);
+      // Make it easy to access the '1st' entity and its referring image field,
+      // part 2: image field.
+      /** @var array|false $image_field */
+      $image_field = field_get_items($entity_type_first, $image_context['entity'], $field_name_first);
       if ($image_field) {
         // Get referring item.
         foreach ($image_field as $image_field_value) {
           if ($image_field_value['fid'] === $managed_file->fid) {
-            // @todo: file_field as well or just ignore the type of field?
             $image_context['image_field'] = $image_field_value;
             break;
           }
@@ -187,6 +228,53 @@ function imagecache_actions_get_image_context($image, $data) {
   }
 
   return $image_context;
+}
+
+
+/**
+ * Returns information about the context, image style and image effect id, of
+ * the current image effect.
+ *
+ * Note that this information is not alterable, that is, it will not have any
+ * effect on the rest of the derivative image generation process including its
+ * subsequent effects.
+ *
+ * This information is called by effects that may need contextual information or
+ * that allow custom PHP:
+ * - Custom action.
+ * - Text from image alt or title.
+ * - Text with tokens.
+ * - Text from PHP code.
+ *
+ * This information is fetched by traversing the backtrace, looking for known
+ * functions that have the image style or effect as argument..
+ *
+ * @return array
+ *   Array with keys 'image_style' and 'image_effect_id' pointing to the current
+ *   image style (array) resp. image effect id (int).
+ */
+function imagecache_actions_get_image_effect_context() {
+  $result = array();
+  $backtrace = debug_backtrace();
+
+  foreach ($backtrace as $function_call) {
+    if ($function_call['function'] && $function_call['function'] === 'image_effect_apply') {
+      $result['image_effect_id'] = isset($function_call['args'][1]['ieid']) ? $function_call['args'][1]['ieid'] : NULL;
+    }
+    else if ($function_call['function'] && $function_call['function'] === 'image_style_create_derivative') {
+      $result['image_style'] = isset($function_call['args'][0]) ? $function_call['args'][0] : NULL;
+    }
+
+    if (count($result) === 2) {
+      break;
+    }
+  }
+
+  $result += array(
+    'image_effect_id' => NULL,
+    'image_style' => NULL,
+  );
+  return $result;
 }
 
 /**
@@ -213,8 +301,7 @@ function imagecache_actions_get_image_context($image, $data) {
  *   A keyed array of absolute x,y co-ordinates to place the layer at.
  */
 function imagecache_actions_calculate_relative_position($base, $layer, $style) {
-  // both images should now have size info available.
-
+  // Both images should now have size info available.
   if (isset($style['bottom'])) {
     $ypos = imagecache_actions_calculate_offset('bottom', $style['bottom'], $base->info['height'], $layer->info['height']);
   }
@@ -227,37 +314,55 @@ function imagecache_actions_calculate_relative_position($base, $layer, $style) {
   if (isset($style['left'])) {
     $xpos = imagecache_actions_calculate_offset('left', $style['left'], $base->info['width'], $layer->info['width']);
   }
-  if (! isset($ypos)) {
-    // assume center
+  if (!isset($ypos)) {
+    // Assume center.
     $ypos = ($base->info['height'] / 2) - ($layer->info['height'] / 2);
   }
-  if (! isset($xpos)) {
-    // assume center
+  if (!isset($xpos)) {
+    // Assume center.
     $xpos = ($base->info['width'] / 2) - ($layer->info['width'] / 2);
   }
-  #dpm(__FUNCTION__ . " Calculated offsets");
-  #dpm(get_defined_vars());
-
+  // dpm(__FUNCTION__ . " Calculated offsets");
+  // dpm(get_defined_vars());
   return array('x' => $xpos, 'y' => $ypos);
 }
 
 /**
+ * Calculates an offset from an edge.
+ *
  * Positive numbers are IN from the edge, negative offsets are OUT.
  *
- * $keyword, $value, $base_size, $layer_size
- * eg
- * left,20 200, 100 = 20
- * right,20 200, 100 = 80 (object 100 wide placed 20 px from the right = x=80)
- *
- * top,50%, 200, 100 = 50 (Object is centered when using %)
- * top,20%, 200, 100 = -10
- * bottom,-20, 200, 100 = 220
- * right, -25%, 200, 100 = 200 (this ends up just off screen)
+ * Examples:
+ * - left, 20, 200, 100 = 20
+ * - right, 20, 200, 100 = 80 (object 100 wide placed 20px from the right)
+ * - top, 50%, 200, 100 = 50 (Object is centered when using %)
+ * - top, 20%, 200, 100 = -10
+ * - bottom, -20, 200, 100 = 220
+ * - right, -25%, 200, 100 = 200 (this ends up just off screen)
  *
  * Also, the value can be a string, eg "bottom-100", or "center+25%"
+
+ * @param string $keyword
+ *   The edge to calculate the offset from. Can be one of: left, right, top,
+ *   bottom, middle, center.
+ * @param string $value
+ *   The value to offset with: can be:
+ *   - a numeric value: offset in pixels
+ *   - a percentage value: offset with a percentage of the $base_size.
+ *   - a keyword indicating a pxiel size: left, right, top, bottom, middle,
+ *     center.
+ *   - an expression of the format: keyword +|- value[%], e.g. center+25%.
+ * @param int $base_size
+ *   The size of the dimension. Used to calculate percentages of.
+ * @param int $layer_size
+ *   The size of the canvas in the current dimension. The value to take for
+ *   $keyword will be based on this value.
+ *
+ * @return int
  */
 function imagecache_actions_calculate_offset($keyword, $value, $base_size, $layer_size) {
-  $offset = 0; // used to account for dimensions of the placed object
+  $offset = 0;
+  // Used to account for dimensions of the placed object.
   $direction = 1;
   $base = 0;
   if ($keyword == 'right' || $keyword == 'bottom') {
@@ -270,16 +375,18 @@ function imagecache_actions_calculate_offset($keyword, $value, $base_size, $laye
     $offset = -1 * ($layer_size / 2);
   }
 
-  // Keywords may be used to stand in for numeric values
+  // Keywords may be used to stand in for numeric values.
   switch ($value) {
     case 'left':
     case 'top':
       $value = 0;
       break;
+
     case 'middle':
     case 'center':
       $value = $base_size / 2;
       break;
+
     case 'bottom':
     case 'right':
       $value = $base_size;
@@ -287,22 +394,24 @@ function imagecache_actions_calculate_offset($keyword, $value, $base_size, $laye
 
   // Handle keyword-number cases like top+50% or bottom-100px,
   // @see imagecache_actions_keyword_filter().
-  if (preg_match('/^(.+)([\+\-])(\d+)([^\d]*)$/', $value, $results)) {
+  if (preg_match('/^([a-z]+) *([+-]) *(\d+)((px|%)?)$/', $value, $results)) {
     list(, $value_key, $value_mod, $mod_value, $mod_unit) = $results;
     if ($mod_unit == '%') {
       $mod_value = $mod_value / 100 * $base_size;
     }
-    $mod_direction = ($value_mod == '-') ? -1 : + 1;
+    $mod_direction = ($value_mod == '-') ? -1 : +1;
     switch ($value_key) {
       case 'left':
       case 'top':
       default:
         $mod_base = 0;
         break;
+
       case 'middle':
       case 'center':
         $mod_base = $base_size / 2;
         break;
+
       case 'bottom':
       case 'right':
         $mod_base = $base_size;
@@ -312,14 +421,17 @@ function imagecache_actions_calculate_offset($keyword, $value, $base_size, $laye
     return $modified_value;
   }
 
-  // handle % values
-  if (substr($value, strlen($value) -1, 1) == '%') {
-    $value = intval($value / 100 * $base_size);
+  // Handle % values.
+  if (substr($value, -1) === '%') {
+    // Explicitly convert $value to prevent warnings in PHP 7.1.
+    $value = intval((int) $value / 100 * $base_size);
     $offset = -1 * ($layer_size / 2);
   }
-  $value = $base + ($direction * $value);
+  // $value may contain 'px' at the end: explicitly convert to prevent warnings
+  // in PHP 7.1.
+  $value = $base + ($direction * (int) $value);
 
-  // Add any extra offset to position the item
+  // Add any extra offset to position the item.
   return $value + $offset;
 }
 
@@ -370,9 +482,9 @@ function imagecache_actions_hex2rgba($hex) {
   $g = hexdec($g);
   $b = hexdec($b);
   $a = hexdec($a);
-  // alpha over 127 is illegal. assume they meant half that.
+  // Alpha over 127 is illegal. assume they meant half that.
   if ($a > 127) {
-    $a = (int) $a/2;
+    $a = (int) $a / 2;
   }
   return array('red' => $r, 'green' => $g, 'blue' => $b, 'alpha' => $a);
 }
@@ -399,8 +511,8 @@ function imagecache_actions_hex2rgba($hex) {
  * @return int
  */
 function imagecache_actions_keyword_filter($value, $base_size, $layer_size) {
-  // See above for the patterns this matches
-  if (! preg_match('/([a-z]*)([\+\-]?)(\d*)([^\d]*)/', $value, $results) ) {
+  // See above for the patterns this matches.
+  if (!preg_match('/([a-z]*) *([+-]?) *(\d*)((px|%)?)/', $value, $results)) {
     trigger_error("imagecache_actions had difficulty parsing the string '$value' when calculating position. Please check the syntax.", E_USER_WARNING);
   }
   list(, $keyword, $plusminus, $value, $unit) = $results;
@@ -412,12 +524,13 @@ function imagecache_actions_keyword_filter($value, $base_size, $layer_size) {
  * Computes a length based on a length specification and an actual length.
  *
  * Examples:
- *  (50, 400) returns 50; (50%, 400) returns 200;
+ *  (50, 400) returns 50; (50px, 400) returns 50; (50%, 400) returns 200;
  *  (50, null) returns 50; (50%, null) returns null;
  *  (null, null) returns null; (null, 100) returns null.
  *
  * @param string|null $length_specification
- *   The length specification. An integer constant or a % specification.
+ *   The length specification. An integer constant optionally followed by 'px'
+ *   or '%'.
  * @param int|null $current_length
  *   The current length. May be null.
  *
@@ -425,7 +538,11 @@ function imagecache_actions_keyword_filter($value, $base_size, $layer_size) {
  */
 function imagecache_actions_percent_filter($length_specification, $current_length) {
   if (strpos($length_specification, '%') !== FALSE) {
-    $length_specification =  $current_length !== NULL ? str_replace('%', '', $length_specification) * 0.01 * $current_length : NULL;
+    $length_specification = $current_length !== NULL ? str_replace('%', '', $length_specification) * 0.01 * $current_length : NULL;
+  }
+  else {
+    // Strips 'px' if available.
+    $length_specification = (int) $length_specification;
   }
   return $length_specification;
 }

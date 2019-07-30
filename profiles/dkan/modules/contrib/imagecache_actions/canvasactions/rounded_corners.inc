@@ -60,6 +60,11 @@ function canvasactions_roundedcorners_form($action) {
   $form['independent_corners_set']['radii'] = array(
     '#type' => 'item',
     '#id' => 'independent-corners-set',
+    '#states' => array(
+      'visible' => array(
+        ':input[name="data[independent_corners_set][independent_corners]"]' => array('checked' => TRUE),
+      ),
+    ),
   );
   foreach ($corners as $attribute => $label) {
     $form['independent_corners_set']['radii'][$attribute] = array(

@@ -40,7 +40,7 @@
  */
 
 if (! function_exists('imagecache_actions_calculate_relative_position') ) {
-  module_load_include('inc', 'imagecache_canvasactions', 'utility');
+  module_load_include('inc', 'imagecache_actions', 'utility');
 }
 
 // @todo There doesn't seem to be a way to specify a file in hook_image_effect_info
@@ -128,6 +128,32 @@ function imagecache_canvasactions_image_effect_info() {
     'summary theme' => 'canvasactions_resizepercent_summary',
   );
 
+  $effects['canvasactions_blur'] = array(
+    'label' => t('Blur'),
+    'help' => t('Make the image become unclear.'),
+    'effect callback' => 'canvasactions_blur_effect',
+    'dimensions passthrough' => TRUE,
+    'form callback' => 'canvasactions_blur_form',
+    'summary theme' => 'canvasactions_blur_summary',
+  );
+
+  $effects['canvasactions_interlace'] = array(
+    'label' => t('Interlace / Progressive'),
+    'help' => t('Create interlaced PNG/GIF or progressive JPG.'),
+    'effect callback' => 'canvasactions_interlace_effect',
+    'dimensions passthrough' => TRUE,
+    'form callback' => 'canvasactions_interlace_form',
+  );
+
+  $effects['canvasactions_perspective'] = array(
+    'label' => t('Perspective transform'),
+    'help' => t('Adds a perspective transformation to the image.'),
+    'effect callback' => 'canvasactions_perspective_effect',
+    'dimensions passthrough' => TRUE,
+    'form callback' => 'canvasactions_perspective_form',
+    'summary theme' => 'canvasactions_perspective_summary',
+  );
+
   return $effects;
 }
 
@@ -169,6 +195,17 @@ function imagecache_canvasactions_theme() {
     'canvasactions_resizepercent_summary' => array(
       'variables' => array('data' => NULL),
       'file' => 'canvasactions.inc',
+    ),
+    'canvasactions_blur_summary' => array(
+      'variables' => array('data' => NULL),
+      'file' => 'canvasactions.inc',
+    ),
+    'canvasactions_perspective_summary' => array(
+      'variables' => array('data' => NULL),
+      'file' => 'canvasactions.inc',
+    ),
+    'canvasactions_perspective_anchor' => array(
+      'render element' => 'element',
     ),
   );
 }

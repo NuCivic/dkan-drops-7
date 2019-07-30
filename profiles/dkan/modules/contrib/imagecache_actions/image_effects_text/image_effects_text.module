@@ -82,14 +82,16 @@ function image_effects_text_theme() {
  * @param string|null $destination
  */
 function image_effects_text_exit($destination = NULL) {
-  static $tmp_file_names = NULL;
+  static $tmp_file_names = array();
 
-  if (isset($destination) && substr($destination, 0 , strlen('temporary://')) === 'temporary://') {
-    // Called by the effect function. Add to our static list of files ot delete.
-    $tmp_file_names[] = $destination;
+  if (isset($destination)) {
+    if (substr($destination, 0 , strlen('temporary://')) === 'temporary://') {
+      // Called by the effect function. Add to our static list of files ot delete.
+      $tmp_file_names[] = $destination;
+    }
   }
-  else if (is_array($tmp_file_names)) {
-    // Normal invocation and we do have files to delete.
+  else {
+    // Normal invocation as Drupal hook: delete any files we have collected.
     foreach ($tmp_file_names as $tmp_file_name) {
       unlink($tmp_file_name);
     }

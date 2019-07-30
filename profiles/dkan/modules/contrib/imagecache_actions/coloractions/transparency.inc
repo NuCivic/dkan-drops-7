@@ -5,7 +5,6 @@
  * @author dan http://coders.co.nz
  */
 
-
 /**
  * Image effect form callback for the alpha effect.
  *
@@ -49,8 +48,9 @@ function coloractions_alpha_form(array $data) {
     "),
   );
 
-  $form['description'] = array('#value' => t(
-    "<p>Alpha toning is an advanced method of greyscaling or colorizing.
+  $form['description'] = array(
+    '#value' => t(
+      "<p>Alpha toning is an advanced method of greyscaling or colorizing.
       It works using transparency, not colour matching.
       The results of this filter are excellent for using as watermarks,
       and for 'sepia' type imprints on coloured or textured backgrounds.
@@ -59,7 +59,8 @@ function coloractions_alpha_form(array $data) {
       <em>unless</em> you either <strong>flatten</strong> this image against a background color
       or image in a later process or <strong>convert</strong> it to a PNG before saving
       using available imagecache actions.</p>"
-    ));
+    )
+  );
 
   $form['RGB'] = imagecache_rgb_form($data['RGB']);
   $form['RGB']['#type'] = 'fieldset';
@@ -91,13 +92,14 @@ function coloractions_alpha_form(array $data) {
  *
  * @return string
  *   The HTML for the summary of this image effect.
+ *
  * @ingroup themeable
  */
 function theme_coloractions_alpha_summary(array $variables) {
-  $element = $variables['element'];
-  return ($element['#value']['flatten'] ? t("Flatten") : t("Transparent"))
-    . ($element['#value']['opacity'] ? " : " . ($element['#value']['opacity'] * 100) . '%' : '')
-    . " : " . theme_imagecacheactions_rgb($element['#value']['RGB']);
+  $data = $variables['data'];
+  return ($data['flatten'] ? t("Flatten") : t("Transparent"))
+    . ($data['opacity'] ? " : " . ($data['opacity'] * 100) . '%' : '')
+    . " : " . theme_imagecacheactions_rgb($data['RGB']);
 }
 
 /**
@@ -117,11 +119,8 @@ function theme_coloractions_alpha_summary(array $variables) {
  */
 function coloractions_alpha_effect(stdClass $image, array $data) {
   // @todo: Extract to GD specific function.
-  // @todo: Comments according to coding standards.
-  // @todo: Solve PHPStorm warnings (unused assignments/local variables).
-  if (! $data['flatten']) {
-    // given an image, convert dark areas to opaque,
-    // light to transparent,
+  if (!$data['flatten']) {
+    // Given an image, convert dark areas to opaque, light to transparent.
     return png_color2alpha($image, $data['RGB']['HEX'], $data['opacity']);
   }
   else {
@@ -129,7 +128,7 @@ function coloractions_alpha_effect(stdClass $image, array $data) {
     $info = $image->info;
 
     if (!$info) {
-      watchdog("imagecache", "Problem converting image to fill behind. Source image returned no info");
+      watchdog('imagecache_actions', "Problem converting image to fill behind. Source image returned no info");
       return FALSE;
     }
 
@@ -140,28 +139,26 @@ function coloractions_alpha_effect(stdClass $image, array $data) {
     // Start with a solid color.
     $background_rgb = imagecache_actions_hex2rgba($data['RGB']['HEX']);
 
-    // Setting the background color here solid is what flattens the image
-    $background_color = @imagecolorallocatealpha($base_image, $background_rgb['red'], $background_rgb['green'], $background_rgb['blue'], 0);
-
-    // But what I really want to do is set it
-    // coloured rgb AND 100% transparent, in the hope that
-    // a failure to render transparency would instead render
+    // Setting the background color here solid is what flattens the image.
+    // But what I really want to do is set it colored rgb AND 100% transparent,
+    // in the hope that a failure to render transparency would instead render
     // THAT colour.
     $background_color = @imagecolorallocatealpha($base_image, $background_rgb['red'], $background_rgb['green'], $background_rgb['blue'], 0);
-    // But that still doesn't work.
-    // Yet somehow I've seen transparent images that fallback to white, not silver.
+    // But that still doesn't work. Yet somehow I've seen transparent images
+    // that fallback to white, not silver.
 
-    imagefill( $base_image, 0, 0, $background_color );
+    imagefill($base_image, 0, 0, $background_color);
 
     // And set the overlay behavior back again.
     imagealphablending($base_image, TRUE);
 
     // Place the current image over it.
-    $foreground = $image->resource;
-    $success = imagecopy($base_image, $image->resource, 0, 0, 0, 0, $info['width'], $info['height']);
+    if ($result = imagecopy($base_image, $image->resource, 0, 0, 0, 0, $info['width'], $info['height'])) {
+      imagedestroy($image->resource);
+      $image->resource = $base_image;
+    }
 
-    $image->resource = $base_image;
-    return TRUE;
+    return $result;
   }
 }
 
@@ -174,9 +171,9 @@ function coloractions_alpha_effect(stdClass $image, array $data) {
  *
  * With no color set, use the existing hue.
  *
- * To save a partially transparent image, the image resource must be switched to PNG.
- * ... or maybe not. Just flatten it yourself, or switch the format yourself.
- * This hack would produce side effects otherwise.
+ * To save a partially transparent image, the image resource must be switched to
+ * PNG. ... or maybe not. Just flatten it yourself, or switch the format
+ * yourself. This hack would produce side effects otherwise.
  *
  * This algorithm runs maths per-pixel, and therefore is incredibly much more
  * inefficient than any native routine. Will kill the server on large images.
@@ -207,8 +204,7 @@ function png_color2alpha(stdClass $image, $color, $opacity = NULL) {
 
   if (($width * $height) > (1200 * 1200)) {
     watchdog('imagecache_actions', __FUNCTION__ . " on {$image->source}. Image is TOO BIG to run the per-pixel algorithm. Aborting.");
-    // @todo: return false?
-    return TRUE;
+    return FALSE;
   }
   for ($i = 0; $i < $height; $i++) {
     //this loop traverses each row in the image
@@ -224,13 +220,13 @@ function png_color2alpha(stdClass $image, $color, $opacity = NULL) {
       // If the rule sets a color, then the darkness of the existing
       // pixel will define the desired alpha value.
       if ($color) {
-        $lightness = ( $rgba_array['red'] + $rgba_array['green'] + $rgba_array['blue'] ) / 3;
+        $lightness = ($rgba_array['red'] + $rgba_array['green'] + $rgba_array['blue']) / 3;
         // Need to flip the numbers around before doing maths.
-        #$opacity = 1-($rgba_array['alpha']/127);
-        #$darkness = 1-($lightness/256); // 0 is white, 1 is black
-        #$visibility = $darkness * $opacity;
-        #$alpha = (1-$visibility) * 127;
-        $alpha = (1 - ((1 -($lightness / 256)) * (1 -($rgba_array['alpha'] / 127)))) * 127;
+        //$opacity = 1-($rgba_array['alpha']/127);
+        //$darkness = 1-($lightness/256); // 0 is white, 1 is black
+        //$visibility = $darkness * $opacity;
+        //$alpha = (1-$visibility) * 127;
+        $alpha = (1 - ((1 - ($lightness / 256)) * (1 - ($rgba_array['alpha'] / 127)))) * 127;
       }
       // If color is NOT set, then the existing color is passed though, only
       // made somewhat transparent.
@@ -238,11 +234,12 @@ function png_color2alpha(stdClass $image, $color, $opacity = NULL) {
         $background = $rgba_array;
       }
       if ($opacity) {
-        // It's a user-defined alpha value
+        // It's a user-defined alpha value.
         $alpha = $alpha * $opacity;
       }
 
       // Paint the pixel.
+      /** @noinspection PhpUndefinedVariableInspection */
       $color_to_paint = imagecolorallocatealpha($image->resource, $background['red'], $background['green'], $background['blue'], $alpha);
       imagesetpixel($image->resource, $j, $i, $color_to_paint);
     }

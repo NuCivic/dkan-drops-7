@@ -3,6 +3,76 @@ Imagecache Actions
 
 Imagecache Actions 7.x-1.x-dev
 ------------------------------
+- ...
+
+Imagecache Actions 7.x-1.10
+---------------------------
+- Use json for exporting image styles.
+- [#2988487] by AdamEvertsson: Minor spelling error.
+
+Imagecache Actions 7.x-1.9
+--------------------------
+- [#2760121] by lebster, fietserwin: Add a "Perspective" effect.
+- [#2947014]: PHP 7.2 warning that each() has been deprecated.
+
+Imagecache Actions 7.x-1.8
+--------------------------
+- [#2917097]: PHP 7.1 Warning "A non-numeric value encountered".
+- [#2905130] by bserem, fietserwin: Remove animation from moving images.
+- [#2888678] by das-peter: ImageMagick: Add support for invert effect.
+- [#1099300]: Notice: A non well formed numeric value encountered in
+  image_gd_definecanvas() (line 381 of canvasactions.inc).
+- [#2719661] by SKAUGHT: Division by zero.
+- [#2717789]: Prevent exif_read_data() warnings.
+- Warning: Theme hook coloractions_invert_summary not found.
+- [#2696225] by mnlund, fietserwin: Add support for multiply color blending.
+- by fietserwin: image_styles_admin: sort image styles by label.
+- [#2039379]: Add some better examples for using custom actions.
+- Made more contextual information (image style and image effect) available in
+  the custom action and text image effects.
+- [#2690337] by Ajithlal, fietserwin: Would like a feature for converting case
+  in text effect.
+
+Imagecache Actions 7.x-1.7
+--------------------------
+- [#2671526]: Fatal error on image style flush when image styles are defined in
+  Features.
+
+Imagecache Actions 7.x-1.6
+--------------------------
+- [#2664020]: IE fails to display images whose extension and Content-Type header
+  do not match the actual image type.
+- [#1591484]: Underlay not working (on IM).
+- [#2359523]: Follow up to improve help text.
+- [#2615986] by hargobind: Effect summary in image_styles_admin.module.
+- Notice: Undefined index: element in theme_coloractions_alpha_summary() (line
+  98 of coloractions\transparency.inc).
+- Removed superfluous theme entry 'imagecache_subroutine_summary' from
+  autorotate sub module.
+- [#2080877] by heathdutton: Interlace / Progressive effect.
+- [#760438] by fietserwin: Resize Overlay / Watermark for ImageMagick.
+- [#760438] by raintonr, Ace Cooper, ttkaminski, thijsvdanker, fietserwin:
+  Resize Overlay / Watermark (GD only).
+- [#768980] by idebr, fietserwin: Blur effect.
+- [#2636314]: 'Import style' can fail on newline characters.
+- [#2573225]: Resize by percentage not calculating other field.
+- [#2447419]: Correct erroneous call to module_load_include in
+  imagecache_canvasactions.module.
+- [#2416805]: Remove reference to non-existent imagecache_coloractions.install.
+- [#2416805]: remove deprecated jquery attr() and replace with FAPI #states
+  (rounded corners UI form).
+- [#2580805]: Coding standards corrections.
+
+
+Imagecache Actions 7.x-1.5 2014-11-29
+-------------------------------------
+- [#2366163]: autorotate sometimes doesn't work with ImageMagick.
+- Text effect: small clean-up of hook_exit().
+- [#2379359]: image_imagemagick_overlay() passes a stream wrapper to convert.
+- [#2359523]: Overlay: allow to define offsets from all sides.
+- [#1717436]: Add effects: color level adjustment and desaturate while retaining
+    alpha.
+- [#2278233]: Call to undefined function imagecache_actions_get_style_label().
 - [#2183721]: Duplicate/Export links just edit, they don't duplicate or export.
     possible solution only.
 - [#2176727]: New actions: scale / resize by percent.

@@ -6,12 +6,12 @@ core = 7.x
 dependencies[] = imagecache_actions
 dependencies[] = image
 
-files[] = imagecache_coloractions.install
 files[] = imagecache_coloractions.module
 files[] = transparency.inc
 files[] = tests/green.imagecache_preset.inc
 
-; Information added by drush on 2014-03-25
-version = "7.x-1.9"
+; Information added by Drupal.org packaging script on 2019-07-17
+version = "7.x-1.10"
+core = "7.x"
 project = "imagecache_actions"
-datestamp = "1395771921"
+datestamp = "1563346089"

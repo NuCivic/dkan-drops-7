@@ -108,4 +108,5 @@ Targeted release date: ...
     watermark effect more advanced?)
   - ImageCache Scale-9 Actions: https://drupal.org/project/imagecache_scale9actions
   - ImageEffects: https://drupal.org/project/imageeffects (pixelate and flip).
+  - Imagick: https://www.drupal.org/project/imagick
   - etc.

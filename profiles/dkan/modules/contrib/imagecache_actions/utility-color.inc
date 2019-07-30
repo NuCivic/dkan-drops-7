@@ -1,27 +1,31 @@
 <?php
 /**
- * @file Utility functions for color widgets
+ * @file Utility functions for color widgets.
  */
 
 /**
- * Prepare a subform for displaying RGB fields
+ * Prepares a subform for displaying RGB fields.
  *
  * Helper function to render a common element.
  *
  * Note that any module that re-uses this form also has to declare the theme
  * function in order to ensure it's in the registry.
+ *
+ * @param array $action
+ *
+ * @return array
  */
 function imagecache_rgb_form($action) {
   if ($action['HEX'] && $deduced = imagecache_actions_hex2rgba($action['HEX'])) {
     $action = array_merge($action, $deduced);
+    // With or without # is valid, but the colorpicker expects it always.
     $action['HEX'] = '#' . ltrim($action['HEX'], '#');
-    // With or without # is valid, but the colorpicker expects it always
   }
   $form = array(
     '#prefix' => '<div class="colorform" >',
     '#suffix' => '</div>',
   );
-  
+
   $form['colorpicker'] = array(
     '#weight' => -1,
     '#markup' => '<div class="colorpicker" style="float:right;"></div>',
@@ -36,11 +40,10 @@ function imagecache_rgb_form($action) {
   );
 
   // Adds the JS that binds the textarea with the farbtastic element.
-  
   // Find each colorpicker placeholder:
-  // initialize it, 
+  // initialize it,
   // then find the nearby textfield that is of type colorentry
-  // and attach the colorpicker behavior to it. 
+  // and attach the colorpicker behavior to it.
   // This is so we can support more that one per page if neccessary.
   $init_colorpicker_script = "
     (function ($) {
@@ -55,7 +58,7 @@ function imagecache_rgb_form($action) {
       }
     })(jQuery);
   ";
-  
+
   // Add Farbtastic color picker.
   $form['HEX']['#attached'] = array(
     'library' => array(
@@ -68,7 +71,7 @@ function imagecache_rgb_form($action) {
       ),
     ),
   );
-  
+
   return $form;
 }
 
@@ -77,21 +80,28 @@ function imagecache_rgb_form($action) {
  *
  * The core image_effect_color_validate() was not intelligent enough.
  * Actually parse the value in order to see if it is parsable.
+ *
+ * @param array $element
+ * param array $form_state
+ *   Not used
  */
-function imagecache_rgb_validate($element, &$form_state) {
+function imagecache_rgb_validate($element/*, &$form_state*/) {
   if ($element['#value'] != '') {
     $rgba_value = imagecache_actions_hex2rgba($element['#value']);
     if (!$rgba_value) {
-      // Returning NULL means a parse error
+      // Returning NULL means a parse error.
       form_error($element, t('!name must be a hexadecimal color value.', array('!name' => $element['#title'])));
     }
   }
 }
 
-
 /**
- * Displays a chosen color for use in the style summary snippets, 
+ * Displays a chosen color for use in the style summary snippets,
  * by actually rendering the color.
+ *
+ * @param array $variables
+ *
+ * @return string
  */
 function theme_imagecacheactions_rgb($variables) {
   if (!empty($variables['RGB']['HEX'])) {
@@ -100,4 +110,3 @@ function theme_imagecacheactions_rgb($variables) {
   }
   return ' ' . t('Transparent');
 }
-

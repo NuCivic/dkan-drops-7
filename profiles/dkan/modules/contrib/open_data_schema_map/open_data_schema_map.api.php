@@ -129,3 +129,43 @@ function hook_open_data_schema_map_args_alter(&$token, &$arg) {
     $token[1] = 'nid';
   }
 }
+
+/******** Use features to provide defaults *******/
+
+
+/**
+ * Provide defaults using features module.
+ * 
+ * @return array
+ *   Exported mapping for ODSM endpoint.
+ */
+function hook_open_data_schema_apis_defaults() {
+  $open_data_schema_apis = array();
+  // Example endpoint:
+  $open_data_schema_apis['my_endpoint'] = array(
+    'name' => 'My Custom Endpoint',
+    // Is enabled by default?
+    'enabled' => 1,
+    'machine_name' => 'my_endpoint',
+    // Machine readbale schema.
+    'api_schema' => 'pod',
+    'description' => NULL,
+    'type' => 'node',
+    'bundle' => 'dataset',
+    // The schema fields and the associated tokens.
+    // See: https://github.com/GetDKAN/dkan/blob/7.x-1.x/modules/dkan/open_data_schema_map_dkan/open_data_schema_map_dkan.features.inc#L1273
+    // for example.
+    'mapping' => array(
+    ),  
+    'outputformat' => 'json',
+    'endpoint' => 'data.json',
+    'arguments' => array(
+      1 => array(
+        'field' => 'identifier',
+        'required' => 0,
+      ),  
+    ),  
+    'xml_root' => 'records',
+    'xml_defaulttag' => 'record',
+  );  
+}

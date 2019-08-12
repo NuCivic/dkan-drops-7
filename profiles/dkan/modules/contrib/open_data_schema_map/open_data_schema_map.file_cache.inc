@@ -82,19 +82,19 @@ function open_data_schema_map_file_cache_exits($api, $arguments = array()) {
 function open_data_schema_map_file_cache_endpoint($machine_name) {
   $api = open_data_schema_map_api_load($machine_name);
   if (isset($api)) {
-    watchdog('open_data_schema_map', 'api present and loaded', WATCHDOG_INFO);
+    watchdog('open_data_schema_map', 'api present and loaded', [], WATCHDOG_INFO);
     $filename = open_data_schema_map_file_cache_name_helper($api);
     // This will only work for data.json v1.1 right now.
-    watchdog('open_data_schema_map', 'Beginning processing for endpoint (this could take a while)', WATCHDOG_INFO);
+    watchdog('open_data_schema_map', 'Beginning processing for endpoint (this could take a while)', [], WATCHDOG_INFO);
     $render = open_data_schema_map_render_api($api);
     $result = $render['result'];
 
     // Load the correct output format, render results, and write to a file.
     if ($output_format = open_data_schema_map_output_format_load($api->outputformat)) {
       $response = $output_format['callback']($api, $result);
-      watchdog('open_data_schema_map', "Saving $filename", WATCHDOG_INFO);
+      watchdog('open_data_schema_map', "Saving $filename", [], WATCHDOG_INFO);
       file_save_data($response, $filename, FILE_EXISTS_REPLACE);
-      watchdog('open_data_schema_map', "$filename saved", WATCHDOG_INFO);
+      watchdog('open_data_schema_map', "$filename saved", [], WATCHDOG_INFO);
     }
   }
 }

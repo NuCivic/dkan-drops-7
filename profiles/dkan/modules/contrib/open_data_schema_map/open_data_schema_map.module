@@ -1035,11 +1035,22 @@ function open_data_schema_map_endpoint_args(&$map, $queries, $args = array()) {
 function open_data_schema_map_endpoint_process_map($ids, $api) {
   $output = array();
   if ($ids) {
+    $total = count($ids);
+    $count = 0;
+    $index = 0;
     foreach ($ids as $key => $id) {
       $result = array();
       $entity = entity_load_single($api->type, $id);
       open_data_schema_map_endpoint_process_map_recursion($result, $api->mapping, $api->type, $entity);
       $output[] = $result;
+      $count++;
+      $index++;
+      if ($count == 100 || $index == $total) {
+        if (function_exists('drush_log')) {
+          drush_log("Processed $index out of $total items", "ok");
+        }
+        $count = 0;
+      }
     }
   }
   return $output;

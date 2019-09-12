@@ -2,8 +2,8 @@ name = "Fieldable Panels Panes"
 description = "Allow the creation of fieldable panels pane entities."
 package = "Panels"
 core = "7.x"
-dependencies[] = ctools (>= 1.8)
-dependencies[] = panels (>= 3.5)
+dependencies[] = ctools
+dependencies[] = panels
 dependencies[] = views
 
 configure = admin/structure/fieldable-panels-panes
@@ -60,13 +60,19 @@ files[] = tests/fpp.with_panelizer.test
 test_dependencies[] = pathauto
 files[] = tests/fpp.with_pathauto.test
 
+; Test the interaction with the Services module. Note: the rest_service
+; submodule that the test depends upon also requires libraries, hence why it is
+; listed here too.
+test_dependencies[] = libraries
+test_dependencies[] = services
+files[] = tests/fpp.services.test
+
 ; Test the node revisions workflow with Revisioning module.
 test_dependencies[] = revisioning
 files[] = tests/fpp.with_revisioning.test
 
-; Information added by Drupal.org packaging script on 2016-11-05
-version = "7.x-1.11"
+; Information added by Drupal.org packaging script on 2019-03-12
+version = "7.x-1.13"
 core = "7.x"
 project = "fieldable_panels_panes"
-datestamp = "1478371741"
-
+datestamp = "1552402090"

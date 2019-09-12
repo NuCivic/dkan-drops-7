@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module with Panels and Entity API.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module with Panels and Entity API.
+ */
 class FppWithPanelsAndEntityTest extends FppWithPanelsTest {
 
   /**
@@ -14,13 +18,14 @@ class FppWithPanelsAndEntityTest extends FppWithPanelsTest {
       'name' => 'FPP tests for Panels and Entity API',
       'description' => 'Confirm that FPP+Panes continues working when Entity API is enabled.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views', 'entity'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
+  public function setUp(array $modules = array()) {
     // Entity API.
     $modules[] = 'entity';
 

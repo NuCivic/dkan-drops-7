@@ -1,4 +1,3 @@
-
 /*hover here bubble*/
 #beautytips-site-wide-popup {
   background: transparent url(../images/beauty-bubble.png) no-repeat scroll 0 0;
@@ -9,7 +8,7 @@
   margin-right: 397px;
 }
 #beautytips-site-wide-popup #beauty-text {
-  color: #EAEAEA;
+  color: #eaeaea;
   font-style: italic;
   line-height: 14px;
   padding-left: 58px;
@@ -17,7 +16,6 @@
   width: 140px;
   font-size: .8em;
 }
-
 /*click here bubble*/
 #beautytips-popup-changes {
   background: transparent url(../images/blue-bubble.png) no-repeat scroll 0 0;
@@ -27,7 +25,7 @@
   margin-right: 702px;
 }
 #beautytips-popup-changes #beauty-click-text {
-  color: #EAEAEA;
+  color: #eaeaea;
   font-style: italic;
   line-height: 14px;
   padding-left: 48px;
@@ -35,11 +33,13 @@
   width: 140px;
   font-size: .8em;
 }
-
 .beautytips-fixed-beautytips {
   position: fixed;
 }
-
 .fieldset-wrapper {
   position: relative;
+}
+/*##beautytips position fix for firefox##*/
+body.gecko div#content {
+  position: static;
 }

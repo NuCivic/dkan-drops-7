@@ -2,15 +2,14 @@
 
 /**
  * @file
- *
  * Maintains an entity that appears as panel pane content.
  */
 
 // -------------------------------------------------------------------------
-// Drupal core hooks
+// Drupal core hooks.
 
 /**
- * Implements hook_entity_info()
+ * Implements hook_entity_info().
  */
 function fieldable_panels_panes_entity_info() {
   $info = array();
@@ -42,7 +41,8 @@ function fieldable_panels_panes_entity_info() {
       'id' => 'fpid',
       'revision' => 'vid',
       'bundle' => 'bundle',
-      'label' => 'title', // This key is required for proper integration with Title module.
+      'label' => 'title',
+      // This key is required for proper integration with Title module.
       'language' => 'language',
       'uuid' => 'uuid',
       'revision uuid' => 'vuuid',
@@ -52,7 +52,7 @@ function fieldable_panels_panes_entity_info() {
     'label callback' => 'fieldable_panels_panes_entity_label_callback',
     'uri callback' => 'fieldable_panels_panes_entity_uri_callback',
     'view modes' => array(
-      // @todo we should support view modes.
+      // @todo Should support view modes.
       'full' => array(
         'label'  => t('Full'),
         'custom settings' => FALSE,
@@ -77,8 +77,8 @@ function fieldable_panels_panes_entity_info() {
     'translation' => array(
       'entity_translation' => array(
         'class' => 'EntityTranslationFieldablePanelsPaneHandler',
-        'base path' =>  'admin/structure/fieldable-panels-panes/view/%fieldable_panels_panes',
-        'edit path' =>  'admin/structure/fieldable-panels-panes/view/%fieldable_panels_panes/edit',
+        'base path' => 'admin/structure/fieldable-panels-panes/view/%fieldable_panels_panes',
+        'edit path' => 'admin/structure/fieldable-panels-panes/view/%fieldable_panels_panes/edit',
         'path wildcard' => '%fieldable_panels_panes',
       ),
     ),
@@ -203,10 +203,9 @@ function fieldable_panels_panes_field_extra_fields() {
 function fieldable_panels_panes_field_extra_fields_display_alter(&$displays, $context) {
   if ($context['entity_type'] == 'fieldable_panels_pane' && $context['view_mode'] == 'full') {
     // Hide display of the title field on the 'full' view mode (because it gets
-    // displayed as the Pane title).
-
-    // Ensure the 'title' key exists, since some other modules may have remove it. This
-    // is the case of the Title module for example.
+    // displayed as the Pane title). Ensure the 'title' key exists, since some
+    // other modules may have remove it. This is the case of the Title module
+    // for example.
     if (isset($displays['title'])) {
       $displays['title']['visible'] = FALSE;
     }
@@ -214,7 +213,7 @@ function fieldable_panels_panes_field_extra_fields_display_alter(&$displays, $co
 }
 
 /**
- * Implements hook_menu()
+ * Implements hook_menu().
  */
 function fieldable_panels_panes_menu() {
   $items = array();
@@ -420,7 +419,6 @@ function fieldable_panels_panes_menu() {
     'weight' => -10,
   ) + $base;
 
-
   // Settings.
   $items['admin/structure/fieldable-panels-panes/settings'] = array(
     'title' => 'Settings',
@@ -474,7 +472,7 @@ function fieldable_panels_panes_permission() {
 }
 
 /**
- * Implements hook_theme()
+ * Implements hook_theme().
  */
 function fieldable_panels_panes_theme() {
   return array(
@@ -509,15 +507,14 @@ function fieldable_panels_panes_admin_menu_map() {
 
 /**
  * Implements hook_admin_menu_map_alter().
- *
- * Add mapping for the individual fields if the Field UI module is enabled,
- * and the mappings are not already added by field_ui_admin_menu_map().
  */
 function fieldable_panels_panes_admin_menu_map_alter(array &$map) {
   if (!module_exists('field_ui')) {
     return;
   }
 
+  // Add mapping for the individual fields if the Field UI module is enabled,
+  // and the mappings are not already added by field_ui_admin_menu_map().
   $bundles = array();
   $info = entity_get_info('fieldable_panels_pane');
   foreach ($info['bundles'] as $bundle_name => $bundle_info) {
@@ -555,7 +552,7 @@ function fieldable_panels_panes_flush_caches() {
 }
 
 /**
- * Implementation of hook_panels_dashboard_blocks().
+ * Implements hook_panels_dashboard_blocks().
  */
 function fieldable_panels_panes_panels_dashboard_blocks(&$vars) {
   ctools_include('export');
@@ -611,34 +608,40 @@ function fieldable_panels_panes_panels_dashboard_blocks(&$vars) {
  * Properly format the type from the URL version to the internal version.
  */
 function fieldable_panels_pane_type_load($type) {
+  // If the type is not set or equals 'view', return FALSE. This appears to be
+  // caused by incorrect menu item ordering, but it is still unclear why it
+  // happens.
+  // @todo Work out the root cause of this happening.
+  if (empty($type) || $type == 'view') {
+    return FALSE;
+  }
+
   $type = str_replace('-', '_', $type);
   $entity_info = entity_get_info('fieldable_panels_pane');
 
   if (isset($entity_info['bundles'][$type])) {
     return $type;
-  }// If bundle is not set and $type is 'view', return FALSE.
-  elseif ($type == 'view' || empty($type)) {
-    return FALSE;
   }
   else {
     // Special handling for two legacy paths:
     // * admin/structure/fieldable-panels-panes/manage/FPPTYPE/fields
     // * admin/structure/fieldable-panels-panes/manage/FPPTYPE/display
-    // Redirect these paths as appropriate.
-    if ($type == 'manage' && (arg(5) == 'fields' || arg(5) == 'display')) {
+    // Redirect these paths as appropriate. Need to be extra verbose here to
+    // avoid breaking other paths.
+    if ($type == 'manage' && arg(0) == 'admin' && arg(1) == 'structure' && arg(2) == 'fieldable-panels-panes' && (arg(5) == 'fields' || arg(5) == 'display')) {
       drupal_goto('admin/structure/fieldable-panels-panes/' . arg(4) . '/' . arg(5));
     }
-
-    // If nothing else was found, redirect to the main FPP admin page.
-    drupal_set_message(t('Unable to load the "@type" Fieldable Panels Pane type.', array('@type' => $type)));
-    drupal_goto('admin/structure/fieldable-panels-panes');
+    else {
+      // If nothing else, return false.
+      return FALSE;
+    }
   }
 }
 
 /**
  * @depricated Backwards compatability layer.
  *
- * @see fieldable_panels_pane_type_load().
+ * @see fieldable_panels_pane_type_load()
  */
 function fieldable_panels_panes_type_load($type) {
   return fieldable_panels_pane_type_load($type);
@@ -659,23 +662,16 @@ function fieldable_panels_panes_entities_title($type) {
 /**
  * Title callback for fieldable panels panes exportable items.
  *
- * @param $item
+ * @param object $item
  *   A %ctools_export_ui object.
+ *
+ * @return string
+ *   The title.
  */
 function fieldable_panels_pane_type_title($item) {
   return $item->title;
 }
 
-/**
- * Ensure an entity can be accessed via URL.
- *
- * This requires only administrative access.
- */
-/*
-function fieldable_panels_panes_access($entity) {
-  return $entity && user_access('administer fieldable panels panes');
-}
-*/
 /**
  * Provide a safe title for an entity from the entity.
  */
@@ -694,8 +690,8 @@ function fieldable_panels_panes_entity_title($entity) {
 /**
  * Access callback to set a revision of a fieldable panel pane as current.
  *
- * @param object $entity_info
- *   A fieldable panel pane object.
+ * @param object $entity
+ *   A Fieldable Panels Pane object.
  *
  * @return bool
  *   TRUE if the specific revision of the panel pane can be set as the current
@@ -706,10 +702,10 @@ function fieldable_panels_panes_entity_make_current_access($entity) {
 }
 
 // -------------------------------------------------------------------------
-// CTools hooks
+// CTools hooks.
 
 /**
- * Implements hook_ctools_plugin_directory()
+ * Implements hook_ctools_plugin_directory().
  */
 function fieldable_panels_panes_ctools_plugin_directory($owner, $plugin_type) {
   if ($owner == 'ctools' && $plugin_type == 'export_ui') {
@@ -729,6 +725,7 @@ function fieldable_panels_panes_ctools_plugin_directory($owner, $plugin_type) {
  * Check if the user has 'update' access for an FPP object.
  *
  * @param mixed $argument
+ *   Should contain an array element "entity_id" with the ID of an FPP object.
  *
  * @return bool
  *   Whether or not the user has access to update an FPP object.
@@ -822,10 +819,10 @@ function fieldable_panels_panes_ctools_access_clear($argument) {
 }
 
 // -------------------------------------------------------------------------
-// Views hooks
+// Views hooks.
 
 /**
- * Implements hook_views_api
+ * Implements hook_views_api().
  */
 function fieldable_panels_panes_views_api() {
   return array(
@@ -850,6 +847,7 @@ function fieldable_panels_panes_block_info() {
     if (empty($bundles)) {
       $ids = db_query('SELECT fpid FROM {fieldable_panels_panes} WHERE reusable = 1')->fetchCol();
     }
+
     // Get reusable entities of selected FPP bundles if $bundles array is not
     // empty.
     else {
@@ -873,6 +871,7 @@ function fieldable_panels_panes_block_info() {
  */
 function fieldable_panels_panes_block_view($delta = '') {
   $block = array();
+
   // Get array of exposed FPP bundles.
   $bundles = fieldable_panels_panes_exposed_bundles();
 
@@ -890,6 +889,7 @@ function fieldable_panels_panes_block_view($delta = '') {
       $block['content'] = $content;
     }
   }
+
   return $block;
 }
 
@@ -910,10 +910,10 @@ function fieldable_panels_panes_exposed_bundles() {
 }
 
 // -------------------------------------------------------------------------
-// Theming
+// Theming.
 
 /**
- * Preprocess function for fieldable-panels-pane.tpl.php
+ * Preprocess function for fieldable-panels-pane.tpl.php.
  */
 function template_preprocess_fieldable_panels_pane(&$vars) {
   $vars += array('content' => array());
@@ -958,12 +958,12 @@ function fieldable_panels_panes_process_fieldable_panels_pane(&$variables) {
 }
 
 // -------------------------------------------------------------------------
-// Database and general entity API functions
+// Database and general entity API functions.
 
 /**
  * Panel pane entity loader.
  *
- * @see entity_load().
+ * @see entity_load()
  */
 function fieldable_panels_panes_load($fpid, $vid = NULL) {
   if (!is_numeric($fpid)) {
@@ -993,6 +993,7 @@ function fieldable_panels_panes_load_from_subtype($subtype_name) {
   // Next, check to see how the subtype is configured.
   $subtype_info = ctools_content_get_subtype($plugin, $subtype_name);
 
+  // If the FPP type doesn't exist then fail.
   if (!isset($subtype_info['bundle'])) {
     return FALSE;
   }
@@ -1041,11 +1042,12 @@ function fieldable_panels_panes_load_from_subtype_force($subtype_name) {
 
   // UUID integration for revisions.
   elseif ($type == 'vuuid' && module_exists('uuid')) {
-   $vids = entity_get_id_by_uuid('fieldable_panels_pane', array($id), TRUE);
+    $vids = entity_get_id_by_uuid('fieldable_panels_pane', array($id), TRUE);
     if ($vids && $content = entity_load('fieldable_panels_pane', FALSE, array('vid' => reset($vids)))) {
       $object = reset($content);
     }
   }
+
   // If the type is 'vid' then a specific FPP revision is being requested.
   elseif ($type == 'vid') {
     $fpid = db_query('SELECT fpid FROM {fieldable_panels_panes_revision} WHERE vid = :vid', array(':vid' => $id))->fetchField();
@@ -1055,7 +1057,7 @@ function fieldable_panels_panes_load_from_subtype_force($subtype_name) {
   // Load up the current revision.
   elseif ($type == 'current') {
     $vid = db_query('SELECT MAX(vid) FROM {fieldable_panels_panes_revision} WHERE fpid = :fpid', array(':fpid' => $id))->fetchField();
-   $object = fieldable_panels_panes_load($id, $vid);
+    $object = fieldable_panels_panes_load($id, $vid);
   }
 
   // The remaining scenario is that it's a regular FPP id, i.e. an "fpid", so
@@ -1070,7 +1072,7 @@ function fieldable_panels_panes_load_from_subtype_force($subtype_name) {
 /**
  * Load multiple fieldable panel panes.
  *
- * @see entity_load_multiple().
+ * @see entity_load_multiple()
  */
 function fieldable_panels_panes_load_multiple($ids, $conditions = array(), $reset = FALSE) {
   return entity_load('fieldable_panels_pane', $ids, $conditions, $reset);
@@ -1088,7 +1090,7 @@ function fieldable_panels_panes_save($entity) {
 /**
  * Delete a fieldable panel pane.
  *
- * @param $fpid
+ * @param int $fpid
  *   A fieldable panel pane ID.
  */
 function fieldable_panels_panes_delete($fpid) {
@@ -1098,10 +1100,13 @@ function fieldable_panels_panes_delete($fpid) {
 /**
  * Delete a revision for a fieldable panel pane.
  *
- * @param $fpid
+ * @param int $fpid
  *   A fieldable panel pane ID.
- * @param $vid
+ * @param int $vid
  *   The revision id to delete.
+ *
+ * @return bool
+ *   Indicates whether the object was successfully deleted or not.
  */
 function fieldable_panels_panes_delete_revision($fpid, $vid) {
   if ($revision = fieldable_panels_panes_load($fpid, $vid)) {
@@ -1124,10 +1129,10 @@ function fieldable_panels_panes_delete_revision($fpid, $vid) {
 /**
  * Delete multiple fieldable panel panes.
  *
- * @param $fpids
+ * @param array $fpids
  *   An array of fieldable panel pane IDs.
  */
-function fieldable_panels_panes_delete_multiple($fpids) {
+function fieldable_panels_panes_delete_multiple(array $fpids) {
   return entity_get_controller('fieldable_panels_pane')->delete($fpids);
 }
 
@@ -1137,7 +1142,8 @@ function fieldable_panels_panes_delete_multiple($fpids) {
  * @see node_view()
  */
 function fieldable_panels_panes_view($entity, $view_mode = 'full', $langcode = NULL) {
-  return entity_get_controller('fieldable_panels_pane')->view($entity, $view_mode, $langcode);
+  // Defer to the other function.
+  return fieldable_panels_pane_view($entity, $view_mode, $langcode);
 }
 
 /**
@@ -1148,7 +1154,7 @@ function fieldable_panels_panes_view($entity, $view_mode = 'full', $langcode = N
  *
  * @see entity_view()
  */
-function fieldable_panels_pane_view($entity, $view_mode = 'full', $langcode) {
+function fieldable_panels_pane_view($entity, $view_mode = 'full', $langcode = NULL) {
   return entity_get_controller('fieldable_panels_pane')->view($entity, $view_mode, $langcode);
 }
 
@@ -1206,6 +1212,7 @@ function fieldable_panels_panes_get_base_context($entity = NULL) {
   }
   else {
     $context = ctools_context_create_empty('entity:fieldable_panels_pane');
+
     // The placeholder is needed to create the form used for the live
     // preview.
     $context->placeholder = array(
@@ -1239,10 +1246,6 @@ function fieldable_panels_panes_entity_edit_form($form, &$form_state) {
     '#value' => $entity->bundle,
   );
   $form_state['fieldable_panels_pane'] = $form_state['entity'];
-
-  // fixes a bug in wysiwyg
-  // oh wysiwyg. We need a better way to address this.
-//  drupal_add_css('sites/all/libraries/ckeditor/skins/kama/editor.css');
 
   $form['title'] = array(
     '#type' => 'textfield',
@@ -1285,7 +1288,12 @@ function fieldable_panels_panes_entity_edit_form($form, &$form_state) {
   $form['link']['path'] = array(
     '#type' => 'textfield',
     '#title' => t('Path'),
-    '#description' => t('The path for this link. This can be an internal Drupal path such as %add-node or an external URL such as %drupal. Enter %front to link to the front page.', array('%front' => '<front>', '%add-node' => 'node/add', '%drupal' => 'http://drupal.org')),
+    '#description' => t('The path for this link. This can be an internal Drupal path such as %add-node or an external URL such as %drupal. Enter %front to link to the front page.',
+      array(
+        '%front' => '<front>',
+        '%add-node' => 'node/add',
+        '%drupal' => 'http://drupal.org',
+      )),
     '#states' => array(
       'visible' => array(
         ':input[name="link"]' => array('checked' => TRUE),
@@ -1479,7 +1487,7 @@ function fieldable_panels_panes_entity_edit_form_submit($form, &$form_state) {
 
   $entity->revision = $form_state['values']['revision'];
   // Only set a log message if there was a new revision. This prevents
-  // overwriting a log message on the current revision
+  // overwriting a log message on the current revision.
   if ($entity->revision) {
     $entity->log = $form_state['values']['log'];
   }
@@ -1516,11 +1524,10 @@ function fieldable_panels_panes_metadata_fpp_get_properties($entity, array $opti
 }
 
 /**
- * Implements hook_form_FORM_ID_alter for ctools_export_ui_edit_item_form.
- *
- * Minor improvements to the FPP bundle/type form.
+ * Implements hook_form_FORM_ID_alter() for ctools_export_ui_edit_item_form().
  */
 function fieldable_panels_panes_form_ctools_export_ui_edit_item_form_alter(&$form, &$form_state, $form_id) {
+  // Minor improvements to the FPP bundle/type form.
   if (isset($form_state['plugin']['name']) && $form_state['plugin']['name'] == 'fieldable_panels_pane') {
     $form['info']['description']['#description'] = t('The administrative description of this type. Also used as the icon tooltip when attempting to add an item of this type via the Panels interface.');
   }
@@ -1605,6 +1612,7 @@ function fieldable_panels_panes_file_download_access($field, $entity_type, $enti
  *   The FPP object being examined.
  *
  * @return bool
+ *   Whether the revision can be locked.
  */
 function fieldable_panels_panes_revision_is_lockable($entity) {
   $lock = variable_get('fpp_revision_locking', 'lock');
@@ -1649,5 +1657,50 @@ function fieldable_panels_panes_entity_delete($entity, $type) {
   if ($type == 'fieldable_panels_pane') {
     $cid = "fieldable_panels_panes_{$entity->bundle}_content_type";
     cache_clear_all($cid, 'cache_panels');
+  }
+}
+
+/**
+ * Implements hook_panelizer_clone_panelizer().
+ */
+function fieldable_panels_panes_panelizer_clone_panelizer(&$panelizer) {
+  foreach ($panelizer->display->content as $pid => $pane) {
+    if ($pane->type == "fieldable_panels_pane") {
+      $entity_info = entity_get_info('fieldable_panels_pane');
+      $fpp = fieldable_panels_panes_load_from_subtype_force($pane->subtype);
+
+      // Reusable FPPs do not get cloned.
+      if ($fpp->reusable) {
+        continue;
+      }
+
+      // Clone the FPP and make sure it will get saved as a new entity.
+      $new_fpp = clone $fpp;
+
+      // Reset the primary keys.
+      $new_fpp->fpid = NULL;
+      $new_fpp->vid = NULL;
+      $new_fpp->vuuid = NULL;
+      $new_fpp->uuid = NULL;
+      $new_fpp->is_new = TRUE;
+
+      // Reset timestamps.
+      $new_fpp->created = NULL;
+      $new_fpp->timestamp = NULL;
+
+      // Make sure the status of a cloned exportable is custom.
+      if (!empty($entity_info['exportable'])) {
+        $status_key = isset($entity_info['entity keys']['status']) ? $entity_info['entity keys']['status'] : 'status';
+        // Replaces ENTITY_CUSTOM because we cannot assume that the Entity API
+        // module is installed.
+        $new_fpp->$status_key = 0x01;
+      }
+
+      // Save the new FPP object and add it to the display.
+      $new_fpp = fieldable_panels_panes_save($new_fpp);
+      list($subtype_prefix,) = explode(':', $pane->subtype);
+      $key = $subtype_prefix == 'current' ? 'fpid' : $subtype_prefix;
+      $pane->subtype = $subtype_prefix . ':' . $new_fpp->{$key};
+    }
   }
 }

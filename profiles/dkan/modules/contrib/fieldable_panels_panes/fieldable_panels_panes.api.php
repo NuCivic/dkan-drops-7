@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Hooks provided by the Fieldable Panels Panes module.
@@ -12,7 +13,7 @@
 /**
  * Respond to fieldable panels pane deletion.
  *
- * @param $panels_pane
+ * @param object $panels_pane
  *   The fieldable panels pane that is being deleted.
  *
  * @ingroup fieldable_panels_pane_api_hooks
@@ -26,7 +27,7 @@ function hook_fieldable_panels_pane_delete($panels_pane) {
 /**
  * Respond to creation of a new fieldable panels pane.
  *
- * @param $panels_pane
+ * @param object $panels_pane
  *   The fieldable that is being created.
  *
  * @ingroup fieldable_panels_pane_api_hooks
@@ -43,7 +44,7 @@ function hook_fieldable_panels_pane_insert($panels_pane) {
 /**
  * Act on a fieldable panels pane being inserted or updated.
  *
- * @param $panels_pane
+ * @param object $panels_pane
  *   The fieldable panels pane that is being inserted or updated.
  *
  * @ingroup fieldable_panels_pane_api_hooks
@@ -55,7 +56,7 @@ function hook_fieldable_panels_pane_presave($panels_pane) {
 /**
  * Respond to updates to a fieldable panels pane.
  *
- * @param $panels_pane
+ * @param object $panels_pane
  *   The fieldable panels pane that is being updated.
  *
  * @ingroup fieldable_panels_pane_api_hooks
@@ -70,11 +71,11 @@ function hook_fieldable_panels_pane_update($panels_pane) {
 /**
  * Act on a fieldable panels pane that is being assembled before rendering.
  *
- * @param $panels_pane
+ * @param object $panels_pane
  *   The fieldable panels pane that is being assembled for rendering.
- * @param $view_mode
+ * @param string $view_mode
  *   The $view_mode parameter.
- * @param $langcode
+ * @param string $langcode
  *   The language code used for rendering.
  *
  * @see hook_entity_view()
@@ -100,7 +101,7 @@ function hook_fieldable_panels_pane_view($panels_pane, $view_mode, $langcode) {
  *   All of the FPP entities for this bundle indexed by their CTools subtype,
  *   e.g. fpid:123, vid:123, uuid:123.
  */
-function hook_fieldable_panels_panes_content_types_alter(&$types, $bundle, $entities) {
+function hook_fieldable_panels_panes_content_types_alter(array &$types, $bundle, array $entities) {
   foreach ($types as $name => &$type) {
     $type['icon'] = 'icon_funnyface.png';
   }
@@ -111,12 +112,12 @@ function hook_fieldable_panels_panes_content_types_alter(&$types, $bundle, $enti
  *
  * @param string $op
  *   The operation to be performed.
- * @param $entity
+ * @param object $entity
  *   The fieldable panels pane that is being accessed.
- * @param $account
+ * @param object|null $account
  *   The user account whose access should be checked.
  *
- * @return TRUE|FALSE|NULL
+ * @return bool|null
  *   Returns TRUE to allow access, FALSE to deny, or NULL to pass the access
  *   decision off to the next hook or the module itself.
  *
@@ -128,6 +129,45 @@ function hook_fieldable_panels_panes_access($op, $entity = NULL, $account = NULL
     return FALSE;
   }
   return NULL;
+}
+
+/**
+ * Allow other modules to modify access to the FPP CTools content type.
+ *
+ * @param bool $return
+ *   Value to determine if edit access is granted to FPP entity.
+ * @param array $content_type
+ *   The CTools content type plugin.
+ * @param array $subtype
+ *   The individual FPP entity being evaluated for edit access.
+ * @param array $view_mode
+ *   The view mode of the FPP entity being evaluated for edit access.
+ */
+function hook_fieldable_panels_pane_content_type_edit_form_access_alter(&$return, array $content_type, array $subtype, array $view_mode) {
+  // For button and quote FPP bundles, deny edit access from Panels.
+  if ($subtype['bundle'] == 'button' || $subtype['bundle'] == 'quote') {
+    $return = FALSE;
+  }
+}
+
+/**
+ * Allow other modules to modify the Fieldable Panels Pane CTools content type.
+ *
+ * @param array $content_type
+ *   The individual content type to be returned.
+ * @param string $subtype_id
+ *   The subtype id of the fieldable panel pane being altered for render.
+ * @param array $plugin
+ *   The CTools content type plugin.
+ */
+function hook_fieldable_panels_pane_content_type_alter(array &$content_type, $subtype_id, array $plugin) {
+  // For button FPP bundles, always show the latest revision.
+  if ($content_type['bundle'] == 'button' && substr($subtype_id, 0, 4) === 'vid:') {
+    $vid = substr($subtype_id, strpos($subtype_id, ':') + 1);
+    $fpid = db_query('SELECT f.fpid FROM {fieldable_panels_panes} f WHERE f.vid = :vid', array(':vid' => $vid))->fetchField();
+    $content_type['name'] = 'fpid:' . $fpid;
+    $content_type['entity_id'] = 'fpid:' . $fpid;
+  }
 }
 
 /**

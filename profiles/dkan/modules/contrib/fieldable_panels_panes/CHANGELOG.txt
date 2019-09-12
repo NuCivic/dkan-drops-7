@@ -1,3 +1,51 @@
+Fieldable Panels Panes 7.x-1.13, 2019-03-12
+-------------------------------------------
+#3039427 by DamienMcKenna: Failure if an FPP can't be loaded in a Panelizer
+  page.
+#3039174 by junaidpv: FPP cause to redirect to non existing path like
+  "admin/structure/fieldable-panels-panes/article/fields" when taking "Manage
+  Fields" paths like "admin/structure/types/manage/article/fields".
+
+
+Fieldable Panels Panes 7.x-1.12, 2019-03-04
+-------------------------------------------
+#2826182 by Arrow: Inversed logic for checking if the title should be used.
+#2825835 by Pol: Avoid errors with Panels when a FPP was deleted or otherwise
+  doesn't exist.
+By DamienMcKenna: Remove the CTools/Panels version requirenents.
+#2826205 by DamienMcKenna, ron_s, Postovan Dumitru, wilei, dat deaf drupaler,
+  potassiumchloride, Rudi Teschner, Pol, Arrow, ec-adam, maxplus, arosboro,
+  kmonty, wylbur, langelhc, smaz, Manuel Garcia, dan.munn, Nitebreed, vkakani,
+  Bram Esposito: Broken links for Fieldable Panels Panes in admin menu after
+  update.
+#2936307 by cboyden, DamienMcKenna: View functions handle langcode argument
+  differently.
+#2867561 by Chris Burge, DamienMcKenna: Allow CTools Content Type plugin access
+  to be altered.
+#2865462 by Chris Burge, DamienMcKenna: Allow CTools content type to be altered.
+#2889278 by cboyden, dsnopek: On the Views link fields, allow hiding links if
+  the FPP is not reusable.
+#2982204 by DamienMcKenna, shaysmith: Database updates may not complete for
+  fieldable_panels_panes_update_7108.
+#2962952 by DamienMcKenna, dsnopek, cboyden: Implement
+  hook_panelizer_clone_panelizer().
+#3019270 by Asacolips, wildhostile, Anybody: Can't access to drupal 7 admin
+  (err_too_many_redirects).
+#3028536 by DamienMcKenna: Add 'use strict' to the JS.
+#2916627 by DamienMcKenna, Manuel Garcia: Add a composer.json file to document
+  the dependencies.
+#3029146 by Manuel Garcia: Add test dependency for services module integration.
+#3036702 by DamienMcKenna: Fix tests for 7.x-1.x branch.
+#3036701 by DamienMcKenna: Coding standards fixes for FPP.
+#3035271 by DamienMcKenna, featherbelly: Remove `composer.json`.
+#3037423 by Mixologic, DamienMcKenna: Add libraries as a test dependency for
+  #2163581.
+#2163581 by Manuel Garcia, DamienMcKenna, indytechcook, timaholt, dww,
+  Mixologic: Add Services resources.
+#3037380 by DamienMcKenna: List dependencies in the tests, tidy up setUp()
+  methods.
+
+
 Fieldable Panels Panes 7.x-1.11, 2016-11-05
 -------------------------------------------
 #2688577 by rigoucr: Wrong function name for update 7114.

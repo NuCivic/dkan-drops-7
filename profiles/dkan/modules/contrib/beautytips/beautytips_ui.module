@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Adds includes to Beautytips settings page and provides some built in functionality.
- * TODO: hook_theme invoke - maybe
- * Invoked include hooks: admin_info, menu_change, theme_change, form_change, menu_items
- * ex.  beautytips_textinput_info
+ * Adds includes to Beautytips settings page and provides some built in
+ *   functionality. TODO: hook_theme invoke - maybe Invoked include hooks:
+ *   admin_info, menu_change, theme_change, form_change, menu_items ex.
+ *   beautytips_textinput_info
  */
 
 function beautytips_ui_admin_settings(&$form) {
-  $items = beautytips_ui_include_invoke('beautytips', 'admin_info', $args = array());
+  $items = beautytips_ui_include_invoke('beautytips', 'admin_info', $args = []);
   if (is_array($items)) {
     foreach ($items as $form_item) {
       if (count($form_item)) {
@@ -25,7 +25,7 @@ function beautytips_ui_admin_settings(&$form) {
 }
 
 /**
- *  Clear menu cache and theme registry in case beautytips help tips turned on or off
+ * Clear cache and theme registry in case beautytips help tips turned on or off.
  */
 function beautytips_ui_admin_submit($form, $form_state) {
   module_invoke('menu', 'rebuild');
@@ -37,17 +37,17 @@ function beautytips_ui_admin_submit($form, $form_state) {
  * Implementation of hook_menu.
  */
 function beautytips_ui_menu() {
-  $items = array(); 
+  $items = [];
 
-  $menu_items = beautytips_ui_include_invoke('beautytips', 'menu_items', $args = array());
+  $menu_items = beautytips_ui_include_invoke('beautytips', 'menu_items', $args = []);
   if (is_array($menu_items)) {
     foreach ($menu_items as $menu_item) {
       if (is_array($menu_item)) {
         $path = key($menu_item);
-        $items[$path] = $menu_item[$path]; 
+        $items[$path] = $menu_item[$path];
       }
     }
-  } 
+  }
   return $items;
 }
 
@@ -55,14 +55,16 @@ function beautytips_ui_menu() {
  * Determine whether an include implements a hook, cf. module_hook.
  *
  * @param $tooltip
- *   The name of the tooltip file (without the .inc extension), such as 'youtube' or 'google'.
+ *   The name of the tooltip file (without the .inc extension),
+ *   such as 'youtube' or 'google'.
  * @param $hook
  *   The name of the hook (e.g. "thumbnail", "settings", etc.).
+ *
  * @return
  *   TRUE if the tooltip is loaded and the hook is implemented.
  */
 function beautytips_ui_include_hook($module, $tooltip, $hook) {
-  return function_exists($module .'_'. $tooltip .'_'. $hook);
+  return function_exists($module . '_' . $tooltip . '_' . $hook);
 }
 
 /**
@@ -76,13 +78,14 @@ function beautytips_ui_include_hook($module, $tooltip, $hook) {
  *   The name of the hook (e.g. "menu_change", "form_change", etc.).
  * @param ...
  *   Arguments to pass to the hook implementation.
+ *
  * @return
  *   The return value of the hook implementation.
  */
 function beautytips_ui_include_invoke($module, $hook, $args) {
   $includes = beautytips_ui_include_list();
   foreach ($includes as $tooltip) {
-    $function = $module .'_'. $tooltip .'_'. $hook;
+    $function = $module . '_' . $tooltip . '_' . $hook;
     $params[] = beautytips_ui_include_hook($module, $tooltip, $hook) ? call_user_func_array($function, $args) : NULL;
   }
   return $params;
@@ -93,16 +96,17 @@ function beautytips_ui_include_invoke($module, $hook, $args) {
  *
  * @param $file
  *   -------------------------
+ *
  * @return
  *   An array of all loaded includes. (w/o appended .inc)
  */
 function beautytips_ui_include_list() {
-  $files = array(
+  $files = [
     'drupal_help.inc' => 'drupal_help',
     'textinput.inc' => 'textinput',
-  );
+  ];
   foreach ($files as $file => $name) {
-    module_load_include('inc', 'beautytips', 'includes/'. $name);
+    module_load_include('inc', 'beautytips', 'includes/' . $name);
   }
 
   return $files;
@@ -110,28 +114,28 @@ function beautytips_ui_include_list() {
 
 /**
  * Implementation of hook_form_alter.
- * Adds beautytips for textareas and textfields
+ * Adds beautytips for textareas and textfields.
  */
 function beautytips_ui_form_alter(&$form, $form_state, $form_id) {
-  beautytips_ui_include_invoke('beautytips', 'form_change', 
-    array(
+  beautytips_ui_include_invoke('beautytips', 'form_change',
+    [
       'form' => &$form,
       'form_state' => $form_state,
       'form_id' => $form_id,
-    )
-  );   
+    ]
+  );
 }
 
 /**
  * Implementation of hook_menu_alter().
  */
 function beautytips_ui_menu_alter(&$items) {
-  beautytips_ui_include_invoke('beautytips', 'menu_change', array('items' => &$items));
+  beautytips_ui_include_invoke('beautytips', 'menu_change', ['items' => &$items]);
 }
 
 /**
  * Implementation of hook_theme_registry_alter().
  */
 function beautytips_ui_theme_registry_alter(&$theme_registry) {
-  beautytips_ui_include_invoke('beautytips', 'theme_change', array('theme_registry' => &$theme_registry));
+  beautytips_ui_include_invoke('beautytips', 'theme_change', ['theme_registry' => &$theme_registry]);
 }

@@ -1,3 +1,7 @@
+Radix 7.x-3.7, 2019-04-22
+-------------------
+- Issue #3041741 by left: update Bootstrap version to 3.4.1
+
 Radix 7.x-3.6, 2017-02-01
 -------------------
 - Add styles to Radix base theme.

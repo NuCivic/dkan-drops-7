@@ -1,10 +1,15 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module to ensure file access works.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module to ensure file access works.
+ */
 class FppFileAccessTest extends FppTestHelper {
+
   /**
    * {@inheritdoc}
    */
@@ -13,29 +18,24 @@ class FppFileAccessTest extends FppTestHelper {
       'name' => 'FPP tests for file access',
       'description' => 'Confirm that file access logic work correctly.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views', 'devel'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-
+  public function setUp(array $modules = array()) {
     // Needed for the image generation logic below.
     $modules[] = 'devel_generate';
 
     parent::setUp($modules);
-
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
-    $this->title = t('Test FPP');
   }
 
   /**
    * Confirm that the private file access works when no auth is defined.
    */
-  function testFileAccessWithoutAuth() {
+  public function testFileAccessWithoutAuth() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -63,10 +63,9 @@ class FppFileAccessTest extends FppTestHelper {
   }
 
   /**
-   * Confirm that the private file access works when the visitor has the correct
-   * correct access.
+   * Confirm private file access works when the visitor DOES have access.
    */
-  function testFileAccessWithCorrectAuth() {
+  public function testFileAccessWithCorrectAuth() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -97,10 +96,9 @@ class FppFileAccessTest extends FppTestHelper {
   }
 
   /**
-   * Confirm that the private file access works when the visitor does NOT have
-   * the correct access.
+   * Confirm private file access works when the visitor does NOT have access.
    */
-  function testFileAccessWithIncorrectAuth() {
+  public function testFileAccessWithIncorrectAuth() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -137,7 +135,7 @@ class FppFileAccessTest extends FppTestHelper {
   /**
    * Add an image field to the FPP type that uses the private storage mechanism.
    */
-  function addPrivateImageField() {
+  public function addPrivateImageField() {
     $this->enablePrivateFileSupport();
 
     // Add a file field to the default FPP type.
@@ -163,7 +161,7 @@ class FppFileAccessTest extends FppTestHelper {
   /**
    * Enable the private file storage scheme.
    */
-  function enablePrivateFileSupport() {
+  public function enablePrivateFileSupport() {
     // Turn on private file access.
     $path = variable_get('file_public_path', conf_path() . '/files') . '/private';
     variable_set('file_private_path', $path);
@@ -180,7 +178,7 @@ class FppFileAccessTest extends FppTestHelper {
    * @return object
    *   An FPP object.
    */
-  function createTestFppObject() {
+  public function createTestFppObject() {
     // Generate a suitable private image file.
     $image = $this->generateImageFile(NULL, NULL, 'private');
 
@@ -204,8 +202,7 @@ class FppFileAccessTest extends FppTestHelper {
   }
 
   /**
-   * Update an FPP object so that it is make only accessible by visitors with
-   * the admin role.
+   * Update an FPP object so that it is make only accessible by admins.
    *
    * @param object $fpp
    *   An FPP object to be made private.
@@ -215,7 +212,7 @@ class FppFileAccessTest extends FppTestHelper {
    * @return object
    *   The FPP object with updated access rules.
    */
-  function makeFppObjectPrivate($fpp, $rid = 2) {
+  public function makeFppObjectPrivate($fpp, $rid = 2) {
     $fpp->view_access = array(
       'plugins' => array(
         array(

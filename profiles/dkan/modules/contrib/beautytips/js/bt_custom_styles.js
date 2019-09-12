@@ -1,21 +1,27 @@
-
 /**
  * jQuery for viewing changes to custom beautytips style.
  */
 (function ($) {
   Drupal.behaviors.beautytipsCustomStyles = {
-    attach: function(context, settings) {
+    attach: function (context, settings) {
       var btPopup = $("#beautytips-popup-changes");
       var popupText = "Sed justo nibh, ultrices ut gravida et, laoreet et elit. Nullam consequat lacus et dui dignissim venenatis. Curabitur quis urna eget mi interdum viverra quis eu enim. Ut sit amet nunc augue. Morbi ferm entum ultricies velit sed aliquam. Etiam dui tortor, auctor sed tempus ac, auctor sed sapien.";
-      var currentTheme = $("input[name='beautytips_default_style']:checked").val(); 
-      btPopup.bt(popupText, {trigger: 'none', clickAnywhereToClose: false, closeWhenOthersOpen: false, positions: 'bottom', cssClass: 'beautytips-fixed-beautytips'});
+      var currentTheme = $("input[name='beautytips_default_style']:checked").val();
+      btPopup.bt(popupText, {
+        trigger: 'none',
+        clickAnywhereToClose: false,
+        closeWhenOthersOpen: false,
+        positions: 'bottom',
+        cssClass: 'beautytips-fixed-beautytips'
+      });
       btPopup.btOn();
 
-      
+
       // Add the color picker to certain textfields
       $('#edit-custom-styles-fill, #edit-custom-styles-strokestyle, #edit-custom-styles-css-styles-color').ColorPicker({
-        onSubmit: function(hsb, hex, rgb, el) {
+        onSubmit: function (hsb, hex, rgb, el) {
           $(el).val('#' + hex);
+          beautytipsStyleTip();
           $(el).ColorPickerHide();
         },
         onBeforeShow: function () {
@@ -23,21 +29,21 @@
           $(this).ColorPickerSetColor(value);
         }
       })
-      .bind('keyup', function(){
-        $(this).ColorPickerSetColor(this.value);
-      });
+          .bind('keyup', function () {
+            $(this).ColorPickerSetColor(this.value);
+          });
 
       var themeSettings = Drupal.settings.beautytips;
-      $("#beauty-default-styles input").click(function() {
+      $("#beauty-default-styles input").click(function () {
         currentTheme = $("input[name='beautytips_default_style']:checked").val();
       });
 
       function beautytipsStyleTip() {
-        btPopup.btOff(); 
-        options = beautytipsSetupDefaultOptions(themeSettings[currentTheme]); 
+        btPopup.btOff();
+        options = beautytipsSetupDefaultOptions(themeSettings[currentTheme]);
         // General options
-        $(".bt-custom-styles .fieldset-wrapper").children('.form-item:not(.beautytips-css-styling)').each( function() {
-          var name = $(this).find('input').attr('name'); 
+        $(".bt-custom-styles .fieldset-wrapper").children('.form-item:not(.beautytips-css-styling)').each(function () {
+          var name = $(this).find('input').attr('name');
           var optionName = name.replace("custom_styles[", "");
           optionName = optionName.replace("]", "");
           var newValue = $(this).find('input').val();
@@ -53,9 +59,9 @@
           }
         });
         // css options
-        $(".beautytips-css-styling .fieldset-wrapper").children('.form-item').each( function() {
+        $(".beautytips-css-styling .fieldset-wrapper").children('.form-item').each(function () {
           var newValue = $(this).find('input').val();
-          var name = $(this).find('input').attr('name'); 
+          var name = $(this).find('input').attr('name');
           var optionName = name.replace("custom_styles[css-styles][", "");
           optionName = optionName.replace("]", "");
           if (!options['cssStyles']) {
@@ -67,13 +73,14 @@
         });
         options['cssClass'] = 'beautytips-fixed-beautytips';
         $("#beautytips-popup-changes").bt(popupText, options);
-        btPopup.btOn(); 
+        btPopup.btOn();
         $('.beautytips-fixed-beautytips').css('position', 'fixed');
       }
+
       beautytipsStyleTip();
 
-      $(".form-item").each(function() {
-        $(this).change(function() {
+      $(".form-item").each(function () {
+        $(this).change(function () {
           beautytipsStyleTip();
         });
       });
@@ -101,7 +108,7 @@
     options['trigger'] = 'none';
     options['clickAnywhereToClose'] = false;
     options['closeWhenOthersOpen'] = false
-    options['positions'] =  'bottom';
+    options['positions'] = 'bottom';
 
     return options;
   }

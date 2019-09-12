@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module with Panels.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module with Panels.
+ */
 class FppWithPanelsTest extends FppTestHelper {
 
   /**
@@ -14,24 +18,20 @@ class FppWithPanelsTest extends FppTestHelper {
       'name' => 'FPP tests for Panels',
       'description' => 'Confirm that FPP works with Panels.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-
+  public function setUp(array $modules = array()) {
     // Helper.
     $modules[] = 'fpp_with_panels_test';
 
     parent::setUp($modules);
 
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
-
-    // Create a user with all the permissions
+    // Create a user with all the permissions.
     $permissions = array(
       // Needed for Page Manager.
       'administer page manager',
@@ -44,7 +44,7 @@ class FppWithPanelsTest extends FppTestHelper {
   /**
    * Make sure admin titles with XSS code can't break the site.
    */
-  function testAdminTitleLinkWithAmpersands() {
+  public function testAdminTitleLinkWithAmpersands() {
     // Create an FPP with an XSS payload in the admin title.
     $fpp = new StdClass();
     $fpp->bundle = $this->bundle;
@@ -103,7 +103,7 @@ class FppWithPanelsTest extends FppTestHelper {
   /**
    * Make sure titles with XSS code can't break the site.
    */
-  function testTitleXSS() {
+  public function testTitleXss() {
     // Create an FPP with an XSS payload in the entity title.
     $fpp = new StdClass();
     $fpp->bundle = $this->bundle;
@@ -112,13 +112,13 @@ class FppWithPanelsTest extends FppTestHelper {
     $fpp->admin_title = '';
     $fpp = fieldable_panels_panes_save($fpp);
 
-    $this->checkAdminUIPaneTitleXSS($fpp);
+    $this->checkAdminUiPaneTitleXss($fpp);
   }
 
   /**
    * Make sure admin titles with XSS code can't break the site.
    */
-  function testAdminTitleXSS() {
+  public function testAdminTitleXss() {
     // Create an FPP with an XSS payload in the admin title.
     $fpp = new StdClass();
     $fpp->bundle = $this->bundle;
@@ -127,7 +127,7 @@ class FppWithPanelsTest extends FppTestHelper {
     $fpp->admin_title = "<script>alert('XSS!');</script>";
     $fpp = fieldable_panels_panes_save($fpp);
 
-    $this->checkAdminUIPaneTitleXSS($fpp);
+    $this->checkAdminUiPaneTitleXss($fpp);
   }
 
   /**
@@ -136,7 +136,7 @@ class FppWithPanelsTest extends FppTestHelper {
    * @param object $fpp
    *   A full FPP entity object.
    */
-  function checkAdminUIPaneTitleXSS($fpp) {
+  public function checkAdminUiPaneTitleXss($fpp) {
     // Load the test Panels page.
     ctools_include('page', 'page_manager', 'plugins/tasks');
     $page = page_manager_page_load('fpp_with_panels_test');

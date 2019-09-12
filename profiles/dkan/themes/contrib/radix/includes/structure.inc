@@ -39,11 +39,11 @@ function radix_table($variables) {
     'table-bordered',
   ));
 
-  $header = $variables['header'];
-  $rows = $variables['rows'];
-  $attributes = $variables['attributes'];
+  $header = is_array($variables['header']) ? $variables['header'] : array();
+  $rows = is_array($variables['rows']) ? $variables['rows'] : array();
+  $attributes = is_array($variables['attributes']) ? $variables['attributes'] : array();
   $caption = $variables['caption'];
-  $colgroups = $variables['colgroups'];
+  $colgroups = is_array($variables['colgroups']) ? $variables['colgroups'] : array();
   $sticky = $variables['sticky'];
   $empty = $variables['empty'];
 
@@ -180,7 +180,7 @@ function radix_table($variables) {
 
   $output .= "</table>\n";
   $output .= "</div>";
-  
+
   return $output;
 }
 

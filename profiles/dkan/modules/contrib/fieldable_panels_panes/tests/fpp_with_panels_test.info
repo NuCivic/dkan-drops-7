@@ -9,9 +9,8 @@ dependencies[] = ctools
 dependencies[] = page_manager
 dependencies[] = fieldable_panels_panes
 
-; Information added by Drupal.org packaging script on 2016-11-05
-version = "7.x-1.11"
+; Information added by Drupal.org packaging script on 2019-03-12
+version = "7.x-1.13"
 core = "7.x"
 project = "fieldable_panels_panes"
-datestamp = "1478371741"
-
+datestamp = "1552402090"

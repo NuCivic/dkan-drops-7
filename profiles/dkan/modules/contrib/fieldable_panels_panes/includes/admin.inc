@@ -33,7 +33,7 @@ function fieldable_panels_panes_settings() {
   $form['fpp_blocks_expose'] = array(
     '#type' => 'checkbox',
     '#title' => t('Make fieldable panels panes available as blocks'),
-    '#description' => t('Fieldable panels panes that are reusable will be made available as blocks.'),
+    '#description' => t('Fieldable Panels Panes that are reusable will be made available as blocks.'),
     '#default_value' => variable_get('fpp_blocks_expose', FALSE),
   );
 
@@ -82,6 +82,9 @@ function fieldable_panels_panes_settings() {
 
 /**
  * List all entities for the given type.
+ *
+ * @param string $type
+ *   The FPP type to process.
  */
 function fieldable_panels_panes_entities_list_page($type) {
   return views_embed_view('fieldable_pane_entities', 'default', $type);
@@ -89,6 +92,9 @@ function fieldable_panels_panes_entities_list_page($type) {
 
 /**
  * Page callback to add a new pane entity.
+ *
+ * @param string $type
+ *   The FPP type to process.
  */
 function fieldable_panels_panes_entities_add_page($type) {
   $form_state = array(
@@ -107,6 +113,9 @@ function fieldable_panels_panes_entities_add_page($type) {
  * This represents an administrative view only. It is not available to
  * the general public. These entities are meant to be viewed as panel
  * panes (or blocks).
+ *
+ * @param object $entity
+ *   The FPP object to process.
  */
 function fieldable_panels_panes_entity_view_page($entity) {
   return fieldable_panels_panes_view($entity, 'preview');
@@ -114,6 +123,9 @@ function fieldable_panels_panes_entity_view_page($entity) {
 
 /**
  * Page callback to view a entity.
+ *
+ * @param object $entity
+ *   The FPP object to process.
  */
 function fieldable_panels_panes_entity_edit_page($entity) {
   $form_state = array(
@@ -125,21 +137,21 @@ function fieldable_panels_panes_entity_edit_page($entity) {
 }
 
 /**
- * Menu callback -- ask for confirmation of node deletion
+ * Menu callback -- ask for confirmation of node deletion.
  */
 function fieldable_panels_panes_entity_delete_form($form, &$form_state, $entity) {
   $form_state['entity'] = $entity;
   return confirm_form($form,
     t('Are you sure you want to delete %title?', array('%title' => $entity->title)),
     'admin/structure/fieldable-panels-panes/view/' . $entity->fpid,
-    t('This action cannot be undone. Note that deleting this entity will not delete panes using it, they will exist but display nothing.'),
+    t('This action cannot be undone. Note that deleting this entity will not delete panes using it, they will exist but will display nothing.'),
     t('Delete'),
     t('Cancel')
   );
 }
 
 /**
- * Execute node deletion
+ * Execute node deletion.
  */
 function fieldable_panels_panes_entity_delete_form_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
@@ -153,7 +165,7 @@ function fieldable_panels_panes_entity_delete_form_submit($form, &$form_state) {
 }
 
 /**
- * Menu callback -- ask for confirmation of revision deletion
+ * Menu callback -- ask for confirmation of revision deletion.
  */
 function fieldable_panels_panes_entity_delete_revision_form($form, &$form_state, $entity) {
   $form_state['entity'] = $entity;
@@ -167,7 +179,7 @@ function fieldable_panels_panes_entity_delete_revision_form($form, &$form_state,
 }
 
 /**
- * Execute revision deletion
+ * Execute revision deletion.
  */
 function fieldable_panels_panes_entity_delete_revision_form_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
@@ -187,15 +199,14 @@ function fieldable_panels_panes_entity_delete_revision_form_submit($form, &$form
 /**
  * Page callback to edit access control of an entity pane.
  *
- * @param $op
+ * @param string $op
  *   Either 'edit' or 'view' to determine which type of access.
- * @param $entity
+ * @param object $entity
  *   The entity to control access to.
  */
 function fieldable_panels_panes_entity_edit_access_page($op, $entity) {
   ctools_include('context-access-admin');
   // @todo -- add view_access field.
-
   $argument = $op . ':' . $entity->fpid;
 
   ctools_include('object-cache');
@@ -238,6 +249,12 @@ function fieldable_panels_panes_entity_edit_access_page($op, $entity) {
 
 /**
  * List all entities for the given type.
+ *
+ * @param object $entity
+ *   The FPP object to process.
+ *
+ * @return array
+ *   Render array.
  */
 function fieldable_panels_panes_entity_list_revisions_page($entity) {
   return views_embed_view('fieldable_pane_entity_revisions', 'default', $entity->fpid);
@@ -251,6 +268,9 @@ function fieldable_panels_panes_entity_list_revisions_page($entity) {
  * the entity.
  *
  * It is token protected.
+ *
+ * @param object $entity
+ *   The FPP object to process.
  */
 function fieldable_panels_panes_entity_make_current_page($entity) {
   if (!isset($_GET['token']) || !drupal_valid_token($_GET['token'], $entity->fpid . ':' . $entity->vid)) {

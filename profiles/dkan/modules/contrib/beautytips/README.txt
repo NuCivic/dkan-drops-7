@@ -3,10 +3,10 @@
   ------------------------------------------------------------------------------------
   In order for this module to work properly with IE, you will need to download the 
   ExplorerCanvas library, which can be found here - http://excanvas.sourceforge.net/.
-  Place the downloaded directory 'excanvas' inside the 'sites/all/libraries' directory.
+  Place the downloaded directory 'excanvas' inside the 'beautytips/other_libs' directory.
   Also, make sure that this file is accessable (readable).  A standard permission setting 
   of 755 should work for the excanvas folder (755 means permission settings - rwxr-xr-x)
-  On Linux or Mac, you can do this with the command 'sudo chmod -R 755 excanvas'
+  On Linux or Mac, you can do this with the command 'sudo chmod -R 755 excanvaso'
 
   Other than that, you just need to turn the module on in the usual Drupal way.
 

@@ -1,12 +1,11 @@
-
 /**
  * Defines the default beautytip and adds them to the content on the page
  */
 (function ($) {
   Drupal.behaviors.beautytips = {
-    attach: function(context, settings) {
+    attach: function (context, settings) {
       // Fix for drupal attach behaviors in case the plugin is not attached.
-      if (typeof(jQuery.bt) == 'undefined' && jQuery.bt == null){
+      if (typeof(jQuery.bt) == 'undefined' && jQuery.bt == null) {
         return;
       }
       jQuery.bt.options.closeWhenOthersOpen = true;
@@ -18,7 +17,7 @@
         // Build array of options that were passed to beautytips_add_beautyips
         var btOptions = styles[beautytips[key]['style']];
         if (beautytips[key]['list']) {
-          for ( var k = 0; k < beautytips[key]['list'].length; k++) {
+          for (var k = 0; k < beautytips[key]['list'].length; k++) {
             btOptions[beautytips[key]['list'][k]] = beautytips[key][beautytips[key]['list'][k]];
           }
         }
@@ -29,7 +28,7 @@
           }
           // Run any java script that needs to be run when the page loads
           if (beautytips[key]['contentSelector'] && beautytips[key]['preEval']) {
-            $(beautytips[key]['cssSelect']).each(function() {
+            $(beautytips[key]['cssSelect']).each(function () {
               if (!beautytipsProcessed(this, false)) {
                 eval(beautytips[key]['contentSelector']);
               }
@@ -37,7 +36,7 @@
           }
           // Run this if the content is straight text being passed.
           if (beautytips[key]['text']) {
-            $(beautytips[key]['cssSelect']).each(function() {
+            $(beautytips[key]['cssSelect']).each(function () {
               if (!beautytipsProcessed(this)) {
                 if (beautytipsOffsetParentEval(beautytips[key], btOptions)) {
                   btOptions['offsetParent'] = eval(btOptions['offsetParent']);
@@ -48,10 +47,10 @@
           }
           // Run this if we are grabbing ajax loaded content.
           else if (beautytips[key]['ajaxPath']) {
-            $(beautytips[key]['cssSelect']).each(function() {
+            $(beautytips[key]['cssSelect']).each(function () {
               if (!beautytipsProcessed(this)) {
                 if (beautytips[key]['ajaxDisableLink']) {
-                  $(this).click(function(event) {
+                  $(this).click(function (event) {
                     event.preventDefault();
                   });
                 }
@@ -64,7 +63,7 @@
           }
           // Run this if we are grabbing content from some place on the page.
           else {
-            $(beautytips[key]['cssSelect']).each(function() {
+            $(beautytips[key]['cssSelect']).each(function () {
               if (!beautytipsProcessed(this)) {
                 if (beautytipsOffsetParentEval(beautytips[key], btOptions)) {
                   btOptions['offsetParent'] = eval(btOptions['offsetParent']);
@@ -109,7 +108,7 @@
       case 'none':
         break;
       case 'fadeIn':
-        btOptions['showTip'] = function(box) {
+        btOptions['showTip'] = function (box) {
           $(box).fadeIn(500);
         };
         break;
@@ -120,12 +119,12 @@
       case 'none':
         break;
       case 'fadeOut':
-        btOptions['hideTip'] = function(box, callback) { 
+        btOptions['hideTip'] = function (box, callback) {
           $(box).animate({opacity: 0}, 500, callback);
         };
         break;
       case 'slideOut':
-        btOptions['hideTip'] = function(box, callback) {
+        btOptions['hideTip'] = function (box, callback) {
           var width = $("body").width();
           $(box).animate({"left": "+=" + width + "px"}, "slow", callback);
         }

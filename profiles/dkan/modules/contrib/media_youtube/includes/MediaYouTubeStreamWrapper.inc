@@ -27,6 +27,9 @@ class MediaYouTubeStreamWrapper extends MediaReadOnlyStreamWrapper {
     if (!isset($response->error)) {
       return $thumbnail_url;
     }
+    elseif ($response->code == -110) {
+      throw new MediaInternetValidationException("Connection timed out.");
+    }
     elseif ($response->code == 401) {
       throw new MediaInternetValidationException("Embedding has been disabled for this video.");
     }
@@ -99,7 +102,7 @@ class MediaYouTubeStreamWrapper extends MediaReadOnlyStreamWrapper {
   }
 
   /**
-   * Returns a url in the format "http://www.youtube.com/watch?v=qsPQN4MiTeE".
+   * Returns a url in the format "https://www.youtube.com/watch?v=qsPQN4MiTeE".
    *
    * Overrides interpolateUrl() defined in MediaReadOnlyStreamWrapper.
    */

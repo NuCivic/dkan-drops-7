@@ -11,9 +11,8 @@ files[] = media_youtube.test
 files[] = includes/MediaYouTubeStreamWrapper.inc
 files[] = includes/MediaInternetYouTubeHandler.inc
 
-; Information added by Drupal.org packaging script on 2018-02-17
-version = "7.x-3.7"
+; Information added by Drupal.org packaging script on 2019-02-14
+version = "7.x-3.8"
 core = "7.x"
 project = "media_youtube"
-datestamp = "1518862084"
-
+datestamp = "1550118784"

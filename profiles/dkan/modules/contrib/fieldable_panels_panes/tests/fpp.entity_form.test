@@ -1,10 +1,15 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module to ensure the basic form works.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module to ensure the basic form works.
+ */
 class FppEntityFormTest extends FppTestHelper {
+
   /**
    * {@inheritdoc}
    */
@@ -13,26 +18,14 @@ class FppEntityFormTest extends FppTestHelper {
       'name' => 'FPP tests',
       'description' => 'Confirm that the entity form fields work as intended.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views'),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-
-    parent::setUp($modules);
-
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
-    $this->title = t('Test FPP');
   }
 
   /**
    * Confirm that the basic form fields show on the 'add' form.
    */
-  function testNewEntity() {
+  public function testNewEntity() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -43,7 +36,6 @@ class FppEntityFormTest extends FppTestHelper {
     $this->assertResponse(200);
 
     // Check all of the default fields.
-
     // The basic title field.
     $this->assertFieldByName('title');
 
@@ -75,7 +67,7 @@ class FppEntityFormTest extends FppTestHelper {
   /**
    * Confirm that the edit form has the correct fields for reusable FPPs.
    */
-  function testExistingReusable() {
+  public function testExistingReusable() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -93,7 +85,6 @@ class FppEntityFormTest extends FppTestHelper {
     $this->assertResponse(200);
 
     // Check all of the fields that are suitable for a reusable FPP.
-
     // The basic title field.
     $this->assertFieldByName('title');
 
@@ -124,7 +115,7 @@ class FppEntityFormTest extends FppTestHelper {
   /**
    * Confirm that the edit form has the correct fields for non-reusable FPPs.
    */
-  function testExistingNonReusable() {
+  public function testExistingNonReusable() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -142,7 +133,6 @@ class FppEntityFormTest extends FppTestHelper {
     $this->assertResponse(200);
 
     // Check all of the fields that are suitable for a reusable FPP.
-
     // The basic title field.
     $this->assertFieldByName('title');
 
@@ -170,10 +160,11 @@ class FppEntityFormTest extends FppTestHelper {
   }
 
   /**
-   * Confirm that the edit form has the correct fields for non-reusable FPPs
-   * when the allow_reusable_access is enabled.
+   * Confirm that the edit form has the correct fields for non-reusable FPPs.
+   *
+   * .. when the allow_reusable_access is enabled.
    */
-  function testAllowReusableAccessOption() {
+  public function testAllowReusableAccessOption() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 

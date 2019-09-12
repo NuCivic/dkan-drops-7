@@ -12,7 +12,7 @@ function fieldable_panels_panes_views_data() {
   $data = array();
 
   // ------------------------------------------------------------------------
-  // Panels panes table
+  // Panels panes table.
   $data['fieldable_panels_panes'] = array(
     'table' => array(
       'base' => array(

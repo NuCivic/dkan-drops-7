@@ -35,7 +35,7 @@
     "THEMING.md"
   ],
   "dependencies": {
-    "bootstrap-sass": "^3.3.7",
+    "bootstrap-sass": "^3.4.1",
     "font-awesome": "^4.7.0"
   }
 }

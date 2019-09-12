@@ -13,7 +13,7 @@ class fieldable_panels_pane extends ctools_export_ui {
   /**
    * Add some additional operations for handling entities.
    */
-  function build_operations($item) {
+  public function build_operations($item) {
     $base_path = ctools_export_ui_plugin_base_path($this->plugin);
     $name = $item->{$this->plugin['export']['key']};
 
@@ -58,11 +58,12 @@ class fieldable_panels_pane extends ctools_export_ui {
   }
 
   /**
-   * Allow users to jump right into adding fields.
+   * {@inheritdoc}
    */
-  function edit_form(&$form, &$form_state) {
+  public function edit_form(&$form, &$form_state) {
     parent::edit_form($form, $form_state);
 
+    // Allow users to jump right into adding fields.
     if (module_exists('field_ui')) {
       $form['buttons']['save_continue'] = array(
         '#type' => 'submit',
@@ -73,22 +74,24 @@ class fieldable_panels_pane extends ctools_export_ui {
   }
 
   /**
-   * Update the form state "op" so we can properly redirect.
+   * {@inheritdoc}
    */
-  function edit_form_submit(&$form, &$form_state) {
+  public function edit_form_submit(&$form, &$form_state) {
     parent::edit_form_submit($form, $form_state);
 
+    // Update the form state "op" so we can properly redirect.
     if ($form_state['triggering_element']['#parents'][0] == 'save_continue') {
       $form_state['op'] = 'save_continue';
     }
   }
 
   /**
-   * Ensure menu gets rebuild after saving a new type.
+   * {@inheritdoc}
    */
-  function edit_save_form($form_state) {
+  public function edit_save_form($form_state) {
     parent::edit_save_form($form_state);
 
+    // Ensure menu gets rebuild after saving a new type.
     entity_info_cache_clear();
     menu_rebuild();
 
@@ -98,11 +101,12 @@ class fieldable_panels_pane extends ctools_export_ui {
   }
 
   /**
-   * Remove fields associated to bundles that are being deleted.
+   * {@inheritdoc}
    */
-  function delete_form_submit(&$form_state) {
+  public function delete_form_submit(&$form_state) {
     parent::delete_form_submit($form_state);
 
+    // Remove fields associated to bundles that are being deleted.
     if ($form_state['op'] == 'delete') {
       field_attach_delete_bundle('fieldable_panels_pane', $form_state['item']->name);
       entity_info_cache_clear();
@@ -112,7 +116,7 @@ class fieldable_panels_pane extends ctools_export_ui {
   /**
    * List entities page.
    */
-  function list_entities_page($js, $input, $item, $step = NULL) {
+  public function list_entities_page($js, $input, $item, $step = NULL) {
     drupal_set_title($this->get_page_title('list_entity', $item));
 
     return views_embed_view('fieldable_pane_entities', 'default', $item->name);
@@ -121,7 +125,7 @@ class fieldable_panels_pane extends ctools_export_ui {
   /**
    * Add entity page.
    */
-  function add_entity_page($js, $input, $item, $step = NULL) {
+  public function add_entity_page($js, $input, $item, $step = NULL) {
     drupal_set_title($this->get_page_title('add_entity', $item));
 
     $form_state = array(
@@ -151,7 +155,7 @@ class fieldable_panels_pane extends ctools_export_ui {
   /**
    * List footer.
    */
-  function list_footer($form_state) {
+  public function list_footer($form_state) {
     ctools_include('export');
     $items = ctools_export_crud_load_all('fieldable_panels_pane_type');
     $entity_info = entity_get_info('fieldable_panels_pane');
@@ -210,7 +214,10 @@ class fieldable_panels_pane extends ctools_export_ui {
           }
         }
 
-        $ops = theme('links', array('links' => $operations, 'attributes' => array('class' => array('links', 'inline'))));
+        $ops = theme('links', array(
+          'links' => $operations,
+          'attributes' => array('class' => array('links', 'inline')),
+        ));
 
         $row[] = $ops;
         $rows[] = $row;
@@ -231,7 +238,8 @@ class fieldable_panels_pane extends ctools_export_ui {
   /**
    * Helper method to derive paths to field UI operations.
    */
-  function field_admin_path($name, $op) {
+  public function field_admin_path($name, $op) {
     return _field_ui_bundle_admin_path('fieldable_panels_pane', $name) . '/' . $op;
   }
+
 }

@@ -248,6 +248,7 @@ function panopoly_widgets_field_widget_form(&$form, &$form_state, $field, $insta
       '#title' => t('Link'),
       '#type' => 'textfield',
       '#default_value' => isset($items[$delta]['link']) ? $items[$delta]['link'] : NULL,
+      '#maxlength' => 255,
       '#linkit' => array(
         'enable' => TRUE,
         'profile' => 'content_fields',

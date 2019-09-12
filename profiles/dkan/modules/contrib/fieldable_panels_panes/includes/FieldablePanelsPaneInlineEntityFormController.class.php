@@ -5,10 +5,13 @@
  * Defines the inline entity form controller for Nodes.
  */
 
+/**
+ * Support for Inline Entity Form.
+ */
 class FieldablePanelsPaneInlineEntityFormController extends EntityInlineEntityFormController {
 
   /**
-  * Overrides EntityInlineEntityFormController::defaultLabels().
+   * {@inheritdoc}
    */
   public function defaultLabels() {
     $labels = array(
@@ -19,7 +22,7 @@ class FieldablePanelsPaneInlineEntityFormController extends EntityInlineEntityFo
   }
 
   /**
-   * Overrides EntityInlineEntityFormController::tableFields().
+   * {@inheritdoc}
    */
   public function tableFields($bundles) {
     $fields = parent::tableFields($bundles);
@@ -28,11 +31,10 @@ class FieldablePanelsPaneInlineEntityFormController extends EntityInlineEntityFo
   }
 
   /**
-   * Overrides EntityInlineEntityFormController::entityForm().
-   *
-   * Copied from fieldable_panels_panes_entity_edit_form().
+   * {@inheritdoc}
    */
   public function entityForm($entity_form, &$form_state) {
+    // Copied from fieldable_panels_panes_entity_edit_form().
     // Make the other form items dependent upon it.
     ctools_include('dependent');
     ctools_add_js('dependent');
@@ -158,12 +160,11 @@ class FieldablePanelsPaneInlineEntityFormController extends EntityInlineEntityFo
   }
 
   /**
-   * Overrides EntityInlineEntityFormController::entityFormSubmit().
-   *
-   * Fixes some of the custom entity values, similar to
-   * fieldable_panels_panes_entity_edit_form_submit().
+   * {@inheritdoc}
    */
   public function entityFormSubmit(&$entity_form, &$form_state) {
+    // Fixes some of the custom entity values, similar to
+    // fieldable_panels_panes_entity_edit_form_submit().
     $info = entity_get_info($this->entityType);
     list(, , $bundle) = entity_extract_ids($this->entityType, $entity_form['#entity']);
     $entity = $entity_form['#entity'];
@@ -216,4 +217,5 @@ class FieldablePanelsPaneInlineEntityFormController extends EntityInlineEntityFo
       field_attach_submit($this->entityType, $entity, $entity_form, $form_state);
     }
   }
+
 }

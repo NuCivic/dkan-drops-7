@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * fieldable panel panes install file
+ * Fieldable Panels Panes install file.
  */
 
 /**
@@ -18,7 +19,6 @@ function fieldable_panels_panes_install() {
     ctools_export_crud_save('fieldable_panels_pane_type', $item);
   }
 }
-
 
 /**
  * Implements hook_uninstall().
@@ -184,7 +184,7 @@ function fieldable_panels_panes_schema() {
         'length' => 255,
       ),
       'log' => array(
-        'description' => t('A log message associated with the revision.'),
+        'description' => 'A log message associated with the revision.',
         'type' => 'text',
         'size' => 'big',
       ),
@@ -239,7 +239,6 @@ function fieldable_panels_panes_schema() {
     'primary key' => array('name'),
   );
 
-
   // Optional cache table for entitycache support.
   $schema['cache_entity_fieldable_panels_pane'] = drupal_get_schema_unprocessed('system', 'cache');
   $schema['cache_entity_fieldable_panels_pane']['description'] = 'Cache table used to store fieldable_panels_pane entity records.';
@@ -251,13 +250,12 @@ function fieldable_panels_panes_schema() {
  * Add UUID support.
  */
 function fieldable_panels_panes_update_7101(&$sandbox) {
-
-  // Make sure to add UUID field
+  // Make sure to add UUID field.
   if (!db_field_exists('fieldable_panels_panes', 'uuid')) {
     db_add_field('fieldable_panels_panes', 'uuid', array('type' => 'char', 'length' => 36, 'default' => '', 'description' => 'The Universally Unique Identifier.'));
   }
 
-  // Make sure to add VUUID field
+  // Make sure to add VUUID field.
   if (!db_field_exists('fieldable_panels_panes_revision', 'vuuid')) {
     db_add_field('fieldable_panels_panes_revision', 'vuuid', array('type' => 'char', 'length' => 36, 'default' => '', 'description' => 'The Universally Unique Identifier.'));
   }
@@ -283,7 +281,7 @@ function fieldable_panels_panes_update_7103(&$sandbox) {
   return t('Theme registry cache has been cleared.');
 }
 
-/*
+/**
  * Update menu paths.
  */
 function fieldable_panels_panes_update_7104(&$sandbox) {
@@ -304,7 +302,7 @@ function fieldable_panels_panes_update_7105() {
  * Add language column.
  */
 function fieldable_panels_panes_update_7106() {
-  // Make sure to add language field
+  // Make sure to add language field.
   if (!db_field_exists('fieldable_panels_panes', 'language')) {
     db_add_field('fieldable_panels_panes', 'language', array(
       'description' => 'The {languages}.language of this entity.',
@@ -328,56 +326,56 @@ function fieldable_panels_panes_update_7107() {
 }
 
 /**
- * Adding Fieldable Panels Panes Type table and saving existing bundles to
- * database.
+ * Adding Fieldable Panels Panes Type table and saving existing bundles.
  */
 function fieldable_panels_panes_update_7108() {
   ctools_include('export');
   $messages = array();
 
-  // Copied from fieldable_panels_panes_schema() because the schema should not
-  // be directly used during hook_update_N.
-  $schema['fieldable_panels_pane_type'] = array(
-    'description' => 'Entity bundle table for panel pane content.',
-    'fields' => array(
-      'name' => array(
-        'description' => 'The machine-readable name of this type.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
+  if (!db_table_exists('fieldable_panels_pane_type')) {
+    // Copied from fieldable_panels_panes_schema() because the schema should not
+    // be directly used during hook_update_N.
+    $schema['fieldable_panels_pane_type'] = array(
+      'description' => 'Entity bundle table for panel pane content.',
+      'fields' => array(
+        'name' => array(
+          'description' => 'The machine-readable name of this type.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'title' => array(
+          'description' => 'The human-readable name of this type.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+          'translatable' => TRUE,
+        ),
+        'description' => array(
+          'description' => 'A brief description of this type.',
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => TRUE,
+        ),
       ),
-      'title' => array(
-        'description' => 'The human-readable name of this type.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'translatable' => TRUE,
+      'export' => array(
+        'admin_title' => 'title',
+        'admin_description' => 'description',
+        'api' => array(
+          'owner' => 'fieldable_panels_panes',
+          'api' => 'fieldable_panels_pane_type',
+          'minimum_version' => 1,
+          'current_version' => 1,
+        ),
       ),
-      'description' => array(
-        'description' => 'A brief description of this type.',
-        'type' => 'text',
-        'size' => 'big',
-        'not null' => TRUE,
-      ),
-    ),
-    'export' => array(
-      'admin_title' => 'title',
-      'admin_description' => 'description',
-      'api' => array(
-        'owner' => 'fieldable_panels_panes',
-        'api' => 'fieldable_panels_pane_type',
-        'minimum_version' => 1,
-        'current_version' => 1,
-      ),
-    ),
-    'primary key' => array('name'),
-  );
+      'primary key' => array('name'),
+    );
 
-
-  // Add the new table for storing bundles.
-  db_create_table('fieldable_panels_pane_type', $schema['fieldable_panels_pane_type']);
+    // Add the new table for storing bundles.
+    db_create_table('fieldable_panels_pane_type', $schema['fieldable_panels_pane_type']);
+  }
 
   // Store possible existing bundles provided by other modules.
   $bundles = array();
@@ -444,8 +442,9 @@ function fieldable_panels_panes_update_7111() {
 }
 
 /**
- * Update all Panelizer displays to point non-reusable FPPs to the vid instead
- * of the fpid.
+ * Update all Panelizer displays to point non-reusable FPPs to the vid.
+ *
+ * (instead of the fpid)
  */
 function fieldable_panels_panes_update_7112(&$sandbox) {
   if (!module_exists('panelizer')) {
@@ -456,6 +455,7 @@ function fieldable_panels_panes_update_7112(&$sandbox) {
   // variable won't be defined before it's checked for. The simplest approach
   // is to manually rerun the updates.
   //
+  // @code
   // /**
   //  * Enable the FPP revision locking feature.
   //  */
@@ -469,7 +469,7 @@ function fieldable_panels_panes_update_7112(&$sandbox) {
   // function MYMODULE_update_7101(&$sandbox) {
   //   return fieldable_panels_panes_update_7112($sandbox);
   // }
-  //
+  // @endcode
   //
   // A more correct approach is to use hook_update_dependencies to ensure that
   // the updates happen in the correct order. This may not work because if the
@@ -477,6 +477,7 @@ function fieldable_panels_panes_update_7112(&$sandbox) {
   // until the caches are cleared, which may not happen until after the updates
   // are ran, thus the updates not running in the correct order.
   //
+  // @code
   // /**
   //  * Implements hook_update_dependencies().
   //  */
@@ -500,16 +501,14 @@ function fieldable_panels_panes_update_7112(&$sandbox) {
   // function MYMODULE_update_7100() {
   //   variable_set('fpp_revision_locking', 'lock');
   // }
-  //
+  // @endcode
   //
   // An alternative solution would be to rerun the updates.
-
   if (variable_get('fpp_revision_locking', 'lock') != 'lock') {
     return t('Pane locking is not enabled, so nothing to do.');
   }
 
   // Update all Panelizer displays.
-
   // The first time through, work out how many records need to be updated.
   if (!isset($sandbox['progress'])) {
     $sandbox['progress'] = 0;
@@ -572,8 +571,9 @@ function fieldable_panels_panes_update_7112(&$sandbox) {
 }
 
 /**
- * Update all Panel Nodes displays to point non-reusable FPPs to the vid instead
- * of the fpid.
+ * Update all Panel Nodes displays to point non-reusable FPPs to the vid.
+ *
+ * (instead of the fpid)
  */
 function fieldable_panels_panes_update_7113() {
   if (!module_exists('panels_node')) {
@@ -584,6 +584,7 @@ function fieldable_panels_panes_update_7113() {
   // variable won't be defined before it's checked for. The simplest approach
   // is to manually rerun the updates.
   //
+  // @code
   // /**
   //  * Enable the FPP revision locking feature.
   //  */
@@ -597,7 +598,7 @@ function fieldable_panels_panes_update_7113() {
   // function MYMODULE_update_7101(&$sandbox) {
   //   return fieldable_panels_panes_update_7113($sandbox);
   // }
-  //
+  // @endcode
   //
   // A more correct approach is to use hook_update_dependencies to ensure that
   // the updates happen in the correct order. This may not work because if the
@@ -605,6 +606,7 @@ function fieldable_panels_panes_update_7113() {
   // until the caches are cleared, which may not happen until after the updates
   // are ran, thus the updates not running in the correct order.
   //
+  // @code
   // /**
   //  * Implements hook_update_dependencies().
   //  */
@@ -628,10 +630,9 @@ function fieldable_panels_panes_update_7113() {
   // function MYMODULE_update_7100() {
   //   variable_set('fpp_revision_locking', 'lock');
   // }
-  //
+  // @endcode
   //
   // An alternative solution would be to rerun the updates.
-
   if (variable_get('fpp_revision_locking', 'lock') != 'lock') {
     return t('Pane locking is not enabled, so nothing to do.');
   }
@@ -720,8 +721,9 @@ function fieldable_panels_panes_update_7114() {
 }
 
 /**
- * Update all Panelizer displays to point non-reusable FPPs to the vuuid instead
- * of the uuid.
+ * Update all Panelizer displays to point non-reusable FPPs to the vuuid.
+ *
+ * (instead of the uuid)
  */
 function fieldable_panels_panes_update_7115(&$sandbox) {
   if (!module_exists('panelizer')) {
@@ -732,6 +734,7 @@ function fieldable_panels_panes_update_7115(&$sandbox) {
   // variable won't be defined before it's checked for. The simplest approach
   // is to manually rerun the updates.
   //
+  // @code
   // /**
   //  * Enable the FPP revision locking feature.
   //  */
@@ -745,7 +748,7 @@ function fieldable_panels_panes_update_7115(&$sandbox) {
   // function MYMODULE_update_7101(&$sandbox) {
   //   return fieldable_panels_panes_update_7115($sandbox);
   // }
-  //
+  // @endcode
   //
   // A more correct approach is to use hook_update_dependencies to ensure that
   // the updates happen in the correct order. This may not work because if the
@@ -753,6 +756,7 @@ function fieldable_panels_panes_update_7115(&$sandbox) {
   // until the caches are cleared, which may not happen until after the updates
   // are ran, thus the updates not running in the correct order.
   //
+  // @code
   // /**
   //  * Implements hook_update_dependencies().
   //  */
@@ -776,16 +780,14 @@ function fieldable_panels_panes_update_7115(&$sandbox) {
   // function MYMODULE_update_7100() {
   //   variable_set('fpp_revision_locking', 'lock');
   // }
-  //
+  // @endcode
   //
   // An alternative solution would be to rerun the updates.
-
   if (variable_get('fpp_revision_locking', 'lock') != 'lock') {
     return t('Pane locking is not enabled, so nothing to do.');
   }
 
   // Update all Panelizer displays.
-
   // The first time through, work out how many records need to be updated.
   if (!isset($sandbox['progress'])) {
     $sandbox['progress'] = 0;
@@ -848,8 +850,9 @@ function fieldable_panels_panes_update_7115(&$sandbox) {
 }
 
 /**
- * Update all Panel Nodes displays to point non-reusable FPPs to the vuuid
- * instead of the uuid.
+ * Update all Panel Nodes displays to point non-reusable FPPs to the vuuid.
+ *
+ * (instead of the uuid)
  */
 function fieldable_panels_panes_update_7116(&$sandbox) {
   if (!module_exists('panels_node')) {
@@ -860,6 +863,7 @@ function fieldable_panels_panes_update_7116(&$sandbox) {
   // variable won't be defined before it's checked for. The simplest approach
   // is to manually rerun the updates.
   //
+  // @code
   // /**
   //  * Enable the FPP revision locking feature.
   //  */
@@ -873,7 +877,7 @@ function fieldable_panels_panes_update_7116(&$sandbox) {
   // function MYMODULE_update_7101(&$sandbox) {
   //   return fieldable_panels_panes_update_7116($sandbox);
   // }
-  //
+  // @endcode
   //
   // A more correct approach is to use hook_update_dependencies to ensure that
   // the updates happen in the correct order. This may not work because if the
@@ -881,6 +885,7 @@ function fieldable_panels_panes_update_7116(&$sandbox) {
   // until the caches are cleared, which may not happen until after the updates
   // are ran, thus the updates not running in the correct order.
   //
+  // @code
   // /**
   //  * Implements hook_update_dependencies().
   //  */
@@ -904,10 +909,9 @@ function fieldable_panels_panes_update_7116(&$sandbox) {
   // function MYMODULE_update_7100() {
   //   variable_set('fpp_revision_locking', 'lock');
   // }
-  //
+  // @endcode
   //
   // An alternative solution would be to rerun the updates.
-
   if (variable_get('fpp_revision_locking', 'lock') != 'lock') {
     return t('Pane locking is not enabled, so nothing to do.');
   }

@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * fpp_with_panels_test.pages_default.inc
+ * Fpp_with_panels_test.pages_default.inc.
  */
 
 /**

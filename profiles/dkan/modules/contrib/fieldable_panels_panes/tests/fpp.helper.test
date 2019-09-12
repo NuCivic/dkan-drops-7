@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @file
  * A base class for the Fieldable Panels Panes tests, provides shared methods.
  */
 
+/**
+ * A base class for the Fieldable Panels Panes tests, provides shared methods.
+ */
 abstract class FppTestHelper extends DrupalWebTestCase {
 
   /**
@@ -16,9 +20,13 @@ abstract class FppTestHelper extends DrupalWebTestCase {
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
+  public function setUp(array $modules = array()) {
     $modules[] = 'fieldable_panels_panes';
     parent::setUp($modules);
+
+    // Some default values to work with.
+    $this->bundle = 'fieldable_panels_pane';
+    $this->title = t('Test');
   }
 
   /**
@@ -30,7 +38,7 @@ abstract class FppTestHelper extends DrupalWebTestCase {
    * @return object
    *   A standard Drupal user object.
    */
-  function createAdminUser(array $perms = array()) {
+  public function createAdminUser(array $perms = array()) {
     // Create a user with the admin permission.
     $permissions = array(
       // The master permission for FPP.
@@ -53,7 +61,7 @@ abstract class FppTestHelper extends DrupalWebTestCase {
    * @return object
    *   A standard Drupal user object.
    */
-  function createUser(array $perms = array()) {
+  public function createUser(array $perms = array()) {
     // Reset the static variable used to identify permissions, otherwise it's
     // possible the permissions check in drupalCreateUser will fail.
     $this->checkPermissions(array(), TRUE);
@@ -65,15 +73,17 @@ abstract class FppTestHelper extends DrupalWebTestCase {
   /**
    * Create an image of a specific size & type.
    *
-   * @param string
+   * @param string $image_size
    *   The size of the requested image in 'XxY' format; defaults to '200x200'.
-   * @param string
-   *   The image format to use, defaults to 'png'.
+   * @param string $format
+   *   The image format to use; defaults to 'png'.
+   * @param string $scheme
+   *   The storage scheme to use; defaults to 'public'.
    *
    * @return string
    *   The URL to a public file.
    */
-  function generateImage($image_size = '200x200', $format = 'png', $scheme = 'public') {
+  public function generateImage($image_size = '200x200', $format = 'png', $scheme = 'public') {
     // Only proceed if the Devel Generate module is installed.
     if (module_exists('devel_generate')) {
       // Load the Devel Generate image generator logic.
@@ -104,7 +114,7 @@ abstract class FppTestHelper extends DrupalWebTestCase {
    * @return object
    *   The file object for the generated image.
    */
-  function generateImageFile($image_size = '200x200', $format = 'png', $scheme = 'public') {
+  public function generateImageFile($image_size = '200x200', $format = 'png', $scheme = 'public') {
     // Generate a test image.
     $image_uri = $this->generateImage($image_size, $format, $scheme);
 

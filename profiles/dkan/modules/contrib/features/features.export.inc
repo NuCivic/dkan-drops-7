@@ -1088,13 +1088,6 @@ function _features_is_assoc($array) {
  *   returns a copy of the object or array with recursion removed
  */
 function features_remove_recursion($o) {
-  static $replace;
-  if (!isset($replace)) {
-    $replace = create_function(
-      '$m',
-      '$r="\x00{$m[1]}ecursion_features";return \'s:\'.strlen($r.$m[2]).\':"\'.$r.$m[2].\'";\';'
-    );
-  }
   if (is_array($o) || is_object($o)) {
     $re = '#(r|R):([0-9]+);#';
     $serialize = serialize($o);
@@ -1104,7 +1097,7 @@ function features_remove_recursion($o) {
         $chunk = substr($serialize, $last, $pos - $last);
         if (preg_match($re, $chunk)) {
           $length = strlen($chunk);
-          $chunk = preg_replace_callback($re, $replace, $chunk);
+          $chunk = preg_replace_callback($re, '_features_remove_recursion', $chunk);
           $serialize = substr($serialize, 0, $last) . $chunk . substr($serialize, $last + ($pos - $last));
           $pos += strlen($chunk) - $length;
         }
@@ -1114,11 +1107,19 @@ function features_remove_recursion($o) {
         $last += 4 + $length;
         $pos = $last;
       }
-      $serialize = substr($serialize, 0, $last) . preg_replace_callback($re, $replace, substr($serialize, $last));
+      $serialize = substr($serialize, 0, $last) . preg_replace_callback($re, '_features_remove_recursion', substr($serialize, $last));
       $o = unserialize($serialize);
     }
   }
   return $o;
+}
+
+/**
+ * Callback function for preg_replace_callback() to remove recursion.
+ */
+function _features_remove_recursion($m) {
+  $r = "\x00{$m[1]}ecursion_features";
+  return 's:' . strlen($r . $m[2]) . ':"' . $r . $m[2] . '";';
 }
 
 /**

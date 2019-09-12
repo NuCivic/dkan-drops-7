@@ -167,6 +167,16 @@ function panopoly_images_preprocess_image_style(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_image().
+ */
+function panopoly_images_preprocess_image(&$variables) {
+  // If the alt attribute is not set, set it to the empty string.
+  if (!isset($variables['alt'])) {
+    $variables['alt'] = '';
+  }
+}
+
+/**
   * Implements hook_entity_info_alter().
   */
 function panopoly_images_entity_info_alter(&$entity_info) {

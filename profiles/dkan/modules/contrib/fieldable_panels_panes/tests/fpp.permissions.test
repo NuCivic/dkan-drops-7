@@ -1,10 +1,15 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module to ensure the permissions work.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module to ensure the permissions work.
+ */
 class FppPermissionsTest extends FppTestHelper {
+
   /**
    * {@inheritdoc}
    */
@@ -13,25 +18,14 @@ class FppPermissionsTest extends FppTestHelper {
       'name' => 'FPP tests for permissions',
       'description' => 'Confirm that the different permissions work correctly.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views'),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-    parent::setUp($modules);
-
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
-    $this->title = t('Test');
   }
 
   /**
    * Confirm that the 'admin' permission works correctly.
    */
-  function testAdminPermission() {
+  public function testAdminPermission() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -63,8 +57,9 @@ class FppPermissionsTest extends FppTestHelper {
 
     $this->drupalGet('admin/structure/fieldable-panels-panes/' . $this->bundle . '/delete');
     $this->assertResponse(200, 'Loaded the Delete page for the default FPP type.');
-    $this->assertText(t('This action will permanently remove this item from your database..'));
-
+    $this->assertText(t('Are you sure you want to delete'));
+    $this->assertText(t('This action will permanently remove this item from your database.'));
+    return;
     $this->drupalGet('admin/structure/fieldable-panels-panes/' . $this->bundle . '/export');
     $this->assertResponse(200, 'Loaded the Export page for the default FPP type.');
     $this->assertFieldByName('code');
@@ -89,7 +84,7 @@ class FppPermissionsTest extends FppTestHelper {
   /**
    * Confirm that the 'list' permission works correctly.
    */
-  function testListPermission() {
+  public function testListPermission() {
     // Create a user with the admin permission.
     $permissions = array(
       'access fieldable panels panes master list',
@@ -106,7 +101,7 @@ class FppPermissionsTest extends FppTestHelper {
   /**
    * Confirm that the 'create bundle' permission works correctly.
    */
-  function testCreateBundlePermission() {
+  public function testCreateBundlePermission() {
     // Create a user with the admin permission.
     $permissions = array(
       "create fieldable {$this->bundle}",
@@ -146,7 +141,7 @@ class FppPermissionsTest extends FppTestHelper {
   /**
    * Confirm that the 'edit bundle' permission doesn't allow FPP creation.
    */
-  function testEditBundlePermission() {
+  public function testEditBundlePermission() {
     // Create a user with edit permission.
     $permissions = array(
       "edit fieldable {$this->bundle}",
@@ -162,7 +157,7 @@ class FppPermissionsTest extends FppTestHelper {
   /**
    * Confirm that the 'edit bundle' permission works correctly.
    */
-  function testCreateEditBundlePermission() {
+  public function testCreateEditBundlePermission() {
     // Create a user with create & edit permission.
     $permissions = array(
       "create fieldable {$this->bundle}",
@@ -196,7 +191,7 @@ class FppPermissionsTest extends FppTestHelper {
   /**
    * Confirm that the 'delete bundle' permission works correctly.
    */
-  function testDeleteBundlePermission() {
+  public function testDeleteBundlePermission() {
     // Create a user with the admin permission.
     $permissions = array(
       "create fieldable {$this->bundle}",

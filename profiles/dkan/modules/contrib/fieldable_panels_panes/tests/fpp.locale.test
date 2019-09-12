@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @file
  * Confirm the language integration works correctly.
  */
 
+/**
+ * Confirm the language integration works correctly.
+ */
 class FppLocaleTest extends FppTestHelper {
 
   /**
@@ -14,29 +18,24 @@ class FppLocaleTest extends FppTestHelper {
       'name' => 'FPP tests for language handling',
       'description' => 'Confirm that language handling works correctly.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-
-    // Needed
+  public function setUp(array $modules = array()) {
+    // Needed.
     $modules[] = 'locale';
 
     parent::setUp($modules);
-
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
-    $this->title = 'Test FPP';
   }
 
   /**
    * Verify the language selector exists.
    */
-  function testLanguageSelector() {
+  public function testLanguageSelector() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -53,7 +52,7 @@ class FppLocaleTest extends FppTestHelper {
   /**
    * Verify the language selector exists.
    */
-  function testNoLanguageSelector() {
+  public function testNoLanguageSelector() {
     module_disable(array('locale'));
 
     // Create a user with the admin permission.
@@ -72,7 +71,7 @@ class FppLocaleTest extends FppTestHelper {
   /**
    * Verify the language selector works with no language selected.
    */
-  function testLanguageNone() {
+  public function testLanguageNone() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 
@@ -106,7 +105,7 @@ class FppLocaleTest extends FppTestHelper {
   /**
    * Verify the language selector works with a specific language.
    */
-  function testLanguageEnglish() {
+  public function testLanguageEnglish() {
     // Create a user with the admin permission.
     $this->adminUser = $this->createAdminUser();
 

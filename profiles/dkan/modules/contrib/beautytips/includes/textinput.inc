@@ -1,62 +1,67 @@
 <?php
 
 function beautytips_textinput_admin_info() {
-  $form['beautytips_text'] = array(
+  $form['beautytips_text'] = [
     '#type' => 'fieldset',
     '#title' => 'Text Input Tooltips',
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
-  );
-  $form['beautytips_text']['beautytips_text_input'] = array(
+  ];
+  $form['beautytips_text']['beautytips_text_input'] = [
     '#type' => 'checkbox',
     '#title' => 'Display Text input popups',
     '#default_value' => variable_get('beautytips_text_input', FALSE),
-  );
-  $form['beautytips_text']['beautytips_position'] = array(
+  ];
+  $form['beautytips_text']['beautytips_position'] = [
     '#type' => 'radios',
     '#title' => 'Which side should the text popups appear on?',
-    '#options' => array('bottom' => t('bottom'), 'top' => t('top'), 'left' => t('left'), 'right' => t('right')),
+    '#options' => [
+      'bottom' => t('bottom'),
+      'top' => t('top'),
+      'left' => t('left'),
+      'right' => t('right'),
+    ],
     '#default_value' => variable_get('beautytips_position', 'bottom'),
-  );
-  $form['beautytips_text']['form_id'] = array(
+  ];
+  $form['beautytips_text']['form_id'] = [
     '#type' => 'fieldset',
     '#title' => 'Restrict text popups to specific forms. (OPTIONAL)',
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,    
-  );
-  $form['beautytips_text']['form_id']['beautytips_form_id'] = array(
+    '#collapsed' => TRUE,
+  ];
+  $form['beautytips_text']['form_id']['beautytips_form_id'] = [
     '#type' => 'textfield',
     '#title' => 'Enter the form id(s) to use for text popup beautytips',
     '#description' => t('You need to use Drupal php syntax like page_node_form'),
     '#default_value' => variable_get('beautytips_form_id', ''),
-  );
-  $form['beautytips_text']['form_id']['beautytips_show_form'] = array(
+  ];
+  $form['beautytips_text']['form_id']['beautytips_show_form'] = [
     '#type' => 'checkbox',
     '#title' => 'Display form_ids',
     '#description' => t("Turn this on if you want to see the names of the form ids to enter above.  The names will appear on the pages where the forms are displayed.") . '<div>' . t("Make sure that you turn it off when you're done retrieving the form_ids.") . '</div>',
     '#default_value' => variable_get('beautytips_show_form', ''),
-  );
-  
+  ];
+
   return $form;
 }
 
 function beautytips_textinput_menu_items() {
-  $items['beautytips/settings/form_ids'] = array(
+  $items['beautytips/settings/form_ids'] = [
     'page callback' => 'beautytips_textinput_form_id_off',
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => ['administer site configuration'],
     'file' => 'textinput.inc',
     'file path' => drupal_get_path('module', 'beautytips_ui') . '/includes',
     'type' => MENU_CALLBACK,
-  );
+  ];
   return $items;
 }
 
 function beautytips_textinput_form_change(&$form, $form_state, $form_id) {
   if (variable_get('beautytips_text_input', FALSE)) {
     if (variable_get('beautytips_show_form', FALSE)) {
-      drupal_set_message(t('The form_id is %form_id.  This message should be ' . l(t('turned off'), 'beautytips/settings/form_ids', array('query' => drupal_get_destination())) . " when finished you're finished checking form_ids.", array('%form_id' => $form_id)));
+      drupal_set_message(t('The form_id is %form_id.  This message should be ' . l(t('turned off'), 'beautytips/settings/form_ids', ['query' => drupal_get_destination()]) . " when finished you're finished checking form_ids.", ['%form_id' => $form_id]));
     }
-     
+
     $add_bt = TRUE;
     if (strlen(variable_get('beautytips_form_id', ''))) {
       if (strpos(variable_get('beautytips_form_id', ''), $form_id) === FALSE) {
@@ -64,15 +69,15 @@ function beautytips_textinput_form_change(&$form, $form_state, $form_id) {
       }
     }
     if ($add_bt) {
-      $options = array();
-      $options['bt_text_field'] = array(
+      $options = [];
+      $options['bt_text_field'] = [
         'cssSelect' => 'input.form-text',
-        'trigger' => array('focus', 'blur'),
+        'trigger' => ['focus', 'blur'],
         'contentSelector' => "$(this).nextAll('.description:eq(0)').hide().html()",
         'width' => '275px',
-        'positions' => array(0 => variable_get('beautytips_position', 'bottom')),
+        'positions' => [0 => variable_get('beautytips_position', 'bottom')],
         'preEval' => TRUE,
-      );
+      ];
 
       // Text areas can have format text with description or just a description.
       // The html structure is different depending on which one is chosen.
@@ -87,14 +92,14 @@ function beautytips_textinput_form_change(&$form, $form_state, $form_id) {
         else {
           null;
         }";
-      $options['bt_text_area'] = array(
+      $options['bt_text_area'] = [
         'cssSelect' => 'textarea.form-textarea',
-        'trigger' => array('focus', 'dblclick'),
+        'trigger' => ['focus', 'dblclick'],
         'contentSelector' => $content,
         'width' => '275px',
-        'positions' => array(0 => variable_get('beautytips_position', 'bottom')),
+        'positions' => [0 => variable_get('beautytips_position', 'bottom')],
         'preEval' => TRUE,
-      );
+      ];
       beautytips_add_beautytips($options);
     }
   }

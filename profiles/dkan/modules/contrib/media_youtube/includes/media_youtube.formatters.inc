@@ -184,9 +184,8 @@ function media_youtube_file_formatter_video_settings($form, &$form_state, $setti
   $element['protocol'] = array(
     '#title' => t('Iframe protocol'),
     '#type' => 'radios',
-    '#default_value' => $settings['protocol'],
+    '#default_value' => 'https:',
     '#options' => array(
-      'http:' => 'http://',
       'https:' => 'https://',
     ),
     '#states' => array(

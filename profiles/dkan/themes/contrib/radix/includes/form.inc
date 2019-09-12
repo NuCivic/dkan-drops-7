@@ -17,9 +17,6 @@ function radix_form($variables) {
     $element['#attributes']['accept-charset'] = "UTF-8";
   }
 
-  // Add the role attribute.
-  $element['#attributes']['role'] = "form";
-
   // Anonymous DIV to satisfy XHTML compliance.
   return '<form' . drupal_attributes($element['#attributes']) . '><div>' . $element['#children'] . '</div></form>';
 }

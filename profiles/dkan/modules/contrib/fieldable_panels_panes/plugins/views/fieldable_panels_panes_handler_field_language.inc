@@ -13,7 +13,7 @@ class fieldable_panels_panes_handler_field_language extends views_handler_field_
   /**
    * {@inheritdoc}
    */
-  function option_definition() {
+  public function option_definition() {
     $options = parent::option_definition();
     $options['native_language'] = array('default' => FALSE, 'bool' => TRUE);
 
@@ -23,7 +23,7 @@ class fieldable_panels_panes_handler_field_language extends views_handler_field_
   /**
    * {@inheritdoc}
    */
-  function options_form(&$form, &$form_state) {
+  public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['native_language'] = array(
       '#title' => t('Native language'),
@@ -36,7 +36,7 @@ class fieldable_panels_panes_handler_field_language extends views_handler_field_
   /**
    * {@inheritdoc}
    */
-  function render($values) {
+  public function render($values) {
     $languages = views_language_list(empty($this->options['native_language']) ? 'name' : 'native');
     $value = $this->get_value($values);
     $value = isset($languages[$value]) ? $languages[$value] : '';

@@ -32,7 +32,7 @@ function media_youtube_test_oembed() {
     'thumbnail_width' => 480,
     'author_name' => 'YouTube Help',
     'height' => 270,
-    'provider_url' => 'http://www.youtube.com/',
+    'provider_url' => 'https://www.youtube.com/',
     'html' => '<iframe width="480" height="270" src="https://www.youtube.com/embed/' . $params['v'] . '?feature=oembed" frameborder="0" allowfullscreen></iframe>',
     'thumbnail_height' => 360,
     'title' => 'YouTube Content ID',
@@ -40,7 +40,7 @@ function media_youtube_test_oembed() {
     'type' => 'video',
     'width' => 480,
     'version' => '1.0',
-    'author_url' => 'http://www.youtube.com/user/YouTubeHelp',
+    'author_url' => 'https://www.youtube.com/user/YouTubeHelp',
   );
 
   drupal_json_output($data);

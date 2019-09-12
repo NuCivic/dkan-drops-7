@@ -191,32 +191,38 @@ function panopoly_widgets_get_required_file_fields($bundle) {
  * Render callback for fieldable panels panes.
  */
 function panopoly_widgets_fieldable_panels_pane_render($subtype, $conf, $panels_args = array(), $context = array()) {
-  $entity = fieldable_panels_panes_load_from_subtype($subtype);
+  ctools_include('content');
+  $plugin = ctools_get_content_type('fieldable_panels_pane');
 
-  // If the entity has some required file fields, check them.
-  $required_file_fields = panopoly_widgets_get_required_file_fields($entity->bundle);
-  $missing_required = FALSE;
-  if (!empty($required_file_fields)) {
-    foreach ($required_file_fields as $required_file_field) {
-      $items = field_get_items('fieldable_panels_pane', $entity, $required_file_field);
+  // Need to first ensure that this is a valid subtype.
+  $subtype_info = ctools_content_get_subtype($plugin, $subtype);
+  if (!empty($subtype_info)) {
+    $entity = fieldable_panels_panes_load_from_subtype($subtype);
 
-      // Check if the required file field is empty or the file doesn't exist.
-      if (empty($items[0]) || empty($items[0]['fid']) || !file_load($items[0]['fid'])) {
-        $missing_required = TRUE;
-        break;
+    // If the entity has some required file fields, check them.
+    $required_file_fields = panopoly_widgets_get_required_file_fields($entity->bundle);
+    $missing_required = FALSE;
+    if (!empty($required_file_fields)) {
+      foreach ($required_file_fields as $required_file_field) {
+        $items = field_get_items('fieldable_panels_pane', $entity, $required_file_field);
+
+        // Check if the required file field is empty or the file doesn't exist.
+        if (empty($items[0]) || empty($items[0]['fid']) || !file_load($items[0]['fid'])) {
+          $missing_required = TRUE;
+          break;
+        }
       }
     }
-  }
 
-  // If a required file field is missing, then we return nothing.
-  if ($missing_required) {
-    return NULL;
-  }
+    // If a required file field is missing, then we return nothing.
+    if ($missing_required) {
+      return NULL;
+    }
 
-  // Otherwise, hand off to the original render callback.
-  $plugin = ctools_get_content_type('fieldable_panels_pane');
-  $original_render_callback = $plugin['original render callback'];
-  return $original_render_callback($subtype, $conf, $panels_args, $context);
+    // Otherwise, hand off to the original render callback.
+    $original_render_callback = $plugin['original render callback'];
+    return $original_render_callback($subtype, $conf, $panels_args, $context);
+  }
 }
 
 /**
@@ -265,6 +271,12 @@ function panopoly_widgets_form_alter(&$form, &$form_state, $form_id) {
     // and makes sense with that option.
     $form['expanded']['#weight'] = 8;
     $form['expanded']['#title'] = t('<strong>Expand children</strong> of this tree.');
+
+    // Hide the 'Always display title' option that only useful in rare edge
+    // cases.
+    if (!empty($form['display_empty'])) {
+      $form['display_empty']['#access'] = FALSE;
+    }
   }
 
   if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
@@ -373,9 +385,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_link.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/quick-links',
+      'real path' => 'admin/structure/fieldable-panels-panes/quick-links',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -388,9 +400,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_file.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/basic-file',
+      'real path' => 'admin/structure/fieldable-panels-panes/basic-file',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -403,9 +415,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_image.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/image',
+      'real path' => 'admin/structure/fieldable-panels-panes/image',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -418,9 +430,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_text.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/text',
+      'real path' => 'admin/structure/fieldable-panels-panes/text',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -433,9 +445,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_map.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/map',
+      'real path' => 'admin/structure/fieldable-panels-panes/map',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -448,9 +460,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_table.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/table',
+      'real path' => 'admin/structure/fieldable-panels-panes/table',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -463,9 +475,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_video.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/video',
+      'real path' => 'admin/structure/fieldable-panels-panes/video',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );
@@ -478,9 +490,9 @@ function panopoly_widgets_entity_info_alter(&$entity_info) {
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_spotlight.png',
     'admin' => array(
-      'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+      'path' => 'admin/structure/fieldable-panels-panes/%fieldable_panels_panes_type',
       'bundle argument' => 4,
-      'real path' => 'admin/structure/fieldable-panels-panes/manage/spotlight',
+      'real path' => 'admin/structure/fieldable-panels-panes/spotlight',
       'access arguments' => array('administer fieldable panels panes'),
     ),
   );

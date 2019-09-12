@@ -1,25 +1,33 @@
 <?php
+
 /**
  * @file
- * Provide views handlers for fieldable panel panes
+ * Provide views handlers for fieldable panel panes.
  */
 
 /**
  * Field handler to present a link to the node.
  */
 class fieldable_panels_panes_handler_field_view_revision extends views_handler_field {
+
   /**
-   * Stores all entities which are in the result.
+   * {@inheritdoc}
    */
   public $entities;
 
-  function construct() {
+  /**
+   * {@inheritdoc}
+   */
+  public function construct() {
     parent::construct();
     $this->real_field = 'fpid';
     $this->additional_fields = array('vid');
   }
 
-  function pre_render(&$values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function pre_render(&$values) {
     $this->entities = array();
     if (!empty($values)) {
       foreach ($values as $row_index => $value) {
@@ -31,19 +39,25 @@ class fieldable_panels_panes_handler_field_view_revision extends views_handler_f
   }
 
   /**
-   * Overridden to return the entity object.
+   * {@inheritdoc}
    */
-  function get_value($values, $field = NULL) {
+  public function get_value($values, $field = NULL) {
     return isset($this->entities[$this->view->row_index]) ? $this->entities[$this->view->row_index] : FALSE;
   }
 
-  function option_definition() {
+  /**
+   * {@inheritdoc}
+   */
+  public function option_definition() {
     $options = parent::option_definition();
     $options['text'] = array('default' => '', 'translatable' => TRUE);
     return $options;
   }
 
-  function options_form(&$form, &$form_state) {
+  /**
+   * {@inheritdoc}
+   */
+  public function options_form(&$form, &$form_state) {
     $form['text'] = array(
       '#type' => 'textfield',
       '#title' => t('Text to display'),
@@ -56,13 +70,19 @@ class fieldable_panels_panes_handler_field_view_revision extends views_handler_f
     $form['alter']['external'] = array('#access' => FALSE);
   }
 
-  function render($values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function render($values) {
     if ($entity = $this->get_value($values)) {
       return $this->render_link($entity, $values);
     }
   }
 
-  function render_link($entity, $values) {
+  /**
+   * {@inheritdoc}
+   */
+  public function render_link($entity, $values) {
     if (fieldable_panels_panes_access('view', $entity)) {
       $this->options['alter']['make_link'] = TRUE;
       $this->options['alter']['path'] = "admin/structure/fieldable-panels-panes/view/$entity->fpid/revision/$entity->vid";
@@ -73,4 +93,5 @@ class fieldable_panels_panes_handler_field_view_revision extends views_handler_f
       $this->options['alter']['path'] = '';
     }
   }
+
 }

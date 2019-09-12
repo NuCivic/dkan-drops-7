@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * @file
@@ -10,7 +10,7 @@
  */
 function beautytips_install() {
   // Set basic defaults
-  variable_set('beautytips_defaults', array('cssStyles' => array()));
+  variable_set('beautytips_defaults', ['cssStyles' => []]);
 }
 
 /**
@@ -34,13 +34,13 @@ function beautytips_requirements($phase) {
  * Implementation of hook_uninstall().
  */
 function beautytips_uninstall() {
-  $variables = array(
+  $variables = [
     'beautytips_always_add',
     'beautytips_added_selectors_array',
     'beautytips_default_style',
     'beautytips_custom_style',
     'beautytips_defaults',
-  );
+  ];
   foreach ($variables as $variable) {
     variable_del($variable);
   }

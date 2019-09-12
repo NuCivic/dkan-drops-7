@@ -1,0 +1,314 @@
+<?php
+
+/**
+ * @file
+ * Tests the services resource Fieldable Panels Pane methods and actions.
+ */
+
+ /**
+  * Test the services resource Fieldable Panels Pane methods and actions.
+  */
+class FppServicesTest extends ServicesWebTestCase {
+
+  /**
+   * The endpoint created for these tests.
+   *
+   * @var object
+   */
+  protected $endpoint = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'FPP tests for Services integration',
+      'description' => 'Test the services resource Fieldable Panels Pane methods and actions.',
+      'group' => 'FPP',
+      // The Services rest_service module requires libraries too.
+      'dependencies' => array('ctools', 'panels', 'views', 'services', 'libraries'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(array $modules = array()) {
+    // Because this test extends ServicesWebTestCase instead of FppTestHelper
+    // the FPP module needs to be specifically listed here.
+    $modules[] = 'fieldable_panels_panes';
+    parent::setUp($modules);
+
+    // Create an endpoint.
+    $this->endpoint = $this->saveNewEndpoint();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function saveNewEndpoint() {
+    $edit = $this->populateEndpointFAPI();
+    $endpoint = new stdClass();
+    $endpoint->disabled = FALSE;
+    $endpoint->api_version = 3;
+    $endpoint->name = $edit['name'];
+    $endpoint->server = $edit['server'];
+    $endpoint->path = $edit['path'];
+    $endpoint->authentication = array(
+      'services' => 'services',
+    );
+    $endpoint->server_settings = array(
+      'formatters' => array(
+        'json' => TRUE,
+        'bencode' => TRUE,
+        'rss' => TRUE,
+        'plist' => TRUE,
+        'xmlplist' => TRUE,
+        'php' => TRUE,
+        'yaml' => TRUE,
+        'jsonp' => FALSE,
+        'xml' => FALSE,
+      ),
+      'parsers' => array(
+        'application/x-yaml' => TRUE,
+        'application/json' => TRUE,
+        'application/vnd.php.serialized' => TRUE,
+        'application/plist' => TRUE,
+        'application/plist+xml' => TRUE,
+        'application/x-www-form-urlencoded' => TRUE,
+        'multipart/form-data' => TRUE,
+      ),
+    );
+    $endpoint->resources = array(
+      'fieldable_panels_panes' => array(
+        'operations' => array(
+          'create' => array(
+            'enabled' => 1,
+          ),
+          'retrieve' => array(
+            'enabled' => 1,
+          ),
+          'update' => array(
+            'enabled' => 1,
+          ),
+          'delete' => array(
+            'enabled' => 1,
+          ),
+          'index' => array(
+            'enabled' => 1,
+          ),
+        ),
+      ),
+    );
+    $endpoint->debug = 1;
+    $endpoint->export_type = FALSE;
+    services_endpoint_save($endpoint);
+    $endpoint = services_endpoint_load($endpoint->name);
+    $this->assertEqual($endpoint->name, $edit['name'], 'Endpoint successfully created');
+    return $endpoint;
+  }
+
+  /**
+   * Tests FPP resource Index.
+   */
+  public function testFppIndex() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+      'perform unlimited index queries',
+    ));
+    $this->drupalLogin($privileged_user);
+
+    // Create a set of FPP entities. The FPP resource returns 20 items at a
+    // time, so this creates 2 1/2 pages worth.
+    $fpps = array();
+    $count = 50;
+    for ($i = 0; $i < $count; $i++) {
+      $fpp = $this->createFpp();
+      $fpps[$fpp->fpid] = $fpp;
+    }
+
+    // Get the content.
+    $page_count = ceil(count($fpps) / 20);
+    $retrieved_fpps = array();
+    for ($page = 0; $page < $page_count; $page++) {
+      $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable_panels_panes', array('page' => $page, 'fields' => 'fpid,title'));
+      $this->assertTrue(count($responseArray['body']) <= 20, 'Correct number of items returned');
+
+      // Store the returned FPP IDs.
+      foreach ($responseArray['body'] as $fpp) {
+        if (isset($retrieved_fpps[$fpp->fpid])) {
+          $this->fail(format_string('Duplicate fieldable panels pane @fpid returned.', array('@fpid' => $fpp->fpid)));
+        }
+        $retrieved_fpps[$fpp->fpid] = TRUE;
+
+        $this->assertEqual($fpps[$fpp->fpid]->title, $fpp->title, 'Successfully received fieldable panels pane info', 'fppResource: Index');
+      }
+    }
+
+    // Verify we retrieved all the FPPs.
+    $expected_fpids = array_keys($fpps);
+    sort($expected_fpids);
+    $retrieved_fpids = array_keys($retrieved_fpps);
+    sort($retrieved_fpids);
+    $this->assertEqual($expected_fpids, $retrieved_fpids, 'Retrieved all fieldable panels panes');
+
+    // The n+1 page should be empty.
+    $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable_panels_panes', array('page' => $page_count + 1));
+    $this->assertEqual(count($responseArray['body']), 0, 'The n+1 page is empty');
+
+    // Adjust the pager size.
+    $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable_panels_panes', array('fields' => 'fpid,title', 'pagesize' => 40));
+    $this->assertEqual(count($responseArray['body']), 40, 'Correct number of items returned');
+
+    // Swap to user that can only use the default pager size.
+    $less_privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+    ));
+    $this->drupalLogin($less_privileged_user);
+    $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable_panels_panes', array('fields' => 'fpid,title', 'pagesize' => 40));
+    $this->assertEqual(count($responseArray['body']), 20, 'Correct number of items returned');
+  }
+
+  /**
+   * Tests FPP resource Retrieve.
+   */
+  public function testFppRetrieve() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+    ));
+    $this->drupalLogin($privileged_user);
+
+    // Verify FPP entity is found.
+    $fpp = $this->createFpp();
+    $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable_panels_panes/' . $fpp->fpid);
+    $this->assertTrue($fpp->title == $responseArray['body']->title,
+      'Successfully received fieldable panels pane info', 'fppResource: Retrieve');
+
+    // Verify FPP entity not found.
+    unset($fpp);
+    $responseArray = $this->servicesGet($this->endpoint->path . '/fieldable-panels-pane/99');
+    $this->assertTrue($responseArray['code'] == '404', 'Successfully was rejected to non existent fieldable panels pane', 'fppResource: Retrieve');
+  }
+
+  /**
+   * Tests FPP resource Create.
+   */
+  public function testFppCreate() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+      'create fieldable fieldable_panels_pane',
+    ));
+    $this->drupalLogin($privileged_user);
+    $fpp = array(
+      'title' => 'Tests',
+      'bundle' => 'fieldable_panels_pane',
+    );
+
+    $response = $this->servicesPost($this->endpoint->path . '/fieldable_panels_panes', $fpp);
+    $body = $response['body'];
+
+    $this->assertTrue(isset($body['fpid']), 'fieldable panels pane was successfully created', 'fppResource: Create');
+    $new_fpp = fieldable_panels_panes_load($body['fpid']);
+    $this->assertEqual($new_fpp->title, $fpp['title'], 'Title was the same', 'fppResource: Create');
+  }
+
+  /**
+   * Tests FPP resource Created.
+   *
+   * Make sure it fails with no permissions.
+   */
+  public function testFppCreateFail() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+    ));
+    $this->drupalLogin($privileged_user);
+    $fpp = array(
+      'title' => 'Tests',
+      'bundle' => 'fieldable_panels_pane',
+    );
+
+    $responseArray = $this->servicesPost($this->endpoint->path . '/fieldable_panels_panes', $fpp);
+
+    $this->assertEqual($responseArray['code'], 403, 'User with not sufficient permissions cannot create fieldable panels pane', 'fppResource: Create');
+  }
+
+  /**
+   * Tests FPP resource Update.
+   */
+  public function testFppUpdate() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+      'edit fieldable fieldable_panels_pane',
+    ));
+    $this->drupalLogin($privileged_user);
+
+    $fpp = $this->createFpp();
+    $fpp_update = (array) $fpp;
+    $fpp_update['title'] = $this->randomName();
+
+    $this->servicesPut($this->endpoint->path . '/fieldable_panels_panes/' . $fpp->fpid, $fpp_update);
+    $fppAfterUpdate = fieldable_panels_panes_load($fpp->fpid);
+    $this->assertTrue(isset($fppAfterUpdate->fpid), 'fieldable panels pane was successfully updated', 'fppResource: Updated');
+    $this->assertEqual($fppAfterUpdate->title, $fpp_update['title'], 'Title is the same', 'fppResource: Update');
+  }
+
+  /**
+   * Tests FPP resource Update fail with no permissions.
+   */
+  public function testFppUpdatePermFail() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+    ));
+    $this->drupalLogin($privileged_user);
+
+    $fpp = $this->createFpp();
+
+    // Try to update this FPP entity with a user that does not have
+    // permission to edit any fieldable_panels_pane content.
+    $fpp_update = (array) $fpp;
+    $fpp_update['title'] = $this->randomName();
+
+    $responseArray = $this->servicesPut($this->endpoint->path . '/fieldable_panels_panes/' . $fpp->fpid, $fpp_update);
+
+    $this->assertTrue(strpos($responseArray['status'], 'Access denied for user'),
+      'Updating the fieldable panels pane failed without needed permissions.', 'fppResource: Update');
+  }
+
+  /**
+   * Tests FPP resource Delete.
+   */
+  public function testFppDelete() {
+    $privileged_user = $this->drupalCreateUser(array(
+      'administer services',
+      'administer fieldable panels panes',
+      'delete fieldable fieldable_panels_pane',
+    ));
+    $this->drupalLogin($privileged_user);
+    $fpp = $this->createFpp();
+
+    $this->servicesDelete($this->endpoint->path . '/fieldable_panels_panes/' . $fpp->fpid);
+    $deleted_fieldable_panels_pane = fieldable_panels_panes_load($fpp->fpid);
+    $this->assertTrue(empty($deleted_fieldable_panels_pane), 'fieldable panels pane was deleted.', 'fppResource: Deleted');
+
+    // Verify trying to delete a non-existing FPP fails.
+    $responseArray = $this->servicesDelete($this->endpoint->path . '/fieldable_panels_panes/' . $fpp->fpid);
+    $this->assertNotEqual($responseArray['code'], 200,
+      'fieldable panels pane was deleted. It shoudlnt have been because it doesnt exist', 'fppResource: Deleted');
+  }
+
+  /**
+   * Helper function to create an FPP.
+   */
+  public function createFpp() {
+    $fpp = new StdClass();
+    $fpp->bundle = 'fieldable_panels_pane';
+    $fpp->title = $this->randomString();
+    return fieldable_panels_panes_save($fpp);
+  }
+
+}

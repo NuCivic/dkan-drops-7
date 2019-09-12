@@ -1,7 +1,7 @@
 <?php
+
 /**
  * @file
- *
  * Contains the controller class for the Fieldable Panel Pane entity.
  */
 
@@ -9,10 +9,16 @@
  * Entity controller class.
  */
 class PanelsPaneController extends DrupalDefaultEntityController {
+
+  /**
+   * The FPP object being processed.
+   *
+   * @var object
+   */
   public $entity;
 
   /**
-   * Overrides DrupalDefaultEntityController::resetCache().
+   * {@inheritdoc}
    */
   public function resetCache(array $ids = NULL) {
     if (module_exists('entitycache')) {
@@ -22,7 +28,7 @@ class PanelsPaneController extends DrupalDefaultEntityController {
   }
 
   /**
-   * Overrides DrupalDefaultEntityController::load().
+   * {@inheritdoc}
    */
   public function load($ids = array(), $conditions = array()) {
     if (module_exists('entitycache')) {
@@ -34,7 +40,7 @@ class PanelsPaneController extends DrupalDefaultEntityController {
   }
 
   /**
-   * Overrides DrupalDefaultEntityController::attachLoad().
+   * {@inheritdoc}
    */
   public function attachLoad(&$queried_entities, $revision_id = FALSE) {
     parent::attachLoad($queried_entities, $revision_id);
@@ -51,6 +57,9 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
     // Add an alias to this query to ensure that we can tell if this is
     // the current revision or not.
@@ -60,6 +69,19 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     return $query;
   }
 
+  /**
+   * Custom method to check access to an FPP object for an operation.
+   *
+   * @param string $op
+   *   The operation to be performed.
+   * @param object|null $entity
+   *   The FPP entity to check.
+   * @param object $account
+   *   The user entity to check.
+   *
+   * @return bool
+   *   Whether the user is allowed to perform the requested operation.
+   */
   public function access($op, $entity = NULL, $account = NULL) {
     if ($op !== 'create' && empty($entity)) {
       return FALSE;
@@ -70,7 +92,8 @@ class PanelsPaneController extends DrupalDefaultEntityController {
       return TRUE;
     }
 
-    // On the first FALSE we return, otherwise we use our own access check.
+    // Trigger hook_fieldable_panels_panes_access().
+    // On the first FALSE it will return, otherwise use custom checks below.
     foreach (module_invoke_all('fieldable_panels_panes_access', $op, $entity, $account) as $result) {
       if ($result === FALSE) {
         return $result;
@@ -98,9 +121,20 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     return FALSE;
   }
 
+  /**
+   * Save the given FPP object.
+   *
+   * @param object $entity
+   *   An FPP object to save.
+   *
+   * @return object|bool
+   *   If the save operation completed correctly, this will be the updated FPP
+   *   object, otherwise it will return FALSE and an exception will be logged in
+   *   watchdog.
+   */
   public function save($entity) {
     $entity = (object) $entity;
-     // Determine if we will be inserting a new entity.
+    // Determine if we will be inserting a new entity.
     $entity->is_new = !(isset($entity->fpid) && is_numeric($entity->fpid));
 
     $transaction = db_transaction();
@@ -191,15 +225,12 @@ class PanelsPaneController extends DrupalDefaultEntityController {
   /**
    * Saves an entity revision with the uid of the current user.
    *
-   * @param $entity
+   * @param object $entity
    *   The fully loaded entity object.
-   * @param $uid
+   * @param int|null $uid
    *   The user's uid for the current revision.
-   * @param $update
-   *   TRUE or FALSE indicating whether or not the existing revision should be
-   *     updated instead of a new one created.
    */
-  function saveRevision($entity, $uid = NULL) {
+  public function saveRevision($entity, array $uid = NULL) {
     if (!isset($uid)) {
       $uid = $GLOBALS['user']->uid;
     }
@@ -221,6 +252,21 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     }
   }
 
+  /**
+   * Display a given FPP object.
+   *
+   * @param object $entity
+   *   The FPP object to be displayed.
+   * @param string $view_mode
+   *   The view mode to use; defaults to 'full', i.e. the normal "full content"
+   *   display.
+   * @param string $langcode
+   *   The language code to use for this; defaults to the current content
+   *   language code.
+   *
+   * @return array
+   *   A render array.
+   */
   public function view($entity, $view_mode = 'full', $langcode = NULL) {
     if (!isset($langcode)) {
       $langcode = $GLOBALS['language_content']->language;
@@ -263,7 +309,7 @@ class PanelsPaneController extends DrupalDefaultEntityController {
    * Builds a structured array representing the fieldable panel pane's content.
    *
    * @param object $entity
-   *   A fieldable panel pane entity.
+   *   A Fieldable Panels Pane entity.
    * @param string $view_mode
    *   View mode, e.g. 'full', 'teaser'...
    * @param string $langcode
@@ -318,7 +364,13 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     $entity->content += array('#view_mode' => $view_mode);
   }
 
-  public function delete($fpids) {
+  /**
+   * Delete a list of FPPs.
+   *
+   * @param array $fpids
+   *   A list of FPP primary keys.
+   */
+  public function delete(array $fpids) {
     $transaction = db_transaction();
     if (!empty($fpids)) {
       $entities = fieldable_panels_panes_load_multiple($fpids, array());
@@ -355,7 +407,17 @@ class PanelsPaneController extends DrupalDefaultEntityController {
     }
   }
 
-  public function create($values) {
+  /**
+   * Create a barebones FPP object.
+   *
+   * @para array $values
+   *   A list of values to add to the base object; must contain the key 'bundle'
+   *   containing the machine name of the FPP bundle/type to be used.
+   *
+   * @return object
+   *   An empty object with the expected base fields present.
+   */
+  public function create(array $values) {
     $entity = (object) array(
       'bundle' => $values['bundle'],
       'language' => LANGUAGE_NONE,
@@ -383,4 +445,5 @@ class PanelsPaneController extends DrupalDefaultEntityController {
 
     return $entity;
   }
+
 }

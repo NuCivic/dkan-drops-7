@@ -1,3 +1,58 @@
+Panopoly Widgets 7.x-1.70, 2019-06-28
+-------------------
+- Hide "Always display title" option on Submenu widget.
+- Getting ready for the 1.69 release.
+
+7.x-1.69, 2019-06-07
+-------------------
+- Update Panopoly Widgets to media_youtube-7.x-3.8.
+- Taking "Manage Fields" paths of content type like
+  "admin/structure/types/manage/article/fields" redirects to wrong non-existing
+  path.
+
+7.x-1.68, 2019-05-29
+-------------------
+- Update tablefield to 7.x-3.5 for SA-CONTRIB-2019-051.
+
+7.x-1.67, 2019-05-09
+-------------------
+- Allow Spotlight links to be up to 255 characters.
+
+7.x-1.66, 2019-04-18
+-------------------
+- Security update for TableField module (tablefield-7.x-3.4).
+
+7.x-1.65, 2019-03-27
+-------------------
+- No changes since last release.
+
+7.x-1.64, 2019-03-20
+-------------------
+- No changes since last release.
+
+7.x-1.63, 2019-03-14
+-------------------
+- No changes since last release.
+
+7.x-1.62, 2019-02-21
+-------------------
+- No changes since last release.
+
+7.x-1.61, 2019-02-13
+-------------------
+- PHP Errors are generated when deleted FPP objects do not exist.
+- Update TableField to tablefield-7.x-3.2.
+- Update Menu Block to menu_block-7.x-2.8.
+- Upgrade File Entity (file_entity) to 7.x-2.25.
+
+7.x-1.60, 2019-01-23
+-------------------
+- No changes since last release.
+
+7.x-1.59, 2019-01-17
+-------------------
+- No changes since last release.
+
 7.x-1.58, 2018-12-11
 -------------------
 - File entity overwriting slide title on spotlight widgets.

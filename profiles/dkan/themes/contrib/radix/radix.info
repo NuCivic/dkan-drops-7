@@ -25,9 +25,8 @@ features[] = favicon
 ; Settings
 settings[main_menu_max_depth] = 2
 
-; Information added by Drupal.org packaging script on 2017-02-02
-version = "7.x-3.6"
+; Information added by Drupal.org packaging script on 2019-04-22
+version = "7.x-3.7"
 core = "7.x"
 project = "radix"
-datestamp = "1486032196"
-
+datestamp = "1555915095"

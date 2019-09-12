@@ -2009,13 +2009,15 @@ function og_group($group_type, $gid, $values = array(), $save_created = TRUE) {
 
   if (is_object($gid)) {
     $group = $gid;
-
   }
   else {
     $group = entity_load_single($group_type, $gid);
+    if (!is_object($group)) {
+      return;
+    }
   }
 
-  // the group ID might be the entity, so re-popualte it.
+  // The group ID might be the entity, so re-populate it.
   list($gid,, $group_bundle) = entity_extract_ids($group_type, $group);
 
   // Get membership if exists.

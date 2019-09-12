@@ -81,7 +81,7 @@ function radix_theme(&$existing, $type, $theme, $path) {
  * Implements theme_radix_dropdown().
  */
 function theme_radix_dropdown($variables) {
-  $links = $variables['links'];
+  $links = is_array($variables['links']) ? $variables['links'] : array();
   $attributes = (isset($variables['attributes'])) ? $variables['attributes'] : array();
   $wrapper = (isset($variables['wrapper'])) ? $variables['wrapper'] : FALSE;
   $output = '';
@@ -161,7 +161,7 @@ function theme_radix_dropdown($variables) {
  * Implements theme_radix_button_group().
  */
 function theme_radix_button_group($variables) {
-  $buttons = $variables['buttons'];
+  $buttons = is_array($variables['buttons']) ? $variables['buttons'] : array();
   $attributes = $variables['attributes'];
   $output = '';
 
@@ -292,7 +292,7 @@ function radix_preprocess_radix_modal(&$variables) {
   }
 
   // Format modal butttons.
-  if (isset($variables['buttons'])) {
+  if (is_array($variables['buttons'])) {
     if (count($variables['buttons'])) {
       foreach ($variables['buttons'] as $key => $button) {
         $text = isset($button['text']) ? $button['text'] : '';

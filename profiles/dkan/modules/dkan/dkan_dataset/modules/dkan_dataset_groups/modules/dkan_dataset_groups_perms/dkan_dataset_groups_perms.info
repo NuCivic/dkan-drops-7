@@ -32,4 +32,4 @@ features[og_features_permission][] = node:group:update own dataset content
 features[og_features_permission][] = node:group:update own resource content
 features[og_features_permission][] = node:group:view any unpublished dataset content
 features[og_features_permission][] = node:group:view any unpublished resource content
-version = 7.x-1.16.14
+version = 7.x-1.17

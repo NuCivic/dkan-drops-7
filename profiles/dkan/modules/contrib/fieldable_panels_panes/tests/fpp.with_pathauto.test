@@ -1,10 +1,15 @@
 <?php
+
 /**
  * @file
  * Tests for the Fieldable Panels Panes module with Pathauto.
  */
 
+/**
+ * Tests for the Fieldable Panels Panes module with Pathauto.
+ */
 class FppWithPathautoTest extends FppTestHelper {
+
   /**
    * {@inheritdoc}
    */
@@ -13,25 +18,23 @@ class FppWithPathautoTest extends FppTestHelper {
       'name' => 'FPP tests for Pathauto',
       'description' => 'Confirm that FPP does not break when using Pathauto.',
       'group' => 'FPP',
+      'dependencies' => array('ctools', 'panels', 'views', 'pathauto'),
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  function setUp(array $modules = array()) {
-    $modules[] = 'fieldable_panels_panes';
-
-    // 
+  public function setUp(array $modules = array()) {
     $modules[] = 'pathauto';
 
     parent::setUp($modules);
-
-    // Some default values to work with.
-    $this->bundle = 'fieldable_panels_pane';
   }
 
-  function testPathauto() {
+  /**
+   * Test the Pathauto integration.
+   */
+  public function testPathauto() {
     // Create a test node.
     $node = $this->drupalCreateNode();
 

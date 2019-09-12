@@ -9,68 +9,68 @@
  * Implements hook_menu().
  */
 function beautytips_manager_menu() {
-  $items['admin/config/user-interface/beautytips/custom-tips'] = array(
+  $items['admin/config/user-interface/beautytips/custom-tips'] = [
     'title' => 'BeautyTips Custom-Tips',
     'page callback' => 'beautytips_manager_tips_manager_page',
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_LOCAL_TASK,
-  );
-  $items['admin/config/user-interface/beautytips/custom-tips/%/edit'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-tips/%/edit'] = [
     'title' => 'BeautyTips Custom-Tip Edit',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('beautytips_manager_custom_tips_form', 5),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['beautytips_manager_custom_tips_form', 5],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
-  $items['admin/config/user-interface/beautytips/custom-tips/%/delete'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-tips/%/delete'] = [
     'title' => 'BeautyTips Custom-Tip Delete',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('beautytips_manager_delete_tip_confirm_form', 5),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['beautytips_manager_delete_tip_confirm_form', 5],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
-  $items['admin/config/user-interface/beautytips/custom-tips/add'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-tips/add'] = [
     'title' => 'BeautyTips Custom-Tip Add',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('beautytips_manager_custom_tips_form'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['beautytips_manager_custom_tips_form'],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_LOCAL_ACTION,
-  );
-  $items['admin/config/user-interface/beautytips/custom-styles'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-styles'] = [
     'title' => 'BeautyTips Custom Styles',
     'page callback' => 'beautytips_manager_styles_manager_page',
-    'access arguments' => array('administer site configuration'),
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_LOCAL_TASK,
-  );
-  $items['admin/config/user-interface/beautytips/custom-styles/%/edit'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-styles/%/edit'] = [
     'title' => 'BeautyTips Custom Style Edit',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('beautytips_manager_custom_styles_form', 5),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['beautytips_manager_custom_styles_form', 5],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
-  $items['admin/config/user-interface/beautytips/custom-styles/%/delete'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-styles/%/delete'] = [
     'title' => 'BeautyTips Manager Delete',
     'page callback' => 'beautytips_manager_delete_style_page',
-    'page arguments' => array(5),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => [5],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
-  $items['admin/config/user-interface/beautytips/custom-styles/add'] = array(
+  ];
+  $items['admin/config/user-interface/beautytips/custom-styles/add'] = [
     'title' => 'BeautyTips Custom Style Add',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('beautytips_manager_custom_styles_form'),
-    'access arguments' => array('administer site configuration'),
+    'page arguments' => ['beautytips_manager_custom_styles_form'],
+    'access arguments' => ['administer site configuration'],
     'file' => 'beautytips_manager.admin.inc',
     'type' => MENU_LOCAL_ACTION,
-  );
+  ];
   return $items;
 }
 
@@ -78,7 +78,7 @@ function beautytips_manager_menu() {
  *  Implements hook_init().
  */
 function beautytips_manager_init() {
-  $options = array();
+  $options = [];
   $tips = beautytips_manager_get_custom_tips();
   if (count($tips)) {
     foreach ($tips as $tip) {
@@ -98,11 +98,13 @@ function beautytips_manager_init() {
         // is displayed only on those pages listed in $tip->pages.
         $page_match = !($tip->visibility XOR $page_match);
       }
-      else if (!$tip->visibility) {
-        $page_match = TRUE;
-      }
       else {
-        $page_match = FALSE;
+        if (!$tip->visibility) {
+          $page_match = TRUE;
+        }
+        else {
+          $page_match = FALSE;
+        }
       }
       if ($page_match) {
         $options['beautytips_manager_custom_' . $tip->id] = beautytips_manager_build_beautytip($tip);
@@ -118,11 +120,11 @@ function beautytips_manager_init() {
  * Implements hook_permission().
  */
 function beautytips_manager_permission() {
-  return array(
-    'use Javascript for custom beautytip display' => array(
+  return [
+    'use Javascript for custom beautytip display' => [
       'title' => t('Use Javascript for custom beautytip display'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -153,7 +155,7 @@ function beautytips_manager_save_custom_tip($tip) {
  * TODO: Don't include all of these
  */
 function beautytips_manager_get_triggers() {
-  return array(
+  return [
     'hover' => 'hover',
     'hoverIntent' => 'hoverIntent',
     'click' => 'click',
@@ -177,17 +179,17 @@ function beautytips_manager_get_triggers() {
     'unload' => 'unload',
     'resize' => 'resize',
     'scroll' => 'scroll',
-  );
+  ];
 }
 
 /**
  * Retrieve all custom beautytips.
  */
 function beautytips_manager_get_custom_tips() {
-  $tips = array();
+  $tips = [];
   $cache = cache_get('beautytips:beautytips-ui-custom-tips');
   if (!$cache) {
-    $results =  db_query("SELECT * FROM {beautytips_custom_tips}");
+    $results = db_query("SELECT * FROM {beautytips_custom_tips}");
     foreach ($results as $result) {
       $tips[$result->id] = $result;
     }
@@ -196,7 +198,7 @@ function beautytips_manager_get_custom_tips() {
   else {
     $tips = $cache->data;
   }
-  
+
   return $tips;
 }
 
@@ -205,7 +207,7 @@ function beautytips_manager_get_custom_tips() {
  */
 function beautytips_manager_get_custom_tip($id) {
   $sql = "SELECT * FROM {beautytips_custom_tips} WHERE id = :id";
-  $result = db_query($sql, array(':id' => $id));
+  $result = db_query($sql, [':id' => $id]);
   return $result->fetchObject();
 }
 
@@ -214,15 +216,18 @@ function beautytips_manager_get_custom_tip($id) {
  *  that can be passed to beautytips_add_beautytips().
  */
 function beautytips_manager_build_beautytip($tip) {
-  $single_triggers = array('hover', 'hoverIntent');
-  $trigger = in_array($tip->trigger_on, $single_triggers) ? $tip->trigger_on : array($tip->trigger_on, $tip->trigger_off);
-  $options = array(
+  $single_triggers = ['hover', 'hoverIntent'];
+  $trigger = in_array($tip->trigger_on, $single_triggers) ? $tip->trigger_on : [
+    $tip->trigger_on,
+    $tip->trigger_off,
+  ];
+  $options = [
     'cssSelect' => check_plain($tip->element),
     'style' => $tip->style,
     'trigger' => $trigger,
     'shrinkToFit' => (boolean) $tip->shrink,
     'ajaxDisableLink' => (boolean) $tip->disable_link,
-  );
+  ];
   if ($tip->animation_on) {
     $options['animate']['on'] = $tip->animation_on;
   }
@@ -242,14 +247,17 @@ function beautytips_manager_build_beautytip($tip) {
       $options['text'] = check_markup($tip->content);
       break;
     case 'ajax':
-      $options['ajaxPath'] = !$tip->content ? "$(this).attr('href')" : array("$(this).attr('href')", filter_xss($tip->content));
+      $options['ajaxPath'] = !$tip->content ? "$(this).attr('href')" : [
+        "$(this).attr('href')",
+        filter_xss($tip->content),
+      ];
       break;
     case 'js':
       $options['contentSelector'] = filter_xss($tip->content);
       break;
   }
   return $options;
-} 
+}
 
 /**
  * Delete a singular custom beautytip.
@@ -279,8 +287,8 @@ function beautytips_manager_save_custom_style($style) {
  *  for mapping the names between php and javascript.
  */
 function beautytips_manager_style_mapping() {
-  return array(
-    'options' => array(
+  return [
+    'options' => [
       'fill' => 'fill',
       'strokeWidth' => 'stroke_width',
       'strokeStyle' => 'stroke_style',
@@ -293,22 +301,22 @@ function beautytips_manager_style_mapping() {
       'shadowBlur' => 'shadow_blur',
       'shadowColor' => 'shadow_color',
       'cssClass' => 'css_class',
-    ),
-    'css_options' => array(
+    ],
+    'css_options' => [
       'color' => 'css_color',
       'fontFamily' => 'css_font_family',
       'fontWeight' => 'css_font_weight',
       'fontSize' => 'css_font_size',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
  * Get all defined custom styles.
  */
 function beautytips_manager_get_custom_styles() {
-  $styles = array();
-  $results =  db_query("SELECT * FROM {beautytips_custom_styles}");
+  $styles = [];
+  $results = db_query("SELECT * FROM {beautytips_custom_styles}");
   foreach ($results as $result) {
     $styles[$result->id] = $result;
   }
@@ -320,7 +328,7 @@ function beautytips_manager_get_custom_styles() {
  */
 function beautytips_manager_get_custom_style($id) {
   $sql = "SELECT * FROM {beautytips_custom_styles} WHERE id = :id";
-  $result = db_query($sql, array(':id' => $id));
+  $result = db_query($sql, [':id' => $id]);
   return $result->fetchObject();
 }
 
@@ -328,7 +336,7 @@ function beautytips_manager_get_custom_style($id) {
  * Implements hook_define_beautytips_styles().
  */
 function beautytips_manager_define_beautytips_styles() {
-  $styles = array();
+  $styles = [];
   $custom_styles = beautytips_manager_get_custom_styles();
   $style_map = beautytips_manager_style_mapping();
   $style_options = array_flip($style_map['options']);
@@ -336,7 +344,7 @@ function beautytips_manager_define_beautytips_styles() {
 
   if (count($custom_styles)) {
     foreach ($custom_styles as $id => $style) {
-      $options = array();
+      $options = [];
       foreach ($style as $key => $value) {
         if (isset($style_options[$key])) {
           if ($key == 'shadow') {
@@ -344,14 +352,18 @@ function beautytips_manager_define_beautytips_styles() {
               $options['shadow'] = $value == 'shadow' ? TRUE : FALSE;
             }
           }
-          else if (!is_null($value) && $value != '') {
-            // Add the setting and make sure integers stay as integers.
-            $options[$style_options[$key]]= (ctype_digit($value) || is_int($value)) ? (int) $value : check_plain($value);
+          else {
+            if (!is_null($value) && $value != '') {
+              // Add the setting and make sure integers stay as integers.
+              $options[$style_options[$key]] = (ctype_digit($value) || is_int($value)) ? (int) $value : check_plain($value);
+            }
           }
         }
-        else if (isset($css_style_options[$key])) {
-          if (!is_null($value) && $value != '') {
-            $options['cssStyles'][$css_style_options[$key]] = check_plain($value);
+        else {
+          if (isset($css_style_options[$key])) {
+            if (!is_null($value) && $value != '') {
+              $options['cssStyles'][$css_style_options[$key]] = check_plain($value);
+            }
           }
         }
       }

@@ -1,17 +1,19 @@
 <?php
+
 /**
  * @file
- * Provide views handlers for fieldable panel panes
+ * Provide views handlers for fieldable panel panes.
  */
 
 /**
  * Field handler to present a link node delete.
  */
 class fieldable_panels_panes_handler_field_delete_revision extends fieldable_panels_panes_handler_field_view_revision {
+
   /**
-   * Renders the link.
+   * {@inheritdoc}
    */
-  function render_link($entity, $values) {
+  public function render_link($entity, $values) {
     if (fieldable_panels_panes_access('delete', $entity)) {
       $this->options['alter']['make_link'] = TRUE;
       $this->options['alter']['path'] = "admin/structure/fieldable-panels-panes/view/$entity->fpid/revision/$entity->vid/delete";
@@ -24,4 +26,5 @@ class fieldable_panels_panes_handler_field_delete_revision extends fieldable_pan
       $this->options['alter']['path'] = '';
     }
   }
+
 }

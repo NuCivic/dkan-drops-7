@@ -118,4 +118,4 @@ features[user_permission][] = view revisions
 features[user_permission][] = view the administration theme
 features[user_role][] = administrator
 features[user_role][] = editor
-version = 7.x-1.17
+version = 7.x-1.17.1

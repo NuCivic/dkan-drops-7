@@ -4,6 +4,7 @@ core = 7.x
 package = Open Data
 dependencies[] = entity
 dependencies[] = entity_token
+dependencies[] = fast_token_browser
 dependencies[] = features
 dependencies[] = token
 files[] = open_data_schema_map.features.inc

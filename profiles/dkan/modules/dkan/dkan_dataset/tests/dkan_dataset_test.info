@@ -4,4 +4,4 @@ core = 7.x
 dependencies[] = dkan_dataset
 dependencies[] = dkan_dataset_rest_api
 hidden = TRUE
-version = 7.x-1.17
+version = 7.x-1.17.1

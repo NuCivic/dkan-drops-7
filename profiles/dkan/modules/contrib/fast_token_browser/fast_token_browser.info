@@ -1,0 +1,10 @@
+name = Fast Token Browser
+description = A more efficient browser for the Token module.
+core = 7.x
+dependencies[] = token
+
+; Information added by Drupal.org packaging script on 2019-05-29
+version = "7.x-1.5"
+core = "7.x"
+project = "fast_token_browser"
+datestamp = "1559153385"

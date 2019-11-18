@@ -289,100 +289,18 @@ function open_data_schema_map_form_recursion(&$form, $schema, $api, $defaults = 
       $entity_ref_fields = open_data_schema_map_entity_ref_fields($api->type, $api->bundle);
       if ($value['type'] == 'array' && $entity_ref_fields) {
         $odsm_entity_reference = isset($defaults[$key]['odsm_entity_reference']['value']) ? $defaults[$key]['odsm_entity_reference']['value'] : '';
-        $osd_key_map = $odsm_entity_reference ? open_data_schema_map_token_tree('[node:' . str_replace('_', '-', $odsm_entity_reference) . ']') : '';
         $form[$key]['odsm_entity_reference'] = array(
           '#title' => $key . ' Multivalue Field',
           '#type' => 'select',
           '#options' => array('' => t('-- none --')) + $entity_ref_fields,
           '#default_value' => $odsm_entity_reference,
-          '#description' => t('This array can iterate over multi-value fields as long as they are an entity reference. Select entity reference field to use. If none is selected this output will not loop and accept single value tokens. "Nth" represents iteratable tokens.') . $osd_key_map,
+          '#description' => t('This array can iterate over multi-value fields as long as they are an entity reference. Select entity reference field to use. If none is selected this output will not loop and accept single value tokens. "Nth" represents iteratable tokens.'),
         );
       }
       open_data_schema_map_form_recursion($form[$key], $schema[$key], $api, $defaults[$key]);
     }
   }
   return $form;
-}
-
-/**
- * Recursive function that walks throw tokens to output rows.
- *
- * @param array $rows
- *   Output rows
- * @param array $token_info
- *   Tokens
- */
-function open_data_schema_map_token_rows(&$rows, $token_info) {
-  if (isset($token_info['children'])) {
-    foreach ($token_info['children'] as $token_child => $token_child_info) {
-      if (is_array($token_child_info)) {
-        $token_child = str_replace('1', 'Nth', $token_child);
-        $token_child_info['name'] = str_replace('1', 'Nth', $token_child_info['name']);
-        $token_child_info['raw token'] = str_replace('1', 'Nth', $token_child_info['raw token']);
-        $token_child_info['token'] = str_replace('1', 'N', $token_child_info['token']);
-        $token_child_info['description'] = str_replace('1', 'Nth', $token_child_info['description']);
-        $token_child_info['parent'] = str_replace('1', 'Nth', $token_child_info['parent']);
-        $row = _token_token_tree_format_row($token_child, $token_child_info);
-        unset($row['data']['value']);
-        $rows[] = $row;
-        if (isset($token_info['children'])) {
-          open_data_schema_map_token_rows($rows, $token_child_info);
-        }
-      }
-    }
-  }
-
-}
-
-/**
- * Creates token tree for single token.
- *
- * @param string $token
- *   Token
- *
- * @return string
- *   Rendered token
- */
-function open_data_schema_map_token_tree($token) {
-  module_load_include('inc', 'token', 'token.pages');
-
-  $tree = token_build_tree('node');
-  if (!isset($tree[$token])) {
-    $token = substr($token, 0, -1) . ":?]";
-  }
-  if (isset($tree[$token])) {
-    $token_info = $tree[$token];
-    if (isset($token_info['children'])) {
-      $shifted = array_shift($token_info['children']);
-      $token_info['children'] = array($shifted['raw token'] => $shifted);
-    }
-
-    $row = _token_token_tree_format_row($token, $token_info);
-    unset($row['data']['value']);
-    $rows = array($row);
-    open_data_schema_map_token_rows($rows, $token_info);
-
-    $element = array(
-      '#theme' => 'tree_table',
-      '#header' => array(
-        t('Name'),
-        t('Token'),
-        t('Description'),
-      ),
-      '#rows' => $rows,
-      '#attributes' => array('class' => array('token-tree')),
-      '#empty' => t('No tokens available'),
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'token') . '/token.js'),
-        'css' => array(drupal_get_path('module', 'token') . '/token.css'),
-        'library' => array(array('token', 'treeTable')),
-      ),
-    );
-    $element['#caption'] = t("Click a token to insert it into the field you've last clicked.");
-    $element['#attributes']['class'][] = 'token-click-insert';
-    return drupal_render($element);
-  }
-  return '';
 }
 
 /**
@@ -781,7 +699,6 @@ function open_data_schema_map_json_4($schema, $api, $defaults) {
     if ($data['type'] == 'array' && isset($data['anyOf'][0]['items']['type']) && $data['anyOf'][0]['items']['type'] == 'object') {
       $entity_ref_fields = open_data_schema_map_entity_ref_fields($api->type, $api->bundle);
       $odsm_entity_reference = isset($defaults[$item]['odsm_entity_reference']['value']) ? $defaults[$item]['odsm_entity_reference']['value'] : '';
-      $osd_key_map = $odsm_entity_reference ? open_data_schema_map_token_tree('[node:' . str_replace('_', '-', $odsm_entity_reference) . ']') : '';
       $form[$item] = array(
         '#title' => $data['title'],
         '#type' => 'fieldset',
@@ -792,7 +709,7 @@ function open_data_schema_map_json_4($schema, $api, $defaults) {
         '#type' => 'select',
         '#options' => array('' => t('-- none --')) + $entity_ref_fields,
         '#default_value' => $odsm_entity_reference,
-        '#description' => t('This array can iterate over multi-value fields. Select multi-value field to use. If none is selected this output will not loop and accept single value tokens. Selecting and saving an entity reference will produce a list of chaiabale tokens. For non entity reference fields, replace "?" with "Nth:value". "Nth" represents iteratable tokens.') . $osd_key_map,
+        '#description' => t('This array can iterate over multi-value fields. Select multi-value field to use. If none is selected this output will not loop and accept single value tokens. Selecting and saving an entity reference will produce a list of chaiabale tokens. For non entity reference fields, replace "?" with "Nth:value". "Nth" represents iteratable tokens.'),
       );
       foreach ($data['anyOf'][0]['items']['properties'] as $subitem => $subdata) {
         $desc = isset($subdata['description']) ? $subdata['description'] : '';
@@ -865,7 +782,6 @@ function open_data_schema_map_json_3_recursion(&$form, $schema, $api, $defaults 
     if ($field_type == 'object' || $field_type == 'array' && $data['items']['type'] == 'object') {
       $entity_ref_fields = open_data_schema_map_entity_ref_fields($api->type, $api->bundle);
       $odsm_entity_reference = isset($defaults[$item]['odsm_entity_reference']['value']) ? $defaults[$item]['odsm_entity_reference']['value'] : '';
-      $osd_key_map = $odsm_entity_reference ? open_data_schema_map_token_tree('[node:' . str_replace('_', '-', $odsm_entity_reference) . ']') : '';
       $form[$item] = array(
         '#title' => $item,
         '#type' => 'fieldset',
@@ -877,7 +793,7 @@ function open_data_schema_map_json_3_recursion(&$form, $schema, $api, $defaults 
         '#type' => 'select',
         '#options' => array('' => t('-- none --')) + $entity_ref_fields,
         '#default_value' => $odsm_entity_reference,
-        '#description' => t('This array can iterate over multi-value fields as long as they are an entity reference. Select entity reference field to use. If none is selected this output will not loop and accept single value tokens. "Nth" represents iteratable tokens.') . $osd_key_map,
+        '#description' => t('This array can iterate over multi-value fields as long as they are an entity reference. Select entity reference field to use. If none is selected this output will not loop and accept single value tokens. "Nth" represents iteratable tokens.'),
       );
       if ($data['type'] == 'object') {
         open_data_schema_map_json_3_recursion($form[$item], $data['properties'], $api, $defaults[$item]);

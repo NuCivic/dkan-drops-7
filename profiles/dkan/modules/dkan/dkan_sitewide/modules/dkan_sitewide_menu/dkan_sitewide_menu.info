@@ -44,4 +44,4 @@ features[menu_links][] = menu-command-center-menu_site-information:admin/config/
 features[menu_links][] = menu-command-center-menu_taxonomy:admin/structure/taxonomy
 features[menu_links][] = menu-command-center-menu_visualization:admin/structure/entity-type/visualization/ve_chart/add
 features[menu_links][] = menu-command-center-menu_visualizations:admin/structure/entity-type/visualization
-version = 7.x-1.17
+version = 7.x-1.17.1

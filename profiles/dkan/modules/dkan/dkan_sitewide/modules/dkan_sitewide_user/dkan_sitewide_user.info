@@ -21,4 +21,4 @@ features[field_group][] = group_user_tabs|user|user|default
 features[field_instance][] = user-user-field_about
 features[views_view][] = user_profile_fields
 features[views_view][] = user_profile_search
-version = 7.x-1.17.1
+version = jenkins15

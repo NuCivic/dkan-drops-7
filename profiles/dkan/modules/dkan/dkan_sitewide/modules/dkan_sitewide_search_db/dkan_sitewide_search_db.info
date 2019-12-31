@@ -35,4 +35,4 @@ features[search_api_index][] = datasets
 features[search_api_server][] = datasets
 features[variable][] = facetapi_pretty_paths_searcher_search_api@datasets
 features[variable][] = facetapi_pretty_paths_searcher_search_api@datasets_options
-version = 7.x-1.17.1
+version = jenkins15

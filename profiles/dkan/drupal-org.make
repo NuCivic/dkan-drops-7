@@ -13,6 +13,8 @@ projects:
     version: '1.1'
     patch:
       2441283: https://www.drupal.org/files/issues/allow_ordering_of_the-2441283-5.patch
+  admin_views:
+    version: '1.7'
   adminrole:
     version: '1.1'
   autocomplete_deluxe:
@@ -279,7 +281,7 @@ projects:
     version: '1.8'
   radix:
     type: theme
-    version: '3.7'
+    version: '3.8'
     patch:
       1: patches/radix-bootstrap.patch
   radix_layouts:
@@ -345,6 +347,7 @@ projects:
     version: '3.23'
     patch:
       2543562: https://www.drupal.org/files/issues/views-use_query_group_operator_for_main_group-2543562-2.patch
+      3054091: https://www.drupal.org/files/issues/2019-06-01/n3054091-14-hard.patch
   views_autocomplete_filters:
     version: '1.2'
     patch:

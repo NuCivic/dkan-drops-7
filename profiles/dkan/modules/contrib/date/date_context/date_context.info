@@ -9,6 +9,6 @@ dependencies[] = context
 files[] = date_context.module
 files[] = plugins/date_context_date_condition.inc
 ; Information added by drush on 2018-01-16
-version = "7.x-2.10+4-dev"
+version = "7.x-2.x-dev"
 project = "date"
 datestamp = "1516128997"

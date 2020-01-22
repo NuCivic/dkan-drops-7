@@ -64,7 +64,7 @@ function radix_preprocess_html(&$variables) {
  * Implements hook_css_alter().
  */
 function radix_css_alter(&$css) {
-  $active_theme = variable_get('theme_default', '');
+  global $theme_key;
 
   // Unset some panopoly css.
   if (module_exists('panopoly_admin')) {
@@ -85,7 +85,7 @@ function radix_css_alter(&$css) {
   unset($css['modules/system/system.menus.css']);
 
   // Remove radix stylesheets if it is not the default theme.
-  if ($active_theme != 'radix') {
+  if ($theme_key != 'radix') {
     unset($css[drupal_get_path('theme', 'radix') . '/assets/css/radix.style.css']);
   }
 

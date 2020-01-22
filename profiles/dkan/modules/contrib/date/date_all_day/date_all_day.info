@@ -6,6 +6,6 @@ package = Date/Time
 core = 7.x
 
 ; Information added by drush on 2018-01-16
-version = "7.x-2.10+4-dev"
+version = "7.x-2.x-dev"
 project = "date"
 datestamp = "1516128997"

@@ -28,33 +28,25 @@ class FacetapiBonusCurrentSearchResetFiltersLink extends CurrentSearchItemText {
     // Makes sure facet builds are initialized.
     $adapter->processFacets();
 
-    $query = array();
-    $path = '';
-
-    // Build intesection of all filters. This will remove all filters.
-    foreach ($adapter->getAllActiveItems() as $item) {
-      if (empty($query)) {
-        $query = $this->getQueryString($item, $adapter);
-      }
-      else {
-        $facet_query = $this->getQueryString($item, $adapter);
-        if (isset($query['f'])) {
-          $query['f'] = array_intersect($query['f'], $facet_query['f']);
-        }
-      }
-      // Save the path.
-      if (empty($path)) {
-        $path = $this->getFacetPath($item, $adapter);
-      }
-    }
-
-    // If no facets were selected.
-    if (empty($path)) {
+    // If no facets were selected stop here.
+    $items = $adapter->getAllActiveItems();
+    if (empty($items)) {
       return;
     }
 
+    // Get the right URL processor.
+    $processor = $adapter->getUrlProcessor();
+
+    // Build the query parameters and remove the current facet key.
+    $query = $processor->normalizeParams($processor->fetchParams());
+    unset($query[$processor->getFilterKey()]);
+
+    // Get the path from either a basePath or the first search item if the
+    // current URL processor doesn't provide a basePath.
+    $path = method_exists($processor, 'getBasePath') ? $processor->getBasePath() : $this->getFacetPath(reset($items), $adapter);
+
     $variables = array(
-      'text' => l(token_replace($translated_text, $data), $this->getFacetPath($item, $adapter), array('query' => $query)),
+      'text' => l(token_replace($translated_text, $data), $path, array('query' => $query)),
       'wrapper' => $this->settings['wrapper'],
       'element' => $this->settings['element'],
       'css' => $this->settings['css'],

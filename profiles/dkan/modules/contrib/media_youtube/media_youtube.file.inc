@@ -24,19 +24,26 @@ function media_youtube_file_operations() {
  */
 function media_youtube_cache_clear($fids) {
   $fids = array_keys($fids);
+  $folder = variable_get('youtube_thumb_dir');
 
   $query = new EntityFieldQuery();
   $results = $query
-    ->entityCondition('entity_type', 'file')
-    ->propertyCondition('uri', 'youtube:', 'STARTS_WITH')
-    ->propertyCondition('fid', $fids)
-    ->execute();
+  ->entityCondition('entity_type', 'file')
+  ->propertyCondition('uri', '%' . $folder . '%', 'LIKE')
+  ->propertyCondition('fid', $fids)
+  ->execute();
 
-  $files = file_load_multiple(array_keys($results['file']));
+  if (!empty($results)) {
+    $files = file_load_multiple(array_keys($results['file']));
 
-  foreach ($files as $file) {
-    $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
-    $local_path = $wrapper->getLocalThumbnailPath();
-    file_unmanaged_delete($local_path);
+    foreach ($files as $file) {
+      foreach (image_styles() as $isid => $style) {
+        $path = image_style_url($isid, $file->uri);
+        if ($path) {
+          image_path_flush($path);
+        }
+      }
+      drupal_set_message(t('Refreshed thumbnail and derivatives for %filename', array('%filename' => $file->filename)));
+    }
   }
 }

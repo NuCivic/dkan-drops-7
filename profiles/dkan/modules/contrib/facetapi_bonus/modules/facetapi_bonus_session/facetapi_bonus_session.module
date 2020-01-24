@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function facetapi_bonus_session_module_implements_alter(&$implementations, $hook) {
+  // Do our form alters as late as possible.
+  if ($hook == 'facetapi_searcher_info_alter' && isset($implementations['facetapi_bonus_session'])) {
+    $group = $implementations['facetapi_bonus_session'];
+    unset($implementations['facetapi_bonus_session']);
+    $implementations['facetapi_bonus_session'] = $group;
+  }
+}
+
+/**
+ * Implements hook_facetapi_searcher_info().
+ */
+function facetapi_bonus_session_facetapi_searcher_info_alter(array &$searcher_info) {
+  foreach ($searcher_info as &$info) {
+    if ($info['adapter'] == 'search_api') {
+      $info['url processor'] = 'session';
+    }
+  }
+}
+
+/**
+ * Implements hook_facetapi_url_processors().
+ */
+function facetapi_bonus_session_facetapi_url_processors() {
+  return array(
+    'session' => array(
+      'handler' => array(
+        'label' => t('Session'),
+        'class' => 'FacetapiUrlProcessorSession',
+      ),
+    ),
+  );
+}

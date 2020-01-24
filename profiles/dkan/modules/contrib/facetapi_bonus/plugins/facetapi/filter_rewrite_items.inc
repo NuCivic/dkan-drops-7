@@ -35,29 +35,11 @@ class FacetapiFilterRewriteItems extends FacetapiFilter {
       // element hasn't got a real value.
       // Thus this crude "always checked" checkbox.
       '#title' => t('Rewrite facet items (always checked)'),
-      '#type' => 'checkbox',
+      '#type' => 'markup',
       '#default_value' => TRUE,
-      '#suffix' => t('By enabling this filter, items of this facet can be
-                      rewritten prior to rendering by implementing the hook:
-                      <br/><br/><pre>
-
-                      function HOOK_facet_items_alter(&$build, &$settings) {
-                        if ($settings->facet == "YOUR_FACET_NAME") {
-                          foreach($build as $key => $item) {
-                            $build[$key]["#markup"] = drupal_strtoupper($item["#markup"]);
-                          }
-                        }
-                      }
-
-                      </pre><br /><br />This example simply rewrites all facet
-                      items output to be uppercase.
-                      Replace "HOOK" with the name of a custom module containing
-                      your hook implementation, and "YOUR_FACET_NAME" with the
-                      machine name of the specific facet whose items you want to
-                      rewrite.
-                      $build is an array of facet items you
-                      can rewrite, $settings contains the facet filter settings
-                      as context to determin the facet and search context.'),
+      '#markup' => t('By enabling this filter, items of this facet can be rewritten prior to rendering by implementing the hook:
+<code>function HOOK_facet_items_alter(&$build, &$settings)</code>.
+</br>See <code>facetapi_bonus.api.php</code> for further documentation.'),
     );
   }
 

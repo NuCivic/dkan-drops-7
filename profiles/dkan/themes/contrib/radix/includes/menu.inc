@@ -90,6 +90,9 @@ function radix_menu_link($variables) {
 
   if (!empty($element['#below'])) {
     $sub_menu = drupal_render($element['#below']);
+    if (empty($element['#localized_options']['html'])) {
+      $element['#title'] = check_plain($element['#title']);
+    }
     $element['#localized_options']['html'] = TRUE;
     $element['#title'] .= '<span class="caret"></span>';
   }
@@ -124,6 +127,9 @@ function radix_menu_link__dropdown($variables) {
     unset($element['#below']['#theme_wrappers']);
     $sub_menu = '<ul class="dropdown-menu">' . drupal_render($element['#below']) . '</ul>';
     $element['#localized_options']['attributes']['class'][] = 'dropdown-toggle';
+    if (empty($element['#localized_options']['html'])) {
+      $element['#title'] = check_plain($element['#title']);
+    }
     $element['#localized_options']['html'] = TRUE;
 
     // Check if element is nested.

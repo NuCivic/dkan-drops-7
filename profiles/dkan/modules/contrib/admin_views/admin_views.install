@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Administration views installation functions.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function admin_views_install() {
+  // We need to run after Views module's hook_menu_alter() to fix the router
+  // item properties of overridden pages.
+  db_query("UPDATE {system} SET weight = 12 WHERE name = 'admin_views'");
+}
+
+/**
+ * Remove deprecated views_plugin_access_menu plugin.
+ */
+function admin_views_update_7100() {
+  $result = db_query("SELECT vid, id, display_options FROM {views_display}");
+  foreach ($result as $record) {
+    $options = unserialize($record->display_options);
+    if (isset($options['access']) && is_array($options['access']) && isset($options['access']['type']) && $options['access']['type'] === 'menu') {
+      $options['access'] = array(
+        'type' => 'perm',
+        'perm' => 'access administration pages',
+      );
+
+      db_query("UPDATE {views_display} SET display_options = :options WHERE vid = :vid AND id = :id", array(
+        'vid' => $record->vid,
+        'id' => $record->id,
+        'options' => serialize($options),
+      ));
+    }
+  }
+}
+

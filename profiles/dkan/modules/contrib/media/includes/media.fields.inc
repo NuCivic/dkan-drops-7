@@ -279,7 +279,7 @@ function media_field_widget_process($element, &$form_state, $form) {
       '#default_value' => isset($item['alt']) ? $item['alt'] : '',
       '#description' => t('This text will be used by screen readers, search engines, or when the image cannot be loaded.<br />
 <em>(Notice: this field is not fetched on -all- formatters yet. For example: If the Rendered file formatter will be used, this field is not available at the moment.)</em>'),
-      '#maxlength' => variable_get('image_alt_length', 80),
+      '#maxlength' => variable_get('image_alt_length', 100),
       '#weight' => 1,
     );
   }

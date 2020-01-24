@@ -1,12 +1,14 @@
 <?php
 
 class FacetapiBonusSelect extends FacetapiWidget {
-   /**
+  /**
    * Renders the form.
    */
   public function execute() {
     $element = &$this->build[$this->facet['field alias']];
-    $name = array_pop(explode(':', $this->build['#settings']->name));
+    $parts = explode(':', $this->build['#settings']->name);
+    $name = array_pop($parts);
+
     $element = drupal_get_form('facetapi_bonus_select_' .  $name, $element);
   }
 }
@@ -16,14 +18,17 @@ class FacetapiBonusSelect extends FacetapiWidget {
  * Generate form for facet.
  */
 function facetapi_bonus_select($form, &$form_state, $elements) {
+  $default_value = '';
 
   // Build options from facet elements.
-  $options = array('' => t('- Select -'));
+  $options = array();
   foreach ($elements as $element) {
+    $key = serialize(array('path' => $element['#path'], 'query' => $element['#query']));
+    $options[$key] = theme('facetapi_bonus_select_option', array('title' => $element['#markup'], 'count' => $element['#count']));
+
     if ($element['#active']) {
-      continue;
+      $default_value = $key;
     }
-    $options[serialize($element['#query'])] = theme('facetapi_bonus_select_option', array('title' => $element['#markup'], 'count' => $element['#count']));
   }
   if (count($options) == 1) {
     return;
@@ -32,8 +37,11 @@ function facetapi_bonus_select($form, &$form_state, $elements) {
     '#type' => 'select',
     '#options' => $options,
     '#attributes' => array('class' => array('ctools-auto-submit')),
-    'default_value' => '',
+    '#default_value' => $default_value,
   );
+  if (empty($default_value)) {
+    $form['select']['#empty_option'] = t('- Select -');
+  }
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Filter'),
@@ -55,5 +63,6 @@ function facetapi_bonus_select($form, &$form_state, $elements) {
  * Submit handler for facet form.
  */
 function facetapi_bonus_select_submit($form, &$form_state) {
-  $form_state['redirect'] = array($_GET['q'], array('query' => unserialize($form_state['values']['select'])));
+  $value = unserialize($form_state['values']['select']);
+  $form_state['redirect'] = array($value['path'], array('query' => $value['query']));
 }

@@ -30,8 +30,8 @@ scripts[] = assets/js/{{machine_name}}.script.js
 ; 3 or greater = nested dropdown menus).
 settings[main_menu_max_depth] = 2
 
-; Information added by Drupal.org packaging script on 2019-04-22
-version = "7.x-3.7"
+; Information added by Drupal.org packaging script on 2020-01-15
+version = "7.x-3.8"
 core = "7.x"
 project = "radix"
-datestamp = "1555915095"
+datestamp = "1579110795"

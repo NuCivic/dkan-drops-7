@@ -1,0 +1,10 @@
+name = File Hash
+description = Generate hashes for each uploaded file.
+core = 7.x
+configure = admin/config/media/filehash
+files[] = filehash.test
+
+; Information added by drush on 2019-09-30
+version = "7.x-1.7+0-dev"
+project = "filehash"
+datestamp = "1569864424"

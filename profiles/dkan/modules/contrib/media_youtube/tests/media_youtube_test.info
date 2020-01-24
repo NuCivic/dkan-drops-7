@@ -8,8 +8,8 @@ hidden = TRUE
 files[] = includes/MediaYouTubeTestStreamWrapper.inc
 files[] = includes/MediaYouTubeTestHandler.inc
 
-; Information added by Drupal.org packaging script on 2019-02-14
-version = "7.x-3.8"
+; Information added by Drupal.org packaging script on 2019-10-03
+version = "7.x-3.9"
 core = "7.x"
 project = "media_youtube"
-datestamp = "1550118784"
+datestamp = "1570113188"

@@ -43,7 +43,15 @@ class FacetapiFilterExcludeItems extends FacetapiFilter {
           }
         }
       }
+      if ($this->settings->settings['invert']) {
+        $exclude = !$exclude;
+      }
       if (!$exclude) {
+        // Recurse into item children if available to make sure those are
+        // filtered too.
+        if (!empty($item['#item_children'])) {
+          $item['#item_children'] = $this->execute($item['#item_children']);
+        }
         $filtered_build[$key] = $item;
       }
     }
@@ -57,7 +65,7 @@ class FacetapiFilterExcludeItems extends FacetapiFilter {
   public function settingsForm(&$form, &$form_state) {
     $form['exclude'] = array(
       '#title' => t('Exclude items'),
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#description' => t("Comma separated list of titles or values that should be excluded, matching either an item's title or value."),
       '#default_value' => $this->settings->settings['exclude'],
     );
@@ -66,6 +74,12 @@ class FacetapiFilterExcludeItems extends FacetapiFilter {
       '#type' => 'checkbox',
       '#description' => t('Interpret each exclude list item as a regular expression pattern.<br /><small>(Slashes are escaped automatically, patterns using a comma can be wrapped in "double quotes", and if such a pattern uses double quotes itself, just make them double-double-quotes (""))</small>.'),
       '#default_value' => $this->settings->settings['regex'],
+    );
+    $form['invert'] = array(
+      '#title' => t('Invert - only list matched items'),
+      '#type' => 'checkbox',
+      '#description' => t('Instead of excluding items based on the pattern specified above, only matching items will be displayed.'),
+      '#default_value' => $this->settings->settings['invert'],
     );
   }
 
@@ -76,6 +90,7 @@ class FacetapiFilterExcludeItems extends FacetapiFilter {
     return array(
       'exclude' => '',
       'regex' => 0,
+      'invert' => 0,
     );
   }
 }

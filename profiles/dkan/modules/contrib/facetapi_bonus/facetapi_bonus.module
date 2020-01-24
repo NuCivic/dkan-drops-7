@@ -69,6 +69,18 @@ function facetapi_bonus_facetapi_filters() {
         'class' => 'FacetapiFilterShowDeepestLevelItems',
       ),
     ),
+    'filter_depth' => array(
+      'handler' => array(
+        'label' => t('Show items from a specific depth'),
+        'class' => 'FacetapiFilterShowItemsFromSpecificDepth',
+      ),
+    ),
+    'hide_if_selected' => array(
+      'handler' => array(
+        'label' => t('Do not show facet with already selected items'),
+        'class' => 'FacetapiFilterHideIfSelected',
+      ),
+    ),
   );
 }
 
@@ -129,13 +141,16 @@ function facetapi_sort_natural(array $a, array $b) {
  *
  * Set callbacks for select facet forms.
  */
-function facetapi_bonus_forms() {
+function facetapi_bonus_forms($form_id, $args) {
   $forms = array();
-  foreach (facetapi_get_searcher_info() as $searcher => $searcher_info) {
-    foreach (facetapi_get_facet_info($searcher) as $facet) {
-      $forms['facetapi_bonus_select_' .  $facet['name']]['callback'] = 'facetapi_bonus_select';
-    }
+
+  // Map all form IDs starting with facetapi_bonus_select_ to our callback.
+  if (strpos($form_id, 'facetapi_bonus_select_') === 0) {
+    $forms[$form_id] = array(
+      'callback' => 'facetapi_bonus_select',
+    );
   }
+
   return $forms;
 }
 

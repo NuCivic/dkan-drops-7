@@ -1,4 +1,4 @@
-# DKAN Open Data Platform (7.x-1.18)
+# DKAN Open Data Platform (7.x-1.18.1)
 
 DKAN is an open source open data platform with a full suite of cataloging, publishing and visualization features that allow organizations to easily publish data to the public.
 

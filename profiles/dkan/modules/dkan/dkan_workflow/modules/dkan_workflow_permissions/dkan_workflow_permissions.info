@@ -9,4 +9,4 @@ features[roles_permissions][] = Workflow Contributor
 features[roles_permissions][] = Workflow Moderator
 features[roles_permissions][] = Workflow Supervisor
 project path = profiles/dkan/modules/dkan/dkan_workflow/modules
-version = 7.x-1.18
+version = 7.x-1.18.1

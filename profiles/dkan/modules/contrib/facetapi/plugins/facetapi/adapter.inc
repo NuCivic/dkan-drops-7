@@ -1327,10 +1327,13 @@ class FacetapiFacet implements ArrayAccess {
 
     // Add JavaScript settings by merging with the others already set.
     $merge_settings['facetapi']['facets'][] = $widget_plugin->getJavaScriptSettings();
-    $build[$this['field alias']]['#attached']['js'][] = array(
-      'data' => $merge_settings,
-      'type' => 'setting',
-    );
+    
+    if (!empty($build[$this['field alias']])) {
+      $build[$this['field alias']]['#attached']['js'][] = array(
+        'data' => $merge_settings,
+        'type' => 'setting',
+      );
+    }
 
     // Return render array keyed by the FacetapiWidget::$key property.
     return array($widget_plugin->getKey() => $build);

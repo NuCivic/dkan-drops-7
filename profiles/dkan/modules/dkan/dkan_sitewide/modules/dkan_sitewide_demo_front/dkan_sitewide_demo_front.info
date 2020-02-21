@@ -9,4 +9,4 @@ features[ctools][] = context:context:3
 features[ctools][] = page_manager:pages_default:1
 features[features_api][] = api:2
 fetures[context][] = front
-version = 7.x-1.18.1
+version = 7.x-1.18.2

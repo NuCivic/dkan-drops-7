@@ -133,7 +133,11 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
       for (var p in obj) {
         if (obj.hasOwnProperty(p)) {
           if (typeof obj[p] !== 'object') {
-            str += '&' + p + '=' + obj[p] ;
+            if(p == 'sort'){
+              str += '&' + p + '[' + obj[p].split(' ')[0] + ']' + '=' + obj[p].split(' ')[1] ;
+            }else{
+              str += '&' + p + '=' + obj[p] ;
+            }
           }
         }
       }

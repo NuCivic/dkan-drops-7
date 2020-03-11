@@ -11,4 +11,4 @@ features[roles_permissions][] = editor
 features[roles_permissions][] = site manager
 features_exclude[dependencies][features] = features
 project path = profiles/dkan/modules/dkan
-version = 7.x-1.18.2
+version = 7.x-1.18.3

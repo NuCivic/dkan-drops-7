@@ -19,4 +19,4 @@ features[context][] = sitewide
 features[ctools][] = context:context:3
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
-version = 7.x-1.18.2
+version = 7.x-1.18.3

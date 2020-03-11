@@ -160,6 +160,10 @@ function og_moderation_node_revision_access($node, $op = 'view') {
       }
     }
   }
+  // _node_revision_access() uses 'update' not 'revert'.
+  if ($op == 'revert') {
+    $op = 'update';
+  }
   return _node_revision_access($node, $op);
 }
 

@@ -308,6 +308,10 @@ abstract class FacetapiAdapter {
 
       // Perform basic parsing of the filter.
       $parts = explode(':', $filter, 2);
+      // We need to filter out possible XSS attack function calls.
+      foreach ($parts as $id => $part) {
+        $parts[$id] = filter_xss($part);
+      }
       $field_alias = rawurldecode($parts[0]);
       if (isset($parts[1]) && isset($enabled_aliases[$field_alias])) {
         $filter = $field_alias . ':' . $parts[1]; // @see https://www.drupal.org/node/1884152

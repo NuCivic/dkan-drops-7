@@ -3,9 +3,9 @@ api: '2'
 core: 7.x
 includes:
 - https://raw.githubusercontent.com/GetDKAN/visualization_entity/7.x-2.x/visualization_entity.make
-- https://raw.githubusercontent.com/NuCivic/open_data_schema_map/7.x-2.5/open_data_schema_map.make
-- https://raw.githubusercontent.com/NuCivic/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
-- https://raw.githubusercontent.com/NuCivic/recline/7.x-2.3/recline.make
+- https://raw.githubusercontent.com/GetDKAN/open_data_schema_map/7.x-2.6/open_data_schema_map.make
+- https://raw.githubusercontent.com/GetDKAN/leaflet_draw_widget/5a5f8faf664aeca02371f6692307580d9fab9116/leaflet_widget.make
+- https://raw.githubusercontent.com/GetDKAN/recline/7.x-2.3/recline.make
 projects:
   admin_menu:
     version: 3.0-rc6
@@ -75,6 +75,11 @@ projects:
     version: '1.7'
   diff:
     version: '3.4'
+  dkan_default_content:
+    download:
+        type: git
+        url: https://github.com/GetDKAN/dkan_default_content.git
+        tag: 7.x-1.0
   double_field:
     version: '2.5'
   drafty:
@@ -117,6 +122,7 @@ projects:
   field_group_table:
     version: '1.6'
     patch:
+      1: patches/field_group_table_accessibilty.patch
       2887897: https://www.drupal.org/files/issues/added_missing_isset_calls-2887897-2.patch
       3016830: https://www.drupal.org/files/issues/2018-11-28/undefined-index-classes-3016830-0.patch
   field_hidden:
@@ -232,6 +238,12 @@ projects:
       type: git
       url: https://git.drupal.org/project/multistep.git
       revision: 3b0d40a
+  nuboot_radix:
+    download:
+      type: git
+      url: https://github.com/GetDKAN/nuboot_radix.git
+      tag: 7.x-2.0
+    type: theme
   og:
     version: '2.10'
     patch:
@@ -249,9 +261,11 @@ projects:
     download:
       type: git
       url: https://github.com/GetDKAN/open_data_schema_map.git
-      tag: 7.x-2.5
+      tag: 7.x-2.6
   panelizer:
     version: '3.4'
+    patch:
+      2845433: https://www.drupal.org/files/issues/2020-03-27/panelizer-fix-access-denied-2845433-42-D7.patch
   panels:
     version: '3.9'
   panels_style_collapsible:

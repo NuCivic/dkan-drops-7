@@ -1,10 +1,10 @@
-# DKAN Open Data Platform (7.x-1.18.3)
+# DKAN Open Data Platform (7.x-1.18.4)
 
 DKAN is an open source open data platform with a full suite of cataloging, publishing and visualization features that allow organizations to easily publish data to the public.
 
 *  [ Official website ](https://getdkan.org)
 *  [ Demo ](http://demo.getdkan.com/)
-*  [ Documentation ](https://docs.getdkan.com/)
+*  [ 7.x-1.x Documentation ](https://dkan.readthedocs.io/en/latest/index.html)
 
 ## Community
 
@@ -24,7 +24,7 @@ Join the [DKAN Slack community](https://dkansignup.herokuapp.com/).
 
 ## Help
 
-* General: [DKAN documentation](https://docs.getdkan.com)
+* General: [DKAN 7.x-1.x documentation](https://dkan.readthedocs.io/en/latest/index.html)
 * Developers: Submit a [Github issue](https://github.com/GetDKAN/dkan/issues) or post to [ #dev ](https://dkan.slack.com/messages/C4BEVFDKJ/) channel in [ DKAN Slack ](https://dkan.slack.com)
 * Bugs: Submit a [Github issue](https://github.com/GetDKAN/dkan/issues)
 
@@ -51,7 +51,7 @@ Please see the [Installation](http://dkan.readthedocs.io/en/latest/installation/
 
 ### Upgrading DKAN
 
-Please see the [Updating and Maintaining DKAN](https://docs.getdkan.com/en/latest/introduction/maintaining.html) section of the DKAN Documentation for general upgrade information.
+Please see the [Updating and Maintaining DKAN](https://dkan.readthedocs.io/en/latest/introduction/maintaining.html) section of the DKAN Documentation for general upgrade information.
 
 ## Releases
 
@@ -61,7 +61,7 @@ Check the [releases page](https://github.com/GetDKAN/dkan/releases) for latest D
 
 DKAN follows a modified semantic versioning convention, and has _major_, _point_ (also known as _minor_), and _patch_ releases.
 
-The only _major_ release of DKAN has been 7.x-1.0. It is unlikely there will be a 7.x-2.x version of DKAN but in the case of a major architecture change, this is possible. 
+The only _major_ release of DKAN has been 7.x-1.0. It is unlikely there will be a 7.x-2.x version of DKAN but in the case of a major architecture change, this is possible.
 
 A [Drupal 8 version of DKAN is in development here](https://github.com/GetDKAN/dkan2).
 
@@ -77,7 +77,7 @@ We keep the DKAN profile (this project), [DKAN Dataset](https://github.com/GetDK
 
 ## License
 
-DKAN and related modules are freely-available under the [ GPLv2 (or later) ](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) license.
+DKAN and related modules are freely-available under the ["GNU General Public License, version 2 or any later version"](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) license.
 
 ## Contributing
 

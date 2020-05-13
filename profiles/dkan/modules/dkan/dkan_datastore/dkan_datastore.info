@@ -12,4 +12,4 @@ features[features_api][] = api:2
 features[field_base][] = field_datastore_status
 features[field_instance][] = node-resource-field_datastore_status
 features[views_view][] = datasets
-version = 7.x-1.18.3
+version = 7.x-1.18.4

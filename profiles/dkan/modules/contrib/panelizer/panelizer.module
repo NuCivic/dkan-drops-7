@@ -1320,7 +1320,7 @@ function panelizer_panels_cache_get($argument) {
     $panelizer = $handler->get_default_panelizer_object($bundle, $name);
     $cache->display = $panelizer->display;
     $cache->display->context = $handler->get_contexts($panelizer);
-    
+
     // Set the storage_type and storage_id if either is empty.
      if (empty($cache->display->storage_type)) {
        $cache->display->storage_type = 'panelizer_default';
@@ -1354,6 +1354,7 @@ function panelizer_panels_cache_get($argument) {
     $cache_keys[] = $vid;
   }
   $cache->display->cache_key = implode(':', $cache_keys);
+  $cache->display->storage_id = $argument;
 
   // Set the allowed content types.
   if (variable_get('panelizer_' . $type . ':' . $bundle . '_allowed_types_default', FALSE)) {

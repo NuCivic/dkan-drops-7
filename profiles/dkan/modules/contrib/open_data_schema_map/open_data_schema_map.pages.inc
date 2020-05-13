@@ -492,6 +492,10 @@ function open_data_schema_map_add_type(&$values, $mapping) {
  *   API object
  */
 function open_data_schema_map_endpoint($api) {
+  $params = drupal_get_query_parameters();
+  if (!isset($params['page'])) {
+    drupal_goto($api->endpoint, ['query' => ['page' => 0]]);
+  }
   // Start by setting the content type header based on the API settings.
   if ($output_format = open_data_schema_map_output_format_load($api->outputformat)) {
     foreach ($output_format['headers'] as $key => $value) {

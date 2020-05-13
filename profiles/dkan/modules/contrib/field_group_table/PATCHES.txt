@@ -1,4 +1,5 @@
 The following patches have been applied to this project:
+- field_group_table_accessibilty.patch
 - https://www.drupal.org/files/issues/added_missing_isset_calls-2887897-2.patch
 - https://www.drupal.org/files/issues/2018-11-28/undefined-index-classes-3016830-0.patch
 

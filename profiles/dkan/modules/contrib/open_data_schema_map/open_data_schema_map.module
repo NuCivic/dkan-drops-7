@@ -73,6 +73,31 @@ class OpenDataSchemaMapException extends Exception {
 function open_data_schema_map_menu() {
   $items = array();
   $pre = OPEN_DATA_SCHEMA_MAP_ADMIN_PATH;
+  $config_parent_normal_path = 'admin/dkan';
+  $config_plid = db_query("SELECT mlid FROM {menu_links} WHERE link_path = :parent AND menu_name = :menu", array(':parent' => $config_parent_normal_path, ':menu' => 'menu-command-center-menu'))->fetchField();
+
+
+  $items['admin/dkan/datasets_per_page'] = array(
+    'title' => t('Datasets per page'),
+    'description' => t('Configure datasets per page for catalog.xml endpoints'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('open_data_schema_map_datasets_per_page_form'),
+    'access arguments' => array('administer DKAN configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['cc/admin/dkan/datasets_per_page'] = array(
+    'access arguments' => array('administer DKAN configuration'),
+    'description' => t('Configure datasets per page for catalog.xml endpoints'),
+    'page callback' => 'drupal_goto',
+    'page arguments' => array('admin/dkan/datasets_per_page'),
+    'title' => t('Datasets per page'),
+    'menu_name' => 'menu-command-center-menu',
+    'parent_identifier' => 'menu-command-center-menu_site-configuration:admin/dkan',
+    'plid' => $config_plid,
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 11,
+  );
 
   $apis = open_data_schema_map_api_load_all();
   if ($apis) {
@@ -161,6 +186,48 @@ function open_data_schema_map_menu() {
   }
 
   return $items;
+}
+
+/**
+ * Datasets per page form.
+ *
+ * @param array $form_state
+ *   Form state array
+ *
+ * @return array
+ *   Form array
+ */
+function open_data_schema_map_datasets_per_page_form() {
+  $form['datasets_per_page'] = array(
+    '#type' => 'textfield',
+    '#size' => 5,
+    '#maxlength' => 5,
+    '#default_value' => variable_get('datasets_per_page', ''),
+    '#title' => t('Amount of datasets per page'),
+    '#description' => t('If your catalog contains thousands of datasets, your API endpoints may get too large to load. To reduce the strain on your server, we recommend that you add pagination to the catalog.xml endpoints. To enable pagination, simply specify the number of results per page you would like in the field above and click save. If nothing is entered, all datasets will be included on a single page.'),
+  );
+  return system_settings_form($form);
+}
+
+/**
+ * Validate function.
+ */
+function open_data_schema_map_datasets_per_page_form_validate($form, &$form_state) {
+  $max_num = $form_state['values']['datasets_per_page'];
+
+  if (empty($max_num)) {
+    if ($max_num == "0") {
+      form_set_error('datasets_per_page', t('Amount of datasets per page cannot be 0.'));
+    }
+  } else {
+    if (!is_numeric($max_num)) {
+      form_set_error('datasets_per_page', t('You must enter a number for the amount of datasets per page.'));
+    } else {
+      if ($max_num < 0) {
+        form_set_error('datasets_per_page', t('Amount of datasets per page must be positive.'));
+      }
+    }
+  }
 }
 
 /**
@@ -999,7 +1066,15 @@ function open_data_schema_map_endpoint_process_map_recursion(&$result, $map, $ty
         }
         unset($token['odsm_entity_reference']);
         if ($values) {
+          $ref_field_info = field_info_field($ref_field);
+          $target_type = $ref_field_info['settings']['target_type'];
           foreach ($values as $num => $item) {
+            if ($target_type === 'node') {
+              $target_node = entity_load_single('node', $item['target_id']);
+              if ($target_node->status === "0") {
+                continue;
+              }
+            }
             $sub_result = array();
             foreach ($token as $subfield => $subtoken) {
               $subtoken['value'] = str_replace('Nth', $num, $subtoken['value']) ? str_replace('Nth', $num, $subtoken['value']) : $subtoken['value'];
@@ -1182,6 +1257,7 @@ function open_data_schema_map_open_data_schema_map_args_alter(&$field, &$arg) {
  *   Array of results/headers
  */
 function open_data_schema_map_render_api($api, $query = NULL, $queries = NULL) {
+  $current_page = 0;
   if (!isset($queries)) {
     $queries = drupal_get_query_parameters();
   }
@@ -1208,6 +1284,24 @@ function open_data_schema_map_render_api($api, $query = NULL, $queries = NULL) {
       $offset = open_data_schema_map_endpoint_special_arg($args, 'offset');
       $limit = open_data_schema_map_endpoint_special_arg($args, 'limit');
       $ids = open_data_schema_map_endpoint_query($api, $limit, $offset, $args);
+      $total = count($ids);
+      // Handle paging.
+      if (isset($queries['page'])) {
+        $current_page = $queries['page'];
+      }
+      $datasets_limit = variable_get('datasets_per_page', '');
+      if (!empty($datasets_limit) && isset($queries['page'])) {
+        if ($total > $datasets_limit) {
+          $pages = floor($total / $datasets_limit);
+          if ($current_page > $pages) {
+            drupal_goto($api->endpoint, ['query' => ['page' => $pages]]);
+          }
+          else {
+            $datasets_offset = $current_page * $datasets_limit;
+            $ids = array_slice($ids, $datasets_offset, $datasets_limit);
+          }
+        }
+      }
       $result = open_data_schema_map_endpoint_process_map($ids, $api);
     }
   }

@@ -113,9 +113,9 @@
                         "language": "",
                         "field_basic_text_text": [
                             {
-                                "value": "<img src=\"/profiles/dkan/themes/nuboot_radix/assets/images/ncd.gif\" class=\"demo\" alt=\"animated gif\" />",
+                                "value": "<img src=\"/profiles/dkan/themes/contrib/nuboot_radix/assets/images/ncd.gif\" class=\"demo\" alt=\"animated gif\" />",
                                 "format": "html",
-                                "safe_value": "<p><img src=\"/profiles/dkan/themes/nuboot_radix/assets/images/ncd.gif\" class=\"demo\" alt=\"animated gif\" /></p>\n"
+                                "safe_value": "<p><img src=\"/profiles/dkan/themes/contrib/nuboot_radix/assets/images/ncd.gif\" class=\"demo\" alt=\"animated gif\" /></p>\n"
                             }
                         ],
                         "rdf_mapping": []

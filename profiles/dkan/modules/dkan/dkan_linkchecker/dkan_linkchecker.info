@@ -22,4 +22,4 @@ features[variable][] = linkchecker_scan_node_resource
 features[views_view][] = dkan_linkchecker_reports
 features_exclude[dependencies][ctools] = ctools
 project path = profiles/dkan/modules/dkan
-version = 7.x-1.18.5
+version = 7.x-1.18.6

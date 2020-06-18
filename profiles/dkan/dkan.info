@@ -127,4 +127,4 @@ dependencies[] = dkan_datastore_simple_import
 dependencies[] = dkan_datastore_api
 dependencies[] = open_data_schema_map_dkan
 dependencies[] = visualization_entity_charts_dkan
-version = 7.x-1.18.7
+version = 7.x-1.18.8

@@ -1,3 +1,39 @@
+7.x-2.7
+------
+ - #121 Fix broken RDF and JSON links.
+
+7.x-2.6
+-------
+ - #119 Adjustment to avoid ArgumentCountError error.
+ - #120 Fix issue on generation of data.json.
+ - #117 Do not include unpublished resources when running odsm-filecache.
+ - #118 Paginate catalog.xml endpoints.
+
+7.x-2.5
+-------
+ - #116 Remove recursive tree functions and add fast token browser.
+
+7.x-2.4
+-------
+ - #115 Fix the function check.
+
+7.x-2.3
+-------
+ - #114 Check that drush_log function exists before calling it.
+
+7.x-2.2
+-------
+ - #113 Print progress message when running drush odsm-filecache.
+ - #111 Add documentation for the features hook.
+
+7.x-2.1
+-------
+ - Update json-schema.
+
+7.x-2.0
+-------
+ - Reset to implement a new release management strategy independent of DKAN.
+
 7.x-1.14.1
 ----------
 - #110 Lock symfonyserializer library to the 3.4.2 tag

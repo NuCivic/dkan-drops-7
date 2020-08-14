@@ -5,4 +5,4 @@ core = 7.x
 
 dependencies[] = dkan_harvest
 files[] = dkan_harvest_datajson.migrate.inc
-version = 7.x-1.18.9
+version = 7.x-1.18.10

@@ -4,4 +4,4 @@ package = DKAN API
 core = 7.x
 dependencies[] = services
 dependencies[] = dkan_datastore
-version = 7.x-1.18.9
+version = 7.x-1.18.10

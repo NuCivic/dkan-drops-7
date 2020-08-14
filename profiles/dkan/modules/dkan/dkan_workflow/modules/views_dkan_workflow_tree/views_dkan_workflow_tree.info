@@ -6,4 +6,4 @@ dependencies[] = views
 dependencies[] = workbench_moderation
 files[] = ViewsDkanWorkflowTreePluginStyle.inc
 stylesheets[all][] = views_dkan_workflow_tree.css
-version = 7.x-1.18.9
+version = 7.x-1.18.10

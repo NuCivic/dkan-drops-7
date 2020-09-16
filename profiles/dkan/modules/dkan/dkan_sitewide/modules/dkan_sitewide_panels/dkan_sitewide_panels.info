@@ -48,4 +48,4 @@ features[views_view][] = dkan_datasets_filtered
 features[views_view][] = dkan_groups
 features[views_view][] = entity_reference_groups_list
 features[views_view][] = list_of_users_groups
-version = 7.x-1.18.10
+version = 7.x-1.18.11

@@ -6,4 +6,4 @@ dependencies[] = ctools
 dependencies[] = panels
 project path = profiles/dkan/modules/dkan
 scripts[] = js/colorPicker.behavior.js
-version = 7.x-1.18.11
+version = 7.x-1.18.12

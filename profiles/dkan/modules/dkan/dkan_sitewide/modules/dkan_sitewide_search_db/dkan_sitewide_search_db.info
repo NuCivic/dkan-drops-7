@@ -18,4 +18,4 @@ features[features_api][] = api:2
 features[search_api_server][] = datasets
 features[variable][] = facetapi_pretty_paths_searcher_search_api@datasets
 features[variable][] = facetapi_pretty_paths_searcher_search_api@datasets_options
-version = 7.x-1.18.12
+version = 7.x-1.18.13

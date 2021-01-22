@@ -11,4 +11,4 @@ files[] = dkan_migrate_base_group.inc
 files[] = dkan_migrate_base_dataset.inc
 files[] = dkan_migrate_base_resource.inc
 files[] = dkan_migrate_base_data_json.inc
-version = 7.x-1.18.14
+version = 7.x-1.18.15

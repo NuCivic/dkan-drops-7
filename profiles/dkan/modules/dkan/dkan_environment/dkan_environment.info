@@ -3,4 +3,4 @@ description = Basic environments management (Local, Development, Production, etc
 core = 7.x
 dependencies[] = environment
 dependencies[] = environment_indicator
-version = 7.x-1.18.14
+version = 7.x-1.18.15
